@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>DentalSoft</title>
+	 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	 <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+	 <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+	<div class="login-wrap">
+      <div class="login-html">
+        <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Inicio de sesión Paciente</label>
+        <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab"></label>
+        <div class="login-form">
+          <div class="sign-in-htm">
+        <form action="#" th:action="@{/admin/signin}" method="post">
+            <div class="group">
+              <br>
+              <label for="user" class="label">Nro. Documento</label>
+              <input id="user" name="documento" type="text" class="input">
+            </div>
+            <div class="group">
+              <br>
+              <label for="pass" class="label">Contraseña</label>
+              <input id="pass" type="password" name="password" class="input" data-type="password">
+            </div>
+            <div class="group">
+              <button type="submit" class="button">Ingresar</button>
+            </div>
+        </form><br><br><br>
+        <div style="margin-top:-15%" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${loginError != null }">
+						<label th:text="${loginError}"></label>
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    						<span aria-hidden="true">&times;</span>
+						</button>
+	    </div>
+            <div class="foot-lnk">
+              <a href="#forgot">¿Olvidó su contraseña?</a>
+            </div>
+        	<div class="hr"></div>
+        	<div class="i">
+        		<a href="#"><i class="material-icons" title="Paciente">person</i></a>
+        		<a th:href="@{/admin/login}"><i class="material-icons" title="Administrador">admin_panel_settings</i></a>
+        		<a th:href="@{/odontologo/login}"><i class="material-icons" title="Odontólogo">vaccines</i></a>
+        	</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
+   <script th:src="@{/js/popper.min.js}"></script>
+   <script th:src="@{/js/bootstrap.min.js}"></script>
+   <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+</body>
+</html>
