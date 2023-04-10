@@ -41,7 +41,7 @@ public class AdministradorController {
 			request.getSession().setAttribute("documento", admin.getDocumento());
 			return "redirect:/producto/list";
 		}else {
-			att.addFlashAttribute("loginError", "documento o contraseña incorrecta");
+			att.addFlashAttribute("loginError", "Documento o contraseña incorrecta");
 			return "redirect:/dentalsoft/login";
 			}
 	}
