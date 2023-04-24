@@ -14,12 +14,17 @@
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
 	 	   <form th:each="adm: ${admin}" action="#">
-		   	<h3><span>Manrique y Soto Centro Odontológico</span><br><span th:text="${adm.nombre}"></span></h3>
+		   	<h3><span></span><br><span th:text="${adm}"></span></h3>
 		   </form>
 		</div>
 		<ul class="list-unstyled component m-0">
 		  <li class="active">
-		  <a th:href="@{/producto/list}" class="dashboard"><i class="material-icons">inventory_2</i>Agenda</a>
+		  <a href="#homeSubmenu6" class="list-unstyled component m-0">
+		  <i class="material-icons">groups</i>Mis Pacientes
+		  </a>
+		  </li>
+		  <li class="dropdown">
+		  <a th:href="@{/producto/list}" class="dashboard"><i class="material-icons">calendar_month</i>Agenda</a>
 		  </li>
 		  
 		  <li class="dropdown">
@@ -32,14 +37,8 @@
 		  </ul>
 		  </li>
 		  <li class="dropdown">
-		  <a href="#homeSubmenu6" data-toggle="collapse" aria-expanded="false" 
-		  class="dropdown-toggle">
-		  <i class="material-icons">groups</i>Pacientes
-		  </a>
-		  </li>
-		  <li class="dropdown">
 		  <a th:href="@{/pqrs/list}" class="list-unstyled component m-0">
-		  <i class="material-icons">content_copy</i>Odontólogos
+		  <i class="material-icons">vaccines</i>Mis Odontólogos
 		  </a>
 		  </li>		
 		</ul>
@@ -56,18 +55,6 @@
 					 </div>
 					 
 					 <div class="col-md-5 col-lg-3 order-3 order-md-2">
-					     <div class="xp-searchbar">
-						     <form>
-							    <div class="input-group">
-								  <input type="search" class="form-control"
-								  placeholder="Buscar">
-								  <div class="input-group-append">
-								     <button class="btn" type="submit" id="button-addon2">Go
-									 </button>
-								  </div>
-								</div>
-							 </form>
-						 </div>
 					 </div>
 					 
 					 
@@ -81,7 +68,7 @@
 								  <span class="xp-user-live"></span>
 								 </a>
 								  <ul class="dropdown-menu small-menu">
-									 <li><a href="/admin/logout">
+									 <li><a th:href="@{/admin/logout}">
 									 <span class="material-icons">logout</span>
 									 Cerrar sesión
 									 </a></li>
@@ -94,7 +81,7 @@
 					 
 				 </div>
 				 <div class="xp-breadcrumbbar text-center">
-				    <span class="page-title" >Manrique y Soto Centro Odontológico</span>
+				    <span class="page-title" >MANRIQUE Y SOTO CENTRO ODONTOLÓGICO</span>
 				 </div>
 				 <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${accion != null }">
 					<label th:text="${accion}"></label>
@@ -171,8 +158,8 @@
       <div class="form-group">
 		    <label>Tipo de documento</label>
 		    <select class="input-select" type="number" name="tipodoc_id">
-		    <form th:each="cat: ${categoria}">
-				<option th:value="${cat.id}" th:text="${cat.nombre}"></option>
+		    <form th:each="tipo: ${tipoDoc}">
+				<option th:value="${tipo.id}" th:text="${tipo.tipo}"></option>
 			</form>
 			</select>
 		</div>
