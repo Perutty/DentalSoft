@@ -18,7 +18,7 @@ import lombok.Data;
 public class Paciente {
 	
 	@Column
-	private Integer tipodoc_id;
+	private String tipodoc;
 	
 	@Id
 	@Column
@@ -28,13 +28,13 @@ public class Paciente {
 	private String nombre;
 	
 	@Column
-	private Integer sexo_id;
+	private String sexo;
 	
 	@Column
-	private Integer estadocivil_id;
+	private String estadocivil;
 	
 	@Column
-	private Integer paisnac_id;
+	private String paisnac;
 	
 	@Column
 	private String ciudadnac;
@@ -48,7 +48,7 @@ public class Paciente {
 	private Date fechaingreso;
 	
 	@Column
-	private Integer paisdomi_id;
+	private String paisdomi;
 	
 	@Column
 	private String ciudaddomi;
@@ -69,7 +69,7 @@ public class Paciente {
 	private String ocupacion;
 	
 	@Column
-	private Integer eps_id;
+	private String eps;
 	
 	@Column
 	private String tipoafiliacion;

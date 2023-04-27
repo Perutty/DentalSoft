@@ -747,10 +747,11 @@ background-color:rgba(0,0,0,0.09);
 		      /*-------footer design start------*/
 			
 			  footer{
+			   position:absolute;
+			   bottom:0;
 		       background-color:#353b48;
 			   color:#fff;
 			   text-align:center;
-			   position:relative;
 			   width: 100%;
 			  }
 		   

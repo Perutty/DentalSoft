@@ -19,7 +19,7 @@ public class Administrador {
 	private String correo;
 	
 	@Column
-	private Integer tipodoc_id;
+	private String tipodoc;
 	
 	@Id
 	@Column

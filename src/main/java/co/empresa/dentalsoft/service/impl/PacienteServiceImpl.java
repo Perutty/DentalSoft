@@ -10,13 +10,13 @@ import co.empresa.dentalsoft.repository.PacienteRepository;
 import co.empresa.dentalsoft.service.PacienteService;
 
 @Service
-public class PacienteServiceImpl extends GenericServiceImpl<Paciente, Integer> implements PacienteService{
+public class PacienteServiceImpl extends GenericServiceImpl<Paciente, String> implements PacienteService{
 	
 	@Autowired
 	public PacienteRepository pacienteRepository;
 	
 	@Override
-	public CrudRepository <Paciente, Integer> getDao(){
+	public CrudRepository <Paciente, String> getDao(){
 		return pacienteRepository;
 	}
 	
@@ -24,5 +24,4 @@ public class PacienteServiceImpl extends GenericServiceImpl<Paciente, Integer> i
 	public Paciente select(String documento, String password) {
 		return pacienteRepository.findByDocumentoAndPassword(documento, password);
 	}
-
 }
