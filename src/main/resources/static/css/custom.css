@@ -714,6 +714,14 @@ background-color:rgba(0,0,0,0.09);
 		   display:inline-block;
 	   }
 	   
+	   .input-select {
+		  max-width: 100%;
+		  width: auto;
+		  overflow: hidden;	
+		  text-overflow: ellipsis;
+		  white-space: nowrap;
+		}
+		
 	   .modal .form-control{
 		   border-radius:2px;
 		   box-shadow:none;

@@ -94,10 +94,10 @@
 		     
 		      <div class="main-content">
 			     <div class="row">
-				    <div class="col-md-12">
+				    <div class="col-md-12" >
 					   <div class="table-wrapper">
 					     
-					   <div class="table-title">
+					   <div class="table-title" >
 					     <div class="row">
 						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
 							    <h2 class="ml-lg-2">Gestionar pacientes</h2>
@@ -125,14 +125,14 @@
 						  <tbody th:each="paci: ${paciente}">
 						     <tr>
 							 <td th:text="${paci.tipodoc}"></td>
-							 <td th:text="${paci.documento}"></td>
+							 <td class="documento" th:text="${paci.documento}"></td>
 							 <td th:text="${paci.nombre}"></td>
 							 <td th:text="${paci.celular}"></td>
 							 <td>
 							    <a th:href="@{/paciente/edit/{documento}(documento=${paci.documento})}">
 							   <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
 							   </a>
-							   <a href="#deleteEmployeeModal" data-toggle="modal">
+							   <a href="#deleteEmployeeModal" class="delete" data-toggle="modal">
 							   <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
 							   </a>
 							 </tr>
@@ -156,7 +156,7 @@
       <div class="modal-body">
       <label>¿Quieres eliminar este paciente?</label>
       <div style="text-align:center;color:white"><br>
-      <a class="btn btn-success" th:onclick="if(confirm('¿Estás seguro de que deseas eliminar este paciente?')){ window.location.href = 'paciente/delete/' + ${paci.documento}; }">Confirmar</a>
+      <a id="confirmar" class="btn btn-success">Confirmar</a>
       </div>
       </div>
       </div>
@@ -177,6 +177,7 @@
       <div class="form-group">
 		    <label>Tipo de documento </label>
 		    <select class="input-select" type="number" name="tipodoc">
+		    <option value="" style="text-align: center">--- Seleccione su tipo de documento ---</option>
 		    <div th:each="tipo: ${tipoDoc}">
 				<option th:value="${tipo.tipo}" th:text="${tipo.tipo}"></option>
 			</div>
@@ -193,6 +194,7 @@
 		<div class="form-group">
 		<label>Sexo </label>
 		    <select class="input-select" type="number" name="sexo">
+		    <option value="" style="text-align: center">--- Seleccione su sexo ---</option>
 		    <div th:each="sexo: ${sexo}">
 				<option th:value="${sexo.sexo}" th:text="${sexo.sexo}"></option>
 			</div>
@@ -201,6 +203,7 @@
 		<div class="form-group">
 		<label>Estado Civil </label>
 		  <select class="input-select" type="number" name="estadocivil">
+		  <option value="" style="text-align: center">--- Seleccione su estado civil ---</option>
 		    <div th:each="civil: ${estadocivil}">
 				<option th:value="${civil.estado}" th:text="${civil.estado}"></option>
 			</div>
@@ -209,6 +212,7 @@
 		 <div class="form-group">
 		<label>País de nacimiento </label>
 		  <select class="input-select" type="number" name="paisnac">
+		  <option value="" style="text-align: center">--- Seleccione su país de nacimiento ---</option>
 		    <div th:each="pais: ${pais}">
 				<option th:value="${pais.nombre}" th:text="${pais.nombre}"></option>
 			</div>
@@ -229,6 +233,7 @@
 		<div class="form-group">
 		<label>País de residencia </label>
 		  <select class="input-select" type="number" name="paisdomi">
+		  <option value="" style="text-align: center">--- Seleccione su país de residencia ---</option>
 		    <div th:each="pais: ${pais}">
 				<option th:value="${pais.nombre}" th:text="${pais.nombre}"></option>
 			</div>
@@ -261,6 +266,7 @@
 		<div class="form-group">
 		<label>Eps de afiliación</label>
 		  <select class="input-select" type="number" name="eps">
+		  <option value="" style="text-align: center">--- Seleccione su EPS ---</option>
 		    <div th:each="eps: ${eps}">
 				<option th:value="${eps.nombre}" th:text="${eps.nombre}"></option>
 			</div>
@@ -305,6 +311,7 @@
 				</div>
 		</footer>
 
+	<script th:src="@{/js2/script.js}"></script>
    <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
    <script th:src="@{/js/popper.min.js}"></script>
    <script th:src="@{/js/bootstrap.min.js}"></script>
