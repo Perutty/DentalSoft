@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,6 +57,7 @@ public class AdministradorController {
 	
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, HttpSession session, Model model) {
+		
 		if(request.getSession().getAttribute("admin_id") != null) {
 			return "redirect:/admin/admindashboard";
 		}else
@@ -69,7 +71,7 @@ public class AdministradorController {
 		
 		if(admin != null)
 		{
-			request.getSession().setAttribute("admin", admin.getNombre());
+			request.getSession().setAttribute("admin_doc", documento);
 			return "redirect:/admin/dashboard";
 		}else {
 			att.addFlashAttribute("loginError", "Documento o contraseña incorrecta");
@@ -79,7 +81,10 @@ public class AdministradorController {
 	
 	@GetMapping("/dashboard")
 	public String dashboard(HttpServletRequest request, Model model){
-		String adm_nombre = (String)request.getSession().getAttribute("admin");
+		
+		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
+		Administrador adm = administradorService.get(adm_doc);
+		
 		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
 		List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
 		List<Paciente> paciente = pacienteService.getAll();
@@ -92,8 +97,26 @@ public class AdministradorController {
 		model.addAttribute("eps", eps);
 		model.addAttribute("sexo", sexo);
 		model.addAttribute("pais", pais);
-		model.addAttribute("admin", adm_nombre);
+		model.addAttribute("admin", adm);
 		return "admindashboard";
+	}
+	
+	@GetMapping("/edit/{documento}")
+	public String edit(RedirectAttributes att,@PathVariable("documento") String documento, HttpServletRequest request,Model model){
+		Administrador admin = administradorService.get(documento);
+		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
+		model.addAttribute("tipoDoc", tipoDoc);	
+		model.addAttribute("adm", admin);
+		return "editadmin";
+	}
+	
+	@PostMapping("/save")
+	public String save(RedirectAttributes att, Administrador administrador, Model model) {
+		if(administrador != null) {
+			administradorService.save(administrador);
+			att.addFlashAttribute("accion", "¡Datos actualizados con éxito!");
+		}
+		return "redirect:/admin/dashboard";
 	}
 	
 	

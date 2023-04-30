@@ -13,13 +13,13 @@
 	  <div class="body-overlay"></div>
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
-	 	   <form th:each="adm: ${admin}" action="#">
-		   	<h3><span></span><br><span th:text="${adm}"></span></h3>
+	 	   <form th:each="adm: ${adm}" action="#">
+		   	<h3><span></span><br><span th:text="${adm.nombre}"></span></h3>
 		   </form>
 		</div>
 		<ul class="list-unstyled component m-0">
 		  <li class="active">
-		  <a href="#homeSubmenu6" class="list-unstyled component m-0">
+		  <a th:href="@{/admin/dashboard}" class="list-unstyled component m-0">
 		  <i class="material-icons">groups</i>Mis Pacientes
 		  </a>
 		  </li>
@@ -110,10 +110,15 @@
 					   
 					   </div>
 					</div>	
-     
-     <div class="container col-md-4">
-	<form th:action="@{/paciente/save}" method="post" th:object="${paciente}">
-      <div class="form-group">
+    <div class="container col-md-4" th:object="${adm}" style="display:grid;align-items:center">
+    	<img th:src="@{'/fotos/'+${adm.foto}}" style="margin: 0 auto; border-radius: 50%; width: 200px; height: 200px;"/>
+	<form th:action="@{/admin/save}" method="post">
+	<br>
+		<div class="form-group">
+		    <label>Nombre</label>
+			<input name="nombre" th:field="*{nombre}" type="text" placeholder="Nombre" class="form-control" required>
+		</div>
+		<div class="form-group">
 		    <label>Tipo de documento </label>
 		    <select class="input-select" type="number" name="tipodoc">
 		    <div th:each="tipo: ${tipoDoc}">
@@ -121,107 +126,30 @@
 			</div>
 			</select>
 		</div>
-        <div class="form-group">
+		<div class="form-group">
 		    <label>Número de Documento</label>
 			<input name="documento" type="text" th:field="*{documento}" placeholder="No. documento" class="form-control" required>
-		</div>
-		<div class="form-group">
-		    <label>Nombre</label>
-			<input name="nombre" th:field="*{nombre}" type="text" placeholder="Nombre" class="form-control" required>
-		</div>
-		<div class="form-group">
-		<label>Sexo </label>
-		    <select class="input-select" type="number" name="sexo">
-		    <div th:each="sexo: ${sexo}">
-				<option th:value="${sexo.sexo}" th:text="${sexo.sexo}" th:field="*{sexo}"></option>
-			</div>
-			</select>
-		</div>
-		<div class="form-group">
-		<label>Estado Civil </label>
-		  <select class="input-select" type="number" name="estadocivil">
-		    <div th:each="civil: ${estadocivil}">
-				<option th:value="${civil.estado}" th:text="${civil.estado}" th:field="*{estadocivil}"></option>
-			</div>
-		  </select>
-		 </div>
-		 <div class="form-group">
-		<label>País de nacimiento </label>
-		  <select class="input-select" type="number" name="paisnac">
-		    <div th:each="pais: ${pais}">
-				<option th:value="${pais.nombre}" th:text="${pais.nombre}" th:field="*{paisnac}"></option>
-			</div>
-		  </select>
-		  </div>
-		  <div class="form-group">
-		    <label>Ciudad de nacimiento</label>
-			<input name="ciudadnac" type="text" th:field="*{ciudadnac}" placeholder="ciudad de nacimiento" class="form-control" required>
-		</div>
-		<div class="form-group">
-		<label>Fecha de nacimiento </label>
-				<input name="fechanac" th:field="*{fechanac}" type="date" required></input>
-		</div>
-		<div class="form-group">
-		<label>Fecha de ingreso </label>
-				<input name="fechaingreso" th:field="*{fechaingreso}" type="date" required></input>
-		</div>
-		<div class="form-group">
-		<label>País de residencia </label>
-		  <select class="input-select" type="number" name="paisdomi">
-		    <div th:each="pais: ${pais}">
-				<option th:value="${pais.nombre}" th:text="${pais.nombre}" th:field="*{paisdomi}"></option>
-			</div>
-		  </select>
-		  </div>
-		  <div class="form-group">
-		    <label>Ciudad de residencia</label>
-			<input name="ciudaddomi" type="text" th:field="*{ciudaddomi}" placeholder="ciudad de residencia" class="form-control" required>
-		</div>
-		<div class="form-group">
-		    <label>Dirección de residencia</label>
-			<input name="direcciondomi" type="text" th:field="*{direcciondomi}" placeholder="Dirección de residencia" class="form-control" required>
-		</div>
-		<div class="form-group">
-		    <label>Barrio de residencia</label>
-			<input name="barriodomi" type="text" th:field="*{barriodomi}" placeholder="Barrio de residencia" class="form-control" required>
-		</div>
-		<div class="form-group">
-		    <label>Teléfono celular</label>
-			<input name="celular" type="text" th:field="*{celular}" placeholder="No. de Celular" class="form-control" required>
 		</div>
 		<div class="form-group">
 		    <label>Correo electrónico</label>
 			<input name="correo" type="text" th:field="*{correo}" placeholder="Correo electrónico" class="form-control" required>
 		</div>
 		<div class="form-group">
-		    <label>Ocupación</label>
-			<input name="ocupacion" type="text" th:field="*{ocupacion}" placeholder="Ocupación" class="form-control" required>
+		    <label>Teléfono celular</label>
+			<input name="celular" type="text" th:field="*{celular}" placeholder="No. de Celular" class="form-control" required>
 		</div>
 		<div class="form-group">
-		<label>Eps de afiliación</label>
-		  <select class="input-select" type="number" name="eps">
-		    <div th:each="eps: ${eps}">
-				<option th:value="${eps.nombre}" th:text="${eps.nombre}" th:field="*{eps}"></option>
-			</div>
-		  </select>
-		  </div>
-		  <div class="form-group">
-		    <label>Tipo afiliación</label>
-			<input name="tipoafiliacion" type="text" th:field="*{tipoafiliacion}" placeholder="Tipo de afiliación" class="form-control" required>
+		    <label>Contraseña</label>
+			<input name="password" type="password" th:field="*{password}" placeholder="Contraseña" class="form-control" required>
 		</div>
-		<div class="form-group">
-		    <label>Poliza de seguros</label>
-			<input name="poliza" type="text" th:field="*{poliza}" placeholder="Poliza" class="form-control" required>
-		</div>
-      <div class="modal-footer">
-        <button type="submit" class="btn btn-success">Guardar</button>
+		<button type="submit" class="btn btn-success">Guardar</button>
         <a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Cancelar</a>
-      </div>
-</form>
-</div>
-</div>
-</div>	
-</div>
+	</form>
+   </div>
+   </div>
+   </div>
+   </div> 
+  </div>
 			 <footer id="footer">
 				<div class="container">
 						<div class="col-md-12 text-center">

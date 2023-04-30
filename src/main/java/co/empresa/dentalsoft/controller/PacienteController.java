@@ -1,5 +1,8 @@
 package co.empresa.dentalsoft.controller;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.empresa.dentalsoft.model.Eps;
@@ -60,9 +65,25 @@ public class PacienteController {
 	}
 	
 	@PostMapping("/save")
-	public String save(RedirectAttributes att, Paciente paciente, Model model) {
-		pacienteService.save(paciente);
-		att.addFlashAttribute("accion", "¡Paciente registrado con éxito!");
+	public String save(RedirectAttributes att, Paciente paciente, @RequestParam("foto") MultipartFile foto, Model model) {
+		if(!foto.isEmpty()) {
+			String ruta = "C://Pacientes/fotos";
+			try {
+				byte[] bytes = foto.getBytes();
+				Path rutaAbsoluta = Paths.get(ruta + "//" +foto.getOriginalFilename());
+				Files.write(rutaAbsoluta, bytes);
+				paciente.setFoto(foto.getOriginalFilename());
+			}catch(Exception e) {
+				
+			}
+			if(paciente != null) {
+			pacienteService.save(paciente);
+			att.addFlashAttribute("accion", "¡Paciente registrado con éxito!");
+		}else {
+			pacienteService.save(paciente);
+			att.addFlashAttribute("accion", "¡Datos actualizados con éxito!");
+		}
+		}
 		return "redirect:/admin/dashboard";
 	}
 	

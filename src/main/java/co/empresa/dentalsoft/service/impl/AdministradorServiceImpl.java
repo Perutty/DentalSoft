@@ -10,13 +10,13 @@ import co.empresa.dentalsoft.repository.AdministradorRepository;
 import co.empresa.dentalsoft.service.AdministradorService;
 
 @Service
-public class AdministradorServiceImpl extends GenericServiceImpl<Administrador, Integer> implements AdministradorService {
+public class AdministradorServiceImpl extends GenericServiceImpl<Administrador, String> implements AdministradorService {
 	
 	@Autowired
 	public AdministradorRepository administradorRepository;
 	
 	@Override
-	public CrudRepository<Administrador, Integer> getDao(){
+	public CrudRepository<Administrador, String> getDao(){
 		return administradorRepository;
 	}
 	

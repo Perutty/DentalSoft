@@ -31,6 +31,9 @@ public class Administrador {
 	@Column
 	private String password;
 	
+	@Column
+	private String foto;
+	
 	public Administrador(){};
 	
 	public Administrador(String documento, String password) {

@@ -78,7 +78,7 @@ public class Paciente {
 	private String poliza;
 	
 	@Column
-	private byte[] foto;
+	private String foto;
 	
 	@Column
 	private String password;
