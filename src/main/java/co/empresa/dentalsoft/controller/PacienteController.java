@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -113,11 +116,12 @@ public class PacienteController {
 		return "editpaciente";
 	}
 	
-	@GetMapping("/editDatos")
-	public String editPaciente(RedirectAttributes att, Paciente paciente, HttpServletRequest request,Model model)
+	@PostMapping("/editDatos")
+	public String editPaciente(RedirectAttributes att, Paciente paciente, HttpServletRequest request, Model model)
 	{
 		Paciente paci = pacienteService.get(paciente.getDocumento());
-		paci.setFoto(paci.getFoto());
+		paciente.setFoto(paci.getFoto());
+		paciente.setPassword(paci.getPassword());
 		pacienteService.save(paci);
 		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
 		return "redirect:/admin/dashboard";
@@ -125,7 +129,7 @@ public class PacienteController {
 	
 	@PostMapping("/editFoto")
 	public String editFoto(RedirectAttributes att, @RequestParam("file") MultipartFile foto, 
-							@PathVariable("documento") String documento, HttpServletRequest request,Model model)
+							@RequestParam("documento") String documento, HttpServletRequest request,Model model)
 	{
 		Paciente paciente = pacienteService.get(documento);
 		String filename = paciente.getDocumento() + foto.getOriginalFilename().substring(foto.getOriginalFilename().length()-4);

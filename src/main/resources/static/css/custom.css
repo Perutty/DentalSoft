@@ -262,7 +262,7 @@ body,html{
 		  z-index:9;
 		  position:relative;
 		  padding:15px 30px;
-		  background-color:#353b48;
+		  background-color: #00B8B0;
 	 }
 	 
 	 .xd-topbar{
@@ -325,7 +325,7 @@ body,html{
 	   }
 	   
 	   .navbar{
-		   background-color:#353B48;
+		   background-color: #00B8B0;
 		   color:#fff;
 	   }
 	   
@@ -369,7 +369,7 @@ body,html{
 	  }
 	  .navbar-nav > li > a{
 		  color:#fff;
-	  }
+	 }
 	  
 	  .navbar .notification{
 		  position:absolute;
@@ -488,7 +488,7 @@ body,html{
 }
 	   
 	   .table-title{
-		   background:#353b48;
+		   background-color: #00B8B0;
 		   color:#fff;
 		   position:sticky;
 		   top:0;
@@ -703,10 +703,27 @@ body,html{
 			
 	      /*--table design end----*/ 
 
+.table-title .row{
+	display:flex;
+	justify-content: space-between;
+	align-items:center;
+}
+
+.table-title .row .but a{
+	font-size:15px;
+	
+}
+
 .container-info{
 	display:flex;
+	justify-content:center;
 	margin: 0 auto;
 	overflow: hidden;
+}
+
+.container-info .but{
+	display:flex;
+	justify-content:center;
 }
 
 .container-foto{

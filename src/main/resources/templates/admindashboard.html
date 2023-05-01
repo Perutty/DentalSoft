@@ -14,9 +14,9 @@
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
 	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
-	 	   		<img th:src="@{'/img/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
+	 	   		<img th:src="@{'/fotos/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
 		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
-		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-success">Actualizar Datos</a>
+		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-info">Actualizar Datos</a>
 		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
@@ -105,7 +105,7 @@
 							    <h2 class="ml-lg-2">Gestionar pacientes</h2>
 							 </div>
 							 <div class="col-sm-6 p-0 flex justify-content-lg-end justify-content-center">
-							   <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
+							   <a href="#addEmployeeModal" class="btn btn-secondary" data-toggle="modal">
 							   <i class="material-icons">&#xE147;</i>
 							   <span>Agregar paciente</span>
 							   </a>
@@ -289,8 +289,7 @@
 			<input name="password" type="text" placeholder="Contraseña" class="form-control" required/>
 		</div>
 		<div class="form-group">
-		    <label>Foto: </label>
-            <input type="file" name="file" class="mb-2" accept="image/*">
+			<input type="file" name="file" accept="image/*"/>
 		</div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-success">Agregar</button>

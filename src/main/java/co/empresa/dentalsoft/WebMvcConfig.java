@@ -11,8 +11,10 @@ public class WebMvcConfig implements WebMvcConfigurer{
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		WebMvcConfigurer.super.addResourceHandlers(registry);
 		
-		registry.addResourceHandler("/fotos/**").addResourceLocations("file:/C:/home/centos/");
+		registry.addResourceHandler("/fotos/**").addResourceLocations("file:/C:/home/centos/fotos/");
 	}
+	
+	
 	
 	
 }

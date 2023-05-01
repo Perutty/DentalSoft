@@ -14,9 +14,9 @@
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
 	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
-	 	   		<img th:src="@{'/images/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px"/>
+	 	   		<img th:src="@{'/fotos/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px"/>
 		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
-		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-success">Actualizar Datos</a>
+		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-info">Actualizar Datos</a>
 		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
@@ -103,6 +103,9 @@
 						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
 							    <h2 class="ml-lg-2">EDITAR PACIENTE</h2>
 							 </div>
+							 <div class="but">
+							    <a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Cancelar</a>
+							</div>
 					     </div>
 					   </div>
 					   
@@ -118,11 +121,12 @@
      	<input th:field="*{documento}" type="hidden"></input>
 		<img th:src="@{'/fotos/'+${paciente.foto}}" style="margin: 0 auto;border-radius:50%; width:240px; height:240px"/><br><br>
 		<div aria-label="Subir foto"><span>¿Quieres actualizar la foto del paciente?</span></div><br>
-		<input type="file" accept="image/*">
+		<input type="file" name="file" accept="image/*"><br><br>
+		<button type="submit" class="btn btn-info">Actualizar</button>
 	</form>
     </div>
     <div class="container col-md-7">
-	<form th:action="@{/paciente/edit}" method="post" enctype="multipart/form-data">
+	<form th:action="@{/paciente/editDatos}" method="POST">
       <div class="form-group">
 		    <label>Tipo de documento </label>
 		    <select class="input-select" type="number" name="tipodoc">
@@ -221,7 +225,6 @@
 		</div>
       <div class="modal-footer" style="display:flex;align-items:center;justify-content:center">
         <button type="submit" class="btn btn-success">Guardar</button>
-        <a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Cancelar</a>
       </div>
 </form>
 </div>
