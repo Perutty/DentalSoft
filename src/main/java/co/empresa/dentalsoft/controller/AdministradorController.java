@@ -60,7 +60,7 @@ public class AdministradorController {
 	@Autowired
 	private SexoService sexoService;
 	
-	public static String uploadDirectory = "C:/home/centos/fotos/";
+	public static String uploadDirectory = "C:/home/centos/fotos";
 	
 	
 	@GetMapping("/login")

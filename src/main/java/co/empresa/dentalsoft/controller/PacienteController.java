@@ -1,5 +1,6 @@
 package co.empresa.dentalsoft.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -127,7 +128,20 @@ public class PacienteController {
 							@PathVariable("documento") String documento, HttpServletRequest request,Model model)
 	{
 		Paciente paciente = pacienteService.get(documento);
-		String filename = foto.getOriginalFilename();
+		String filename = paciente.getDocumento() + foto.getOriginalFilename().substring(foto.getOriginalFilename().length()-4);
+		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
+		String fotoAntigua = paciente.getFoto();
+		File borrar = new File(uploadDirectory,fotoAntigua);
+		
+		if(borrar.exists())
+			borrar.delete();
+		
+		try {
+			Files.write(fileNameAndPath, foto.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		paciente.setFoto(filename);
 		pacienteService.save(paciente);
 		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
