@@ -11,7 +11,6 @@ import co.empresa.dentalsoft.controller.PacienteController;
 public class DentalsoftApplication {
 
 	public static void main(String[] args) {
-		new File(PacienteController.uploadDirectory).mkdir();
 		SpringApplication.run(DentalsoftApplication.class, args);
 	}
 

@@ -60,7 +60,7 @@ public class AdministradorController {
 	@Autowired
 	private SexoService sexoService;
 	
-	public static String uploadDirectory = System.getProperty("user.dir")+"/src/main/resources/images";
+	public static String uploadDirectory = "C:/home/centos/fotos/";
 	
 	
 	@GetMapping("/login")
@@ -134,10 +134,10 @@ public class AdministradorController {
 		Administrador adm = administradorService.get(adm_doc);
 		
 		String filename = adm.getDocumento() + foto.getOriginalFilename().substring(foto.getOriginalFilename().length()-4);
-		String fotoAntigua = adm.getFoto();
 		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
-		
+		String fotoAntigua = adm.getFoto();
 		File borrar = new File(uploadDirectory,fotoAntigua);
+		
 		if(borrar.exists())
 			borrar.delete();
 		

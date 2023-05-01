@@ -60,7 +60,7 @@ public class PacienteController {
 	@Autowired
 	private TipoDocumentoService tipoDocumentoService;
 	
-	public static String uploadDirectory = System.getProperty("user.dir")+"/src/main/resources/images";
+	public static String uploadDirectory = "C:/home/centos/fotos";
 
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, HttpSession session, Model model) {
@@ -77,7 +77,7 @@ public class PacienteController {
 				Model model){
 		
 				String filename = paciente.getDocumento() + foto.getOriginalFilename().substring(foto.getOriginalFilename().length()-4);
-				Path fileNameAndPath = Paths.get(uploadDirectory, filename);
+				Path fileNameAndPath = Paths.get(uploadDirectory,filename);
 				
 				try {
 					Files.write(fileNameAndPath, foto.getBytes());
