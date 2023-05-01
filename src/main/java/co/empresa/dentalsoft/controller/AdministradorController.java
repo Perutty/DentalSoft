@@ -3,6 +3,11 @@ package co.empresa.dentalsoft.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.empresa.dentalsoft.model.Administrador;
@@ -54,6 +60,8 @@ public class AdministradorController {
 	@Autowired
 	private SexoService sexoService;
 	
+	public static String uploadDirectory = System.getProperty("user.dir")+"/src/main/resources/images";
+	
 	
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, HttpSession session, Model model) {
@@ -66,7 +74,7 @@ public class AdministradorController {
 	
 	@PostMapping("/signin")
 	public String validate(RedirectAttributes att, @RequestParam String documento, @RequestParam String password, 
-			HttpServletRequest request, HttpSession session,  Model model) {
+			HttpServletRequest request,  Model model) {
 		Administrador admin = administradorService.select(documento, password);
 		
 		if(admin != null)
@@ -116,6 +124,50 @@ public class AdministradorController {
 			administradorService.save(administrador);
 			att.addFlashAttribute("accion", "¡Datos actualizados con éxito!");
 		}
+		return "redirect:/admin/dashboard";
+	}
+	
+	@PostMapping("/editFoto")
+	public String editFoto(RedirectAttributes att, @RequestParam("file") MultipartFile foto, HttpServletRequest request,Model model)
+	{
+		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
+		Administrador adm = administradorService.get(adm_doc);
+		
+		String filename = adm.getDocumento() + foto.getOriginalFilename().substring(foto.getOriginalFilename().length()-4);
+		String fotoAntigua = adm.getFoto();
+		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
+		
+		File borrar = new File(uploadDirectory,fotoAntigua);
+		if(borrar.exists())
+			borrar.delete();
+		
+		try {
+			Files.write(fileNameAndPath, foto.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+			adm.setFoto(filename);
+			administradorService.save(adm);
+			att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
+		
+		return "redirect:/admin/edit/"+adm.getDocumento();
+	}
+	
+	@PostMapping("/editAdmin")
+	public String editDatos(RedirectAttributes att, @RequestParam("documento") String documento, @RequestParam("nombre") String nombre,
+			@RequestParam("tipodoc") String tipodoc, @RequestParam("correo") String correo, @RequestParam("celular") String celular, 
+			@RequestParam("password") String password, HttpServletRequest request,Model model)
+	{
+		Administrador adm = administradorService.get(documento);
+		adm.setNombre(nombre);
+		adm.setTipodoc(tipodoc);
+		adm.setCelular(celular);
+		adm.setCorreo(correo);
+		adm.setDocumento(documento);
+		adm.setPassword(password);
+		adm.setFoto(adm.getFoto());
+		administradorService.save(adm);
+		att.addFlashAttribute("accion", "¡Datos personales actualizados con éxito!");
 		return "redirect:/admin/dashboard";
 	}
 	

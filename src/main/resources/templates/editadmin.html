@@ -13,9 +13,11 @@
 	  <div class="body-overlay"></div>
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
-	 	   <form th:each="adm: ${adm}" action="#">
-		   	<h3><span></span><br><span th:text="${adm.nombre}"></span></h3>
-		   </form>
+	 	   <div th:object="${adm}" style="display:grid;justify-content:center;align-items:center;text-align:center">
+	 	   		<img th:src="@{'/images/'+${adm.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
+		   		<h3><br><span th:text="${adm.nombre}"></span></h3><br>
+		   <a th:href="@{/admin/edit/{documento}(documento=${adm.documento})}" class="btn btn-success">Actualizar Datos</a>
+		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
 		  <li class="active">
@@ -96,7 +98,6 @@
 			     <div class="row">
 				    <div class="col-md-12">
 					   <div class="table-wrapper">
-					     
 					   <div class="table-title">
 					     <div class="row">
 						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
@@ -109,10 +110,19 @@
 					   </div>
 					   
 					   </div>
-					</div>	
-    <div class="container col-md-4" th:object="${adm}" style="display:grid;align-items:center">
-    	<img th:src="@{'/fotos/'+${adm.foto}}" style="margin: 0 auto; border-radius: 50%; width: 200px; height: 200px;"/>
-	<form th:action="@{/admin/save}" method="post">
+					</div>
+					
+	<div class="container-info" th:object="${adm}"	>
+     <div class="container-foto">
+     <form th:action="@{/admin/editFoto}" method="post" enctype="multipart/form-data">
+		<img th:src="@{'/images/'+${adm.foto}}" style="margin: 0 auto;border-radius:50%; width:240px; height:240px"/><br><br>
+		<div><span>¿Quieres actualizar tu foto de perfil?</span></div><br>
+		<input type="file" name="file" accept="image/*"/><br><br>
+		<button type="submit" class="btn btn-success">Actualizar</button>
+	</form>
+    </div>					
+    <div class="container col-md-6" style="display:grid;align-items:center">
+		<form th:action="@{/admin/editAdmin}" method="post">
 	<br>
 		<div class="form-group">
 		    <label>Nombre</label>
@@ -122,7 +132,7 @@
 		    <label>Tipo de documento </label>
 		    <select class="input-select" type="number" name="tipodoc">
 		    <div th:each="tipo: ${tipoDoc}">
-				<option th:value="${tipo.tipo}" th:text="${tipo.tipo}"></option>
+				<option th:value="${tipo.tipo}" th:text="${tipo.tipo}" th:field="*{tipodoc}"></option>
 			</div>
 			</select>
 		</div>
@@ -139,12 +149,12 @@
 			<input name="celular" type="text" th:field="*{celular}" placeholder="No. de Celular" class="form-control" required>
 		</div>
 		<div class="form-group">
-		    <label>Contraseña</label>
-			<input name="password" type="password" th:field="*{password}" placeholder="Contraseña" class="form-control" required>
+			<input name="password" type="hidden" th:field="*{password}" placeholder="Contraseña" class="form-control" required>
 		</div>
 		<button type="submit" class="btn btn-success">Guardar</button>
         <a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Cancelar</a>
 	</form>
+   </div>
    </div>
    </div>
    </div>

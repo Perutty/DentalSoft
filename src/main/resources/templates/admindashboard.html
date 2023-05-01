@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"	xmlns:th="http://www.thymeleaf.org">
   <head>
-    <meta charset="utf-8"/>
+    <meta charset="UTF-8">
        <title>DentalSoft</title>
 	   <link rel="stylesheet" th:href="@{/css/custom.css}">
    	   <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
@@ -14,7 +14,7 @@
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
 	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
-	 	   		<img th:src="@{'/fotos/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
+	 	   		<img th:src="@{'/img/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
 		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
 		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-success">Actualizar Datos</a>
 		   </div>
@@ -167,7 +167,7 @@
      </div> 
      </div>
      
-	<form th:action="@{/paciente/save}" method="post">			
+	<form th:action="@{/paciente/save}" method="post" enctype="multipart/form-data">			
 	<div class="modal fade" tabindex="-1" id="addEmployeeModal" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -189,11 +189,11 @@
 		</div>
         <div class="form-group">
 		    <label>Número de Documento</label>
-			<input name="documento" type="text" placeholder="No. documento" class="form-control" required>
+			<input name="documento" type="text" placeholder="No. documento" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		    <label>Nombre</label>
-			<input name="nombre" type="text" placeholder="Nombre" class="form-control" required>
+			<input name="nombre" type="text" placeholder="Nombre" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		<label>Sexo </label>
@@ -224,7 +224,7 @@
 		  </div>
 		  <div class="form-group">
 		    <label>Ciudad de nacimiento</label>
-			<input name="ciudadnac" type="text" placeholder="ciudad de nacimiento" class="form-control" required>
+			<input name="ciudadnac" type="text" placeholder="ciudad de nacimiento" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		<label>Fecha de nacimiento </label>
@@ -245,27 +245,27 @@
 		  </div>
 		  <div class="form-group">
 		    <label>Ciudad de residencia</label>
-			<input name="ciudaddomi" type="text" placeholder="ciudad de residencia" class="form-control" required>
+			<input name="ciudaddomi" type="text" placeholder="ciudad de residencia" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		    <label>Dirección de residencia</label>
-			<input name="direcciondomi" type="text" placeholder="Dirección de residencia" class="form-control" required>
+			<input name="direcciondomi" type="text" placeholder="Dirección de residencia" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		    <label>Barrio de residencia</label>
-			<input name="barriodomi" type="text" placeholder="Barrio de residencia" class="form-control" required>
+			<input name="barriodomi" type="text" placeholder="Barrio de residencia" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		    <label>Teléfono celular</label>
-			<input name="celular" type="text" placeholder="No. de Celular" class="form-control" required>
+			<input name="celular" type="text" placeholder="No. de Celular" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		    <label>Correo electrónico</label>
-			<input name="correo" type="text" placeholder="Correo electrónico" class="form-control" required>
+			<input name="correo" type="text" placeholder="Correo electrónico" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		    <label>Ocupación</label>
-			<input name="ocupacion" type="text" placeholder="Ocupación" class="form-control" required>
+			<input name="ocupacion" type="text" placeholder="Ocupación" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		<label>Eps de afiliación</label>
@@ -278,24 +278,24 @@
 		  </div>
 		  <div class="form-group">
 		    <label>Tipo afiliación</label>
-			<input name="tipoafiliacion" type="text" placeholder="Tipo de afiliación" class="form-control" required>
+			<input name="tipoafiliacion" type="text" placeholder="Tipo de afiliación" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		    <label>Poliza de seguros</label>
-			<input name="poliza" type="text" placeholder="Poliza" class="form-control" required>
+			<input name="poliza" type="text" placeholder="Poliza" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		    <label>Contraseña</label>
-			<input name="password" type="text" placeholder="Contraseña" class="form-control" required>
+			<input name="password" type="text" placeholder="Contraseña" class="form-control" required/>
 		</div>
 		<div class="form-group">
 		    <label>Foto: </label>
-			<input type="file" name="foto" class="form-control" required>
+            <input type="file" name="file" class="mb-2" accept="image/*">
 		</div>
-      </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-success">Agregar</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      </div>
       </div>
     </div>
   </div>
@@ -305,7 +305,7 @@
 </div>
 </div>
 </div>
-	 <footer id="footer">
+	 <footer id="footer" style="position:absolute;bottom:0;width: 100%;">
 		<div class="container">
 				<div class="col-md-12 text-center">
 					<span class="copyright" style="color:white">

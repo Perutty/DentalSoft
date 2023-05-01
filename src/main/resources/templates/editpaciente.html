@@ -13,9 +13,11 @@
 	  <div class="body-overlay"></div>
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
-	 	   <form th:each="adm: ${admin}" action="#">
-		   	<h3><span></span><br><span th:text="${adm}"></span></h3>
-		   </form>
+	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
+	 	   		<img th:src="@{'/images/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px"/>
+		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
+		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-success">Actualizar Datos</a>
+		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
 		  <li class="active">
@@ -78,7 +80,6 @@
 							</nav>
 						 </div>
 					 </div>
-					 
 				 </div>
 				 <div class="xp-breadcrumbbar text-center">
 				    <span class="page-title" >MANRIQUE Y SOTO CENTRO ODONTOLÓGICO</span>
@@ -111,13 +112,22 @@
 					   </div>
 					</div>	
      
-     <div class="container col-md-4">
-	<form th:action="@{/paciente/save}" method="post" th:object="${paciente}">
+    <div class="container-info" th:object="${paciente}"	>
+     <div class="container-foto">
+     <form th:action="@{/paciente/editFoto}" method="post" enctype="multipart/form-data">
+     	<input th:field="*{documento}" type="hidden"></input>
+		<img th:src="@{'/images/'+${paciente.foto}}" style="margin: 0 auto;border-radius:50%; width:240px; height:240px"/><br><br>
+		<div aria-label="Subir foto"><span>¿Quieres actualizar la foto del paciente?</span></div><br>
+		<input type="file" accept="image/*">
+	</form>
+    </div>
+    <div class="container col-md-7">
+	<form th:action="@{/paciente/edit}" method="post" enctype="multipart/form-data">
       <div class="form-group">
 		    <label>Tipo de documento </label>
 		    <select class="input-select" type="number" name="tipodoc">
 		    <div th:each="tipo: ${tipoDoc}">
-				<option th:value="${tipo.tipo}" th:text="${tipo.tipo}"></option>
+				<option th:value="${tipo.tipo}" th:text="${tipo.tipo}" th:field="*{tipodoc}"></option>
 			</div>
 			</select>
 		</div>
@@ -136,8 +146,6 @@
 				<option th:value="${sexo.sexo}" th:text="${sexo.sexo}" th:field="*{sexo}"></option>
 			</div>
 			</select>
-		</div>
-		<div class="form-group">
 		<label>Estado Civil </label>
 		  <select class="input-select" type="number" name="estadocivil">
 		    <div th:each="civil: ${estadocivil}">
@@ -160,8 +168,6 @@
 		<div class="form-group">
 		<label>Fecha de nacimiento </label>
 				<input name="fechanac" th:field="*{fechanac}" type="date" required></input>
-		</div>
-		<div class="form-group">
 		<label>Fecha de ingreso </label>
 				<input name="fechaingreso" th:field="*{fechaingreso}" type="date" required></input>
 		</div>
@@ -213,16 +219,18 @@
 		    <label>Poliza de seguros</label>
 			<input name="poliza" type="text" th:field="*{poliza}" placeholder="Poliza" class="form-control" required>
 		</div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="display:flex;align-items:center;justify-content:center">
         <button type="submit" class="btn btn-success">Guardar</button>
         <a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Cancelar</a>
       </div>
 </form>
 </div>
 </div>
+</div>
+</div>
 </div>	
 </div>
-			 <footer id="footer">
+	<footer id="footer">
 				<div class="container">
 						<div class="col-md-12 text-center">
 							<span class="copyright" style="color:white">

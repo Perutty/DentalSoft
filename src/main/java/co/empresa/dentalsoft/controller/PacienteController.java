@@ -1,5 +1,6 @@
 package co.empresa.dentalsoft.controller;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,12 +20,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import co.empresa.dentalsoft.model.Administrador;
 import co.empresa.dentalsoft.model.Eps;
 import co.empresa.dentalsoft.model.EstadoCivil;
 import co.empresa.dentalsoft.model.Paciente;
 import co.empresa.dentalsoft.model.Pais;
 import co.empresa.dentalsoft.model.Sexo;
 import co.empresa.dentalsoft.model.TipoDocumento;
+import co.empresa.dentalsoft.service.AdministradorService;
 import co.empresa.dentalsoft.service.EpsService;
 import co.empresa.dentalsoft.service.EstadoCivilService;
 import co.empresa.dentalsoft.service.PacienteService;
@@ -38,6 +41,9 @@ public class PacienteController {
 	
 	@Autowired
 	private PacienteService pacienteService;
+	
+	@Autowired
+	private AdministradorService administradorService;
 	
 	@Autowired
 	private PaisService paisService;
@@ -54,45 +60,45 @@ public class PacienteController {
 	@Autowired
 	private TipoDocumentoService tipoDocumentoService;
 	
-	
-	
+	public static String uploadDirectory = System.getProperty("user.dir")+"/src/main/resources/images";
+
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, HttpSession session, Model model) {
 		if(request.getSession().getAttribute("paciente_doc") != null) {
 			return "redirect:/paciente/dashboard";
-		}else
+		}else {
+				System.out.println(uploadDirectory);
 			return "login";
+			}
 	}
 	
 	@PostMapping("/save")
-	public String save(RedirectAttributes att, Paciente paciente, @RequestParam("foto") MultipartFile foto, Model model) {
-		if(!foto.isEmpty()) {
-			String ruta = "C://Pacientes/fotos";
-			try {
-				byte[] bytes = foto.getBytes();
-				Path rutaAbsoluta = Paths.get(ruta + "//" +foto.getOriginalFilename());
-				Files.write(rutaAbsoluta, bytes);
-				paciente.setFoto(foto.getOriginalFilename());
-			}catch(Exception e) {
+	public String save(RedirectAttributes att,@RequestParam("file") MultipartFile foto,Paciente paciente, 
+				Model model){
+		
+				String filename = paciente.getDocumento() + foto.getOriginalFilename().substring(foto.getOriginalFilename().length()-4);
+				Path fileNameAndPath = Paths.get(uploadDirectory, filename);
 				
-			}
-			if(paciente != null) {
-			pacienteService.save(paciente);
-			att.addFlashAttribute("accion", "¡Paciente registrado con éxito!");
-		}else {
-			pacienteService.save(paciente);
-			att.addFlashAttribute("accion", "¡Datos actualizados con éxito!");
-		}
-		}
+				try {
+					Files.write(fileNameAndPath, foto.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				paciente.setFoto(filename);
+				pacienteService.save(paciente);
+				att.addFlashAttribute("accion", "¡Paciente registrado con éxito!");
 		return "redirect:/admin/dashboard";
-	}
+}
 	
 	@GetMapping("/edit/{documento}")
-	public String edit(RedirectAttributes att, HttpServletRequest request, @PathVariable("documento") String documento, Model model){
-		String adm_nombre = (String)request.getSession().getAttribute("admin");
+	public String formEdit(RedirectAttributes att, HttpServletRequest request, @PathVariable("documento") String documento, Model model){
+		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
+		Administrador adm = administradorService.get(adm_doc);
+		
 		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
 		List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
-		List<Paciente> paciente = pacienteService.getAll();
+		Paciente paciente = pacienteService.get(documento);
 		List<Pais> pais = paisService.getAll();
 		List<Sexo> sexo = sexoService.getAll();
 		List<Eps> eps = epsService.getAll();
@@ -102,9 +108,30 @@ public class PacienteController {
 		model.addAttribute("eps", eps);
 		model.addAttribute("sexo", sexo);
 		model.addAttribute("pais", pais);
-		model.addAttribute("admin", adm_nombre);
-		model.addAttribute("paciente", pacienteService.get(documento));
+		model.addAttribute("admin", adm);
 		return "editpaciente";
+	}
+	
+	@GetMapping("/editDatos")
+	public String editPaciente(RedirectAttributes att, Paciente paciente, HttpServletRequest request,Model model)
+	{
+		Paciente paci = pacienteService.get(paciente.getDocumento());
+		paci.setFoto(paci.getFoto());
+		pacienteService.save(paci);
+		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
+		return "redirect:/admin/dashboard";
+	}
+	
+	@PostMapping("/editFoto")
+	public String editFoto(RedirectAttributes att, @RequestParam("file") MultipartFile foto, 
+							@PathVariable("documento") String documento, HttpServletRequest request,Model model)
+	{
+		Paciente paciente = pacienteService.get(documento);
+		String filename = foto.getOriginalFilename();
+		paciente.setFoto(filename);
+		pacienteService.save(paciente);
+		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
+		return "redirect:/paciente/edit/"+paciente.getDocumento();
 	}
 	
 	@GetMapping("/delete/{documento}")

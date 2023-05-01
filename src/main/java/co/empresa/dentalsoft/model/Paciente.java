@@ -40,11 +40,11 @@ public class Paciente {
 	private String ciudadnac;
 	
 	@Column
-	@DateTimeFormat(iso = ISO.DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date fechanac;
 	
 	@Column
-	@DateTimeFormat(iso = ISO.DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date fechaingreso;
 	
 	@Column
