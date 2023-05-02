@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,12 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -70,10 +67,8 @@ public class PacienteController {
 	public String login(HttpServletRequest request, HttpSession session, Model model) {
 		if(request.getSession().getAttribute("paciente_doc") != null) {
 			return "redirect:/paciente/dashboard";
-		}else {
-				System.out.println(uploadDirectory);
+		}else 
 			return "login";
-			}
 	}
 	
 	@PostMapping("/save")
@@ -121,8 +116,7 @@ public class PacienteController {
 	{
 		Paciente paci = pacienteService.get(paciente.getDocumento());
 		paciente.setFoto(paci.getFoto());
-		paciente.setPassword(paci.getPassword());
-		pacienteService.save(paci);
+		pacienteService.save(paciente);
 		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
 		return "redirect:/admin/dashboard";
 	}
@@ -139,7 +133,6 @@ public class PacienteController {
 		
 		if(borrar.exists())
 			borrar.delete();
-		
 		try {
 			Files.write(fileNameAndPath, foto.getBytes());
 		} catch (IOException e) {

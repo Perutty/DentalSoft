@@ -66,17 +66,16 @@ public class AdministradorController {
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, HttpSession session, Model model) {
 		
-		if(request.getSession().getAttribute("admin_id") != null) {
+		if(request.getSession().getAttribute("admin_doc") != null) {
 			return "redirect:/admin/admindashboard";
 		}else
 			return "loginadmin";
 	}
 	
 	@PostMapping("/signin")
-	public String validate(RedirectAttributes att, @RequestParam String documento, @RequestParam String password, 
-			HttpServletRequest request,  Model model) {
-		Administrador admin = administradorService.select(documento, password);
+	public String validate(RedirectAttributes att, @RequestParam String documento, @RequestParam String password, HttpServletRequest request, Model model) {
 		
+		Administrador admin = administradorService.select(documento, password);
 		if(admin != null)
 		{
 			request.getSession().setAttribute("admin_doc", documento);
@@ -88,29 +87,28 @@ public class AdministradorController {
 	}
 	
 	@GetMapping("/dashboard")
-	public String dashboard(HttpServletRequest request, Model model){
-		
-		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
-		Administrador adm = administradorService.get(adm_doc);
-		
-		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
-		List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
-		List<Paciente> paciente = pacienteService.getAll();
-		List<Pais> pais = paisService.getAll();
-		List<Sexo> sexo = sexoService.getAll();
-		List<Eps> eps = epsService.getAll();
-		model.addAttribute("tipoDoc", tipoDoc);
-		model.addAttribute("estadocivil", estadoCivil);
-		model.addAttribute("paciente", paciente);
-		model.addAttribute("eps", eps);
-		model.addAttribute("sexo", sexo);
-		model.addAttribute("pais", pais);
-		model.addAttribute("admin", adm);
-		return "admindashboard";
+	public String dashboard(HttpServletRequest request, HttpSession session, Model model){
+			
+			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
+			
+			List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
+			List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
+			List<Paciente> paciente = pacienteService.getAll();
+			List<Pais> pais = paisService.getAll();
+			List<Sexo> sexo = sexoService.getAll();
+			List<Eps> eps = epsService.getAll();
+			model.addAttribute("tipoDoc", tipoDoc);
+			model.addAttribute("estadocivil", estadoCivil);
+			model.addAttribute("paciente", paciente);
+			model.addAttribute("eps", eps);
+			model.addAttribute("sexo", sexo);
+			model.addAttribute("pais", pais);
+			model.addAttribute("admin", adm);
+			return "admindashboard";
 	}
 	
 	@GetMapping("/edit/{documento}")
-	public String edit(RedirectAttributes att,@PathVariable("documento") String documento, HttpServletRequest request,Model model){
+	public String edit(RedirectAttributes att,@PathVariable("documento") String documento,Model model){
 		Administrador admin = administradorService.get(documento);
 		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
 		model.addAttribute("tipoDoc", tipoDoc);	
@@ -128,10 +126,9 @@ public class AdministradorController {
 	}
 	
 	@PostMapping("/editFoto")
-	public String editFoto(RedirectAttributes att, @RequestParam("file") MultipartFile foto, HttpServletRequest request,Model model)
+	public String editFoto(RedirectAttributes att, @RequestParam("file") MultipartFile foto,HttpServletRequest request,HttpSession session,Model model)
 	{
-		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
-		Administrador adm = administradorService.get(adm_doc);
+		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 		
 		String filename = adm.getDocumento() + foto.getOriginalFilename().substring(foto.getOriginalFilename().length()-4);
 		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
@@ -156,7 +153,7 @@ public class AdministradorController {
 	@PostMapping("/editAdmin")
 	public String editDatos(RedirectAttributes att, @RequestParam("documento") String documento, @RequestParam("nombre") String nombre,
 			@RequestParam("tipodoc") String tipodoc, @RequestParam("correo") String correo, @RequestParam("celular") String celular, 
-			@RequestParam("password") String password, HttpServletRequest request,Model model)
+			@RequestParam("password") String password,Model model)
 	{
 		Administrador adm = administradorService.get(documento);
 		adm.setNombre(nombre);
@@ -173,7 +170,7 @@ public class AdministradorController {
 	
 	
 	@GetMapping("/logout")
-	public String logout(HttpServletRequest request, HttpSession session,  Model model) {
+	public String logout(HttpSession session, HttpServletRequest request, Model model) {
 			request.getSession().invalidate();
 			return "redirect:/admin/login";
 	}

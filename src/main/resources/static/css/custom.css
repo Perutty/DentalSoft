@@ -270,6 +270,12 @@ body,html{
 		 position:relative;
 	 }
 	 
+	 .xd-topbar .row{
+		 display:flex;
+		 justify-content:space-between;
+		 align-items:center;
+	 }
+	 
 	 input[type="search"]{
 		 background-color:#4a5263;
 		 color:#fff;
@@ -387,12 +393,6 @@ body,html{
 		  line-height:14px;
 	  }
 	  
-	  @media (max-width:768px){
-		  .xp-searchbar{
-			  margin-top:20px;
-		  }
-	  }
-	  
 	  .navbar-nav > li.show .dropdown-menu{
 		  transform:translate3d(0,0,0);
 		  opacity:1;
@@ -414,9 +414,6 @@ body,html{
 		  opacity:0;
 	  }
 	  
-	  .small-menu{
-		  min-width:10rem;
-	  }
 	  
 	  
 	  .dropdown-menu li > a{
@@ -450,8 +447,8 @@ body,html{
 	   
 	  .nav-item .nav-link .material-icons{
 		  position:relative;
-		  top:10px;
-		  font-size:19px;
+		  top:5px;
+		  font-size:25px;
 	  }
 	  
 	  .xp-user-live{
@@ -463,6 +460,10 @@ body,html{
 		  border-radius:50%;
 		  border:2px solid #353b48;
 		  background-color:#4c7cf3;
+	  }
+	  
+	  .small-menu{
+		  min-width:10rem;
 	  }
 	  
 	   /*---navbardesign -end-----*/
@@ -787,14 +788,17 @@ body,html{
 		      /*-------footer design start------*/
 			
 			  footer{
-		       background-color:#353b48;
-			   color:#fff;
-			   text-align:center;
+	   		   display:flex;
+	   		   justify-content:center;
+	   		   align-items:center;
 			   position:relative;
 			   bottom:0;
 			   width: 100%;
+		       background-color:#353b48;
+			   color:#fff;
+			   text-align:center;
 			  }
-		   
+		   		
 		       /*-------footer design end------*/
 		   
 		   
@@ -816,7 +820,7 @@ body,html{
 	@media only screen and (max-width:992px){
 		#sidebar{
 			position:fixed;
-			top:0;
+			 top:0;
 			 bottom:0;
 			 z-index:10;
 			 width:260px;
