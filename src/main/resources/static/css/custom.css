@@ -349,8 +349,8 @@ body,html{
 		}
 		
 		.xp-menubar{
-         border-radius:50%;
-       width:45px;
+        	border-radius:50%;
+      		width:45px;
 			height:45px;
 			line-height:45px;
 			text-align:center;
@@ -395,6 +395,7 @@ body,html{
 	  
 	  .navbar-nav > li.show .dropdown-menu{
 		  transform:translate3d(0,0,0);
+		  transform:translateX(-90px);
 		  opacity:1;
 		  display:block;
 		  visibility:visible;
@@ -788,10 +789,10 @@ body,html{
 		      /*-------footer design start------*/
 			
 			  footer{
+			   position:relative;
 	   		   display:flex;
 	   		   justify-content:center;
 	   		   align-items:center;
-			   position:relative;
 			   bottom:0;
 			   width: 100%;
 		       background-color:#353b48;

@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,10 +60,10 @@ public class PacienteController {
 	@Autowired
 	private TipoDocumentoService tipoDocumentoService;
 	
-	public static String uploadDirectory = "C:/home/centos/fotos";
+	public static String uploadDirectory = "/home/centos/fotos";
 
 	@GetMapping("/login")
-	public String login(HttpServletRequest request, HttpSession session, Model model) {
+	public String login(HttpServletRequest request, Model model) {
 		if(request.getSession().getAttribute("paciente_doc") != null) {
 			return "redirect:/paciente/dashboard";
 		}else 
@@ -75,7 +74,7 @@ public class PacienteController {
 	public String save(RedirectAttributes att,@RequestParam("file") MultipartFile foto,Paciente paciente, 
 				Model model){
 		
-				String filename = paciente.getDocumento() + foto.getOriginalFilename().substring(foto.getOriginalFilename().length()-4);
+				String filename = foto.getOriginalFilename();
 				Path fileNameAndPath = Paths.get(uploadDirectory,filename);
 				
 				try {
@@ -98,6 +97,7 @@ public class PacienteController {
 		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
 		List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
 		Paciente paciente = pacienteService.get(documento);
+		
 		List<Pais> pais = paisService.getAll();
 		List<Sexo> sexo = sexoService.getAll();
 		List<Eps> eps = epsService.getAll();
@@ -126,13 +126,14 @@ public class PacienteController {
 							@RequestParam("documento") String documento, HttpServletRequest request,Model model)
 	{
 		Paciente paciente = pacienteService.get(documento);
-		String filename = paciente.getDocumento() + foto.getOriginalFilename().substring(foto.getOriginalFilename().length()-4);
+		String filename = foto.getOriginalFilename();
 		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
 		String fotoAntigua = paciente.getFoto();
 		File borrar = new File(uploadDirectory,fotoAntigua);
 		
 		if(borrar.exists())
 			borrar.delete();
+		
 		try {
 			Files.write(fileNameAndPath, foto.getBytes());
 		} catch (IOException e) {

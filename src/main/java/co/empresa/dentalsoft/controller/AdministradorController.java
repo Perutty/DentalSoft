@@ -1,7 +1,6 @@
 package co.empresa.dentalsoft.controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,11 +59,11 @@ public class AdministradorController {
 	@Autowired
 	private SexoService sexoService;
 	
-	public static String uploadDirectory = "C:/home/centos/fotos";
+	public static String uploadDirectory = "/home/centos/fotos";
 	
 	
 	@GetMapping("/login")
-	public String login(HttpServletRequest request, HttpSession session, Model model) {
+	public String login(HttpServletRequest request, Model model) {
 		
 		if(request.getSession().getAttribute("admin_doc") != null) {
 			return "redirect:/admin/admindashboard";
@@ -87,7 +86,7 @@ public class AdministradorController {
 	}
 	
 	@GetMapping("/dashboard")
-	public String dashboard(HttpServletRequest request, HttpSession session, Model model){
+	public String dashboard(HttpServletRequest request, Model model){
 			
 			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 			
@@ -126,11 +125,11 @@ public class AdministradorController {
 	}
 	
 	@PostMapping("/editFoto")
-	public String editFoto(RedirectAttributes att, @RequestParam("file") MultipartFile foto,HttpServletRequest request,HttpSession session,Model model)
+	public String editFoto(RedirectAttributes att, @RequestParam("file") MultipartFile foto,HttpServletRequest request,Model model)
 	{
 		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 		
-		String filename = adm.getDocumento() + foto.getOriginalFilename().substring(foto.getOriginalFilename().length()-4);
+		String filename = foto.getOriginalFilename();
 		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
 		String fotoAntigua = adm.getFoto();
 		File borrar = new File(uploadDirectory,fotoAntigua);
@@ -150,7 +149,7 @@ public class AdministradorController {
 		return "redirect:/admin/edit/"+adm.getDocumento();
 	}
 	
-	@PostMapping("/editAdmin")
+	@PostMapping("/editDatos")
 	public String editDatos(RedirectAttributes att, @RequestParam("documento") String documento, @RequestParam("nombre") String nombre,
 			@RequestParam("tipodoc") String tipodoc, @RequestParam("correo") String correo, @RequestParam("celular") String celular, 
 			@RequestParam("password") String password,Model model)
@@ -170,7 +169,7 @@ public class AdministradorController {
 	
 	
 	@GetMapping("/logout")
-	public String logout(HttpSession session, HttpServletRequest request, Model model) {
+	public String logout(HttpServletRequest request, Model model) {
 			request.getSession().invalidate();
 			return "redirect:/admin/login";
 	}
