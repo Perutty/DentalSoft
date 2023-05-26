@@ -126,7 +126,7 @@ public class PacienteController {
 							@RequestParam("documento") String documento, HttpServletRequest request,Model model)
 	{
 		Paciente paciente = pacienteService.get(documento);
-		String filename = foto.getOriginalFilename();
+		String filename = foto.getOriginalFilename(); 
 		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
 		String fotoAntigua = paciente.getFoto();
 		File borrar = new File(uploadDirectory,fotoAntigua);
