@@ -1,6 +1,9 @@
 const deletePaciente = document.querySelectorAll('.delete');
 const deleteOdontologo = document.querySelectorAll('.deleteOdontologo');
-const confirmar = document.querySelector('#confirmar');
+const deleteCita = document.querySelectorAll('.deleteCita');
+const confirmarCita = document.querySelector('#confirmarCita');
+const confirmarPaciente = document.querySelector('#confirmarPaciente');
+const confirmarOdonto = document.querySelector('#confirmarOdonto');
 const searchInput = document.getElementById('search-input');
 const table = document.getElementById('tablax');
 
@@ -47,9 +50,26 @@ if(deletePaciente){
 	});
 }
 
-if(confirmar){
-	confirmar.addEventListener('click', function(){
+
+if(confirmarPaciente){
+	confirmarPaciente.addEventListener('click', function(){
 		window.location.href = '/paciente/delete/'+localStorage.getItem('documento');
+	});
+	localStorage.clear();
+}
+
+if(deleteCita){
+	deleteCita.forEach(function(deleteCita){
+		deleteCita.addEventListener('click', function(){
+			var id = this.closest('tr').querySelector('.id');
+			var idCita = id.textContent;
+			localStorage.setItem('idCita', idCita);
+		});
+	});
+}
+if(confirmarCita){
+	confirmarCita.addEventListener('click', function(){
+		window.location.href = '/cita/delete/'+localStorage.getItem('idCita');
 	});
 	localStorage.clear();
 }
@@ -64,8 +84,8 @@ if(deleteOdontologo){
 	});
 }
 
-if(confirmar){
-	confirmar.addEventListener('click', function(){
+if(confirmarOdonto){
+	confirmarOdonto.addEventListener('click', function(){
 		window.location.href = '/odontologo/delete/'+localStorage.getItem('documento');
 	});
 	localStorage.clear();

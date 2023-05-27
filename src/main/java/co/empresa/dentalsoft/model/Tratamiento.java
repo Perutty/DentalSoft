@@ -17,7 +17,7 @@ public class Tratamiento {
 	private String codigo;
 	
 	@Column
-	private String descripción;
+	private String nombre;
 	
 	public Tratamiento(){};
 }
