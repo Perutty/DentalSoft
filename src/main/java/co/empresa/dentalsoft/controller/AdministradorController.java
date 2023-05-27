@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,19 +21,27 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.empresa.dentalsoft.model.Administrador;
+import co.empresa.dentalsoft.model.Cita;
 import co.empresa.dentalsoft.model.Eps;
 import co.empresa.dentalsoft.model.EstadoCivil;
+import co.empresa.dentalsoft.model.Hora;
+import co.empresa.dentalsoft.model.Odontologo;
 import co.empresa.dentalsoft.model.Paciente;
 import co.empresa.dentalsoft.model.Pais;
 import co.empresa.dentalsoft.model.Sexo;
 import co.empresa.dentalsoft.model.TipoDocumento;
+import co.empresa.dentalsoft.model.Tratamiento;
 import co.empresa.dentalsoft.service.AdministradorService;
+import co.empresa.dentalsoft.service.CitaService;
 import co.empresa.dentalsoft.service.EpsService;
 import co.empresa.dentalsoft.service.EstadoCivilService;
+import co.empresa.dentalsoft.service.HoraService;
+import co.empresa.dentalsoft.service.OdontologoService;
 import co.empresa.dentalsoft.service.PacienteService;
 import co.empresa.dentalsoft.service.PaisService;
 import co.empresa.dentalsoft.service.SexoService;
 import co.empresa.dentalsoft.service.TipoDocumentoService;
+import co.empresa.dentalsoft.service.TratamientoService;
 
 @Controller
 @RequestMapping("/admin")
@@ -40,6 +49,9 @@ public class AdministradorController {
 
 	@Autowired
 	private AdministradorService administradorService;
+	
+	@Autowired
+	private OdontologoService odontologoService;
 	
 	@Autowired
 	private TipoDocumentoService tipoDocumentoService;
@@ -51,7 +63,16 @@ public class AdministradorController {
 	private PaisService paisService;
 	
 	@Autowired
+	private CitaService citaService;
+	
+	@Autowired
 	private EpsService epsService;
+	
+	@Autowired
+	private TratamientoService tratamientoService;
+
+	@Autowired
+	private HoraService horaService;
 	
 	@Autowired
 	private EstadoCivilService estadoCivilService;
@@ -60,6 +81,8 @@ public class AdministradorController {
 	private SexoService sexoService;
 	
 	public static String uploadDirectory = "/home/centos/fotos";
+	
+	List<Cita> listCitasByPaciente = new ArrayList<>();
 	
 	
 	@GetMapping("/login")
@@ -103,7 +126,46 @@ public class AdministradorController {
 			model.addAttribute("sexo", sexo);
 			model.addAttribute("pais", pais);
 			model.addAttribute("admin", adm);
+			
 			return "admindashboard";
+	}
+	
+	@GetMapping("/citas/{nombre}")
+	public String citas(HttpServletRequest request, @PathVariable("nombre") String nombre, Model model){
+		
+			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
+			
+			request.getSession().setAttribute("nombre_paci", nombre);
+			
+			Paciente paci = pacienteService.search(nombre);
+			
+			List<Cita> listCitas = citaService.getAll();
+			List<Tratamiento> tratamientos = tratamientoService.getAll();
+			List<Odontologo> odontologos = odontologoService.getAll();
+			List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
+			List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
+			List<Pais> pais = paisService.getAll();
+			List<Sexo> sexo = sexoService.getAll();
+			List<Eps> eps = epsService.getAll();
+			List<Hora> horas = horaService.getAll();
+			
+			listCitasByPaciente.clear();
+			listCitas.forEach((cita)->{
+				if(cita.getPaciente_doc().equals(nombre))
+					listCitasByPaciente.add(cita);
+			});
+			model.addAttribute("tratamientos", tratamientos);
+			model.addAttribute("horas", horas);
+			model.addAttribute("odontologos", odontologos);
+			model.addAttribute("paciente", paci);
+			model.addAttribute("citas", listCitasByPaciente);
+			model.addAttribute("tipoDoc", tipoDoc);
+			model.addAttribute("estadocivil", estadoCivil);
+			model.addAttribute("eps", eps);
+			model.addAttribute("sexo", sexo);
+			model.addAttribute("pais", pais);
+			model.addAttribute("admin", adm);
+			return "citaspaciente";
 	}
 	
 	@GetMapping("/edit/{documento}")

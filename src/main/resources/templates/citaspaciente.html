@@ -19,7 +19,7 @@
 		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
-		  <li class="dropdown">
+		  <li class="active">
 		  <a th:href="@{/admin/dashboard}" class="list-unstyled component m-0">
 		  <i class="material-icons">groups</i>Mis Pacientes
 		  </a>
@@ -29,7 +29,7 @@
 		  <i class="material-icons">vaccines</i>Mis Odontólogos
 		  </a>
 		  </li>		
-		  <li class="active">
+		  <li class="dropdown">
 		  <a th:href="@{/cita/list}" class="dashboard"><i class="material-icons">calendar_month</i>Agenda</a>
 		  </li>
 		  
@@ -98,7 +98,13 @@
 					   <div class="table-title" >
 					     <div class="row">
 						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
-							    <h2 class="ml-lg-2">Gestionar agenda de citas odontológicas</h2>
+							    <h2 class="ml-lg-2">Citas del paciente</h2>
+							 </div>
+							 <div class="col-sm-6 p-0 flex justify-content-lg-end justify-content-center">
+							   <a href="#addEmployeeModal" class="btn btn-secondary" data-toggle="modal">
+							   <i class="material-icons">&#xE147;</i>
+							   <span>Agregar cita</span>
+							   </a>
 							 </div>
 					     </div>
 					   </div>
@@ -161,7 +167,7 @@
      </div> 
      </div>
      
-	<form th:action="@{/cita/save}" method="post" enctype="multipart/form-data">			
+	<form th:action="@{/cita/save}" method="post" th:object="${paciente}">			
 	<div class="modal fade" tabindex="-1" id="addEmployeeModal" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -174,7 +180,7 @@
       <div class="modal-body">
         <div class="form-group">
 		    <label>Nombre del paciente</label>
-			<input name="paciente_doc" type="text" placeholder="Nombre del paciente" class="form-control" required/>
+			<input name="paciente_doc" type="text" th:field="*{nombre}" readonly class="form-control" required/>
 		</div>
 		<div class="form-group">
 		    <label>Nombre del odontólogo </label>

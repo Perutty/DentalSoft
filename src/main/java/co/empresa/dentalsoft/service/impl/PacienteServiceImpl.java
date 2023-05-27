@@ -24,4 +24,9 @@ public class PacienteServiceImpl extends GenericServiceImpl<Paciente, String> im
 	public Paciente select(String documento, String password) {
 		return pacienteRepository.findByDocumentoAndPassword(documento, password);
 	}
+	
+	@Override
+	public Paciente search(String nombre) {
+		return pacienteRepository.findByNombre(nombre);
+	}
 }

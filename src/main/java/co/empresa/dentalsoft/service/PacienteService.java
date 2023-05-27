@@ -7,4 +7,6 @@ public interface PacienteService extends GenericService<Paciente, String>{
 	
 	public Paciente select(String documento, String password);
 	
+	public Paciente search(String nombre);
+	
 }

@@ -1,9 +1,5 @@
 package co.empresa.dentalsoft.controller;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,11 +66,14 @@ public class CitaController {
 	}
 
 	@PostMapping("/save")
-	public String save(RedirectAttributes att,Cita cita, Model model){
+	public String save(RedirectAttributes att, Cita cita, HttpServletRequest request, Model model){
+				String nombre = (String)request.getSession().getAttribute("nombre_paci");
+				cita.setPaciente_doc(nombre);
 				citaService.save(cita);
 				att.addFlashAttribute("accion", "¡Cita agendada con éxito!");
-		return "redirect:/cita/list";
+		return "redirect:/admin/citas/"+nombre;
 	}
+	
 	
 	@GetMapping("/delete/{id}")
 	public String delete(RedirectAttributes att, @PathVariable("id") String id, Model model){

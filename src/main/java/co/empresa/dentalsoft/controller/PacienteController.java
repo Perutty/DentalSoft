@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.empresa.dentalsoft.model.Administrador;
+import co.empresa.dentalsoft.model.Cita;
 import co.empresa.dentalsoft.model.Eps;
 import co.empresa.dentalsoft.model.EstadoCivil;
 import co.empresa.dentalsoft.model.Paciente;
@@ -28,6 +30,7 @@ import co.empresa.dentalsoft.model.Pais;
 import co.empresa.dentalsoft.model.Sexo;
 import co.empresa.dentalsoft.model.TipoDocumento;
 import co.empresa.dentalsoft.service.AdministradorService;
+import co.empresa.dentalsoft.service.CitaService;
 import co.empresa.dentalsoft.service.EpsService;
 import co.empresa.dentalsoft.service.EstadoCivilService;
 import co.empresa.dentalsoft.service.PacienteService;
@@ -58,9 +61,14 @@ public class PacienteController {
 	private SexoService sexoService;
 	
 	@Autowired
+	private CitaService citaService;
+	
+	@Autowired
 	private TipoDocumentoService tipoDocumentoService;
 	
 	public static String uploadDirectory = "/home/centos/fotos";
+	
+	List<Cita> listCitasByPaciente = new ArrayList<>();
 
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, Model model) {
@@ -68,6 +76,46 @@ public class PacienteController {
 			return "redirect:/paciente/dashboard";
 		}else 
 			return "login";
+	}
+	
+	@PostMapping("/signin")
+	public String validate(RedirectAttributes att, @RequestParam String documento, @RequestParam String password, HttpServletRequest request, Model model) {
+		
+		Paciente paciente = pacienteService.select(documento, password);
+		if(paciente != null)
+		{
+			request.getSession().setAttribute("paciente_doc", documento);
+			return "redirect:/paciente/dashboard";
+		}else {
+			att.addFlashAttribute("loginError", "Documento o contraseña incorrecta");
+			return "redirect:/paciente/login";
+			}
+	}
+	
+	@GetMapping("/dashboard")
+	public String dashboard(HttpServletRequest request, Model model){
+			
+			Paciente paci = pacienteService.get((String)request.getSession().getAttribute("paciente_doc"));
+			List<Cita> listCitas = citaService.getAll();
+			List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
+			List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
+			List<Pais> pais = paisService.getAll();
+			List<Sexo> sexo = sexoService.getAll();
+			List<Eps> eps = epsService.getAll();
+			
+			listCitasByPaciente.clear();
+			listCitas.forEach((cita)->{
+				if(cita.getPaciente_doc() == paci.getNombre())
+					listCitasByPaciente.add(cita);
+			});
+			model.addAttribute("citas", listCitasByPaciente);
+			model.addAttribute("tipoDoc", tipoDoc);
+			model.addAttribute("estadocivil", estadoCivil);
+			model.addAttribute("paciente", paci);
+			model.addAttribute("eps", eps);
+			model.addAttribute("sexo", sexo);
+			model.addAttribute("pais", pais);
+			return "admindashboard";
 	}
 	
 	@PostMapping("/save")

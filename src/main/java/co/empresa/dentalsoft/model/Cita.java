@@ -37,6 +37,9 @@ public class Cita {
 	
 	@Column
 	private String hora;
+	
+	@Column 
+	private boolean estado;
 
 	public Cita() {};
 }
