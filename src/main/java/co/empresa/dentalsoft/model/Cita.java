@@ -13,6 +13,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Data;
 
+
 @Entity
 @Table (name="cita")
 @Data
@@ -39,7 +40,7 @@ public class Cita {
 	private String hora;
 	
 	@Column 
-	private boolean estado;
+	private String estado;
 
 	public Cita() {};
 }

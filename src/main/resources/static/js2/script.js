@@ -2,6 +2,7 @@ const deletePaciente = document.querySelectorAll('.delete');
 const deleteOdontologo = document.querySelectorAll('.deleteOdontologo');
 const deleteCita = document.querySelectorAll('.deleteCita');
 const confirmarCita = document.querySelector('#confirmarCita');
+const confirmar = document.querySelector('#confirmar');
 const confirmarPaciente = document.querySelector('#confirmarPaciente');
 const confirmarOdonto = document.querySelector('#confirmarOdonto');
 const searchInput = document.getElementById('search-input');
@@ -70,6 +71,13 @@ if(deleteCita){
 if(confirmarCita){
 	confirmarCita.addEventListener('click', function(){
 		window.location.href = '/cita/delete/'+localStorage.getItem('idCita');
+	});
+	localStorage.clear();
+}
+
+if(confirmar){
+	confirmar.addEventListener('click', function(){
+		window.location.href = '/admin/delete/'+localStorage.getItem('idCita');
 	});
 	localStorage.clear();
 }

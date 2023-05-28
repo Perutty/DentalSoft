@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"	xmlns:th="http://www.thymeleaf.org">
   <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
        <title>DentalSoft</title>
 	   <link rel="stylesheet" th:href="@{/css/custom.css}">
    	   <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
@@ -26,20 +26,10 @@
 		  </a>
 		  </li>
 		  <li class="dropdown">
-		  <a th:href="@{/producto/list}" class="dashboard"><i class="material-icons">calendar_month</i>Agenda</a>
-		  </li>
-		  
-		  <li class="dropdown">
-		  <a href="#homeSubmenu1" data-toggle="collapse" aria-expanded="false" 
-		  class="dropdown-toggle">
-		  <i class="material-icons">payments</i>Administración
-		  </a>
-		  <ul class="collapse list-unstyled menu" id="homeSubmenu1">
-			 <li><a href="#"><i class="material-icons">receipt_long</i>Informes</a></li>
-		  </ul>
+		  <a th:href="@{/cita/list}" class="dashboard"><i class="material-icons">calendar_month</i>Agenda</a>
 		  </li>
 		  <li class="dropdown">
-		  <a th:href="@{/pqrs/list}" class="list-unstyled component m-0">
+		  <a th:href="@{/odontologo/list}" class="list-unstyled component m-0">
 		  <i class="material-icons">vaccines</i>Mis Odontólogos
 		  </a>
 		  </li>		
@@ -101,10 +91,10 @@
 					   <div class="table-title">
 					     <div class="row">
 						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
-							    <h2 class="ml-lg-2">EDITAR DATOS PERSONALES</h2>
+							    <h2 class="ml-lg-2">EDITAR CITA</h2>
 							 </div>
-							 <div class="but">
-							    <a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Cerrar</a>
+							 <div class="but" th:object="${paci}">
+							    <a type="button" th:href="@{/admin/citas/{documento}(documento=${paci.documento})}" class="btn btn-secondary">Cancelar</a>
 							</div>
 					     </div>
 					   </div>
@@ -115,44 +105,49 @@
 					   </div>
 					</div>
 					
-	<div class="container-info" th:object="${adm}">
-	   <div class="container-foto">
-	     <form th:action="@{/admin/editFoto}" method="post" enctype="multipart/form-data">
-			<img th:src="@{'/fotos/'+${adm.foto}}" style="margin: 0 auto;border-radius:50%; width:240px; height:240px"/><br><br>
-			<div><span>¿Quieres actualizar tu foto de perfil?</span></div><br>
-			<input type="file" name="file" accept="image/*"/><br><br>
-				<button type="submit" class="btn btn-info">Actualizar</button>
-		 </form>
-	    </div>					
+	<div class="container-info" >					
     <div class="container col-md-6">
-		<form th:action="@{/admin/editDatos}" method="post">
+		<form th:action="@{/cita/save}" method="post" th:object="${cita}">
 	<br>
+		<input name="nombre" th:field="*{id}" type="hidden" class="form-control" readonly required>
 		<div class="form-group">
 		    <label>Nombre</label>
-			<input name="nombre" th:field="*{nombre}" type="text" placeholder="Nombre" class="form-control" required>
+			<input name="paciente_doc" th:field="*{paciente_doc}" type="text" class="form-control" readonly required>
 		</div>
 		<div class="form-group">
-		    <label>Tipo de documento </label>
-		    <select class="input-select" type="number" name="tipodoc">
-		    <div th:each="tipo: ${tipoDoc}">
-				<option th:value="${tipo.tipo}" th:text="${tipo.tipo}" th:field="*{tipodoc}"></option>
+		    <label>Nombre del odontólogo </label>
+		    <select class="input-select" type="number" name="odontologo_doc">
+		    <option value="" style="text-align: center">--- Seleccione el nombre del odontólogo ---</option>
+		    <div th:each="odonto: ${odontologos}">
+				<option th:value="${odonto.nombre}" th:text="${odonto.nombre}" th:field="*{odontologo_doc}"></option>
 			</div>
 			</select>
 		</div>
 		<div class="form-group">
-		    <label>Número de Documento</label>
-			<input name="documento" type="text" th:field="*{documento}" placeholder="No. documento" class="form-control" required>
+		    <label>Motivo de cita</label>
+		    <select class="input-select" type="number" name="tratamiento_cod">
+		    <option value="" style="text-align: center">--- Seleccione el motivo de la cita ---</option>
+		    <div th:each="tratamiento: ${tratamientos}">
+				<option th:value="${tratamiento.nombre}" th:text="${tratamiento.nombre}" th:field="*{tratamiento_cod}"></option>
+			</div>
+			</select>
 		</div>
 		<div class="form-group">
-		    <label>Correo electrónico</label>
-			<input name="correo" type="text" th:field="*{correo}" placeholder="Correo electrónico" class="form-control" required>
+		<label>Fecha de ingreso </label>
+				<input name="fecha" type="date" th:field="*{fecha}" required></input>
 		</div>
 		<div class="form-group">
-		    <label>Teléfono celular</label>
-			<input name="celular" type="text" th:field="*{celular}" placeholder="No. de Celular" class="form-control" required>
+		    <label>Hora</label>
+		    <select class="input-select" type="number" name="hora">
+		    <option value="" style="text-align: center">--- Seleccione la hora de la cita ---</option>
+		    <div th:each="hora: ${horas}">
+				<option th:value="${hora.hora}" th:text="${hora.hora}" th:field="*{hora}"></option>
+			</div>
+			</select>
 		</div>
 		<div class="form-group">
-			<input name="password" type="hidden" th:field="*{password}" placeholder="Contraseña" class="form-control" required>
+		<label>Estado:  </label>
+		<label th:text="*{estado}"></label>
 		</div>
 		<div class="but">
 		<button type="submit" class="btn btn-success">Guardar</button>

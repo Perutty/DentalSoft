@@ -110,9 +110,11 @@
 					      <thead>
 						     <tr>
 						     <th style="font-weight:bold">Paciente</th>
+						     <th style="font-weight:bold">Odontologo</th>
 							 <th style="font-weight:bold">Motivo cita</th>
 							 <th style="font-weight:bold">Fecha</th>
 							 <th style="font-weight:bold">Hora</th>
+							 <th style="font-weight:bold">Estado</th>
 							 <th style="font-weight:bold">Acciones</th>
 							 </tr>
 						  </thead>
@@ -121,9 +123,11 @@
 						     <tr>
 						     <td class="id" style="display:none" th:text="${cita.id}"></td>
 							 <td th:text="${cita.paciente_doc}"></td>
+							 <td th:text="${cita.odontologo_doc}"></td>
 							 <td th:text="${cita.tratamiento_cod}"></td>
 							 <td th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></td>
 							 <td th:text="${cita.hora}"></td>
+							 <td th:text="${cita.estado}"></td>
 							 <td>
 							    <a th:href="@{/cita/edit/{id}(id=${cita.id})}">
 							   <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
@@ -131,6 +135,7 @@
 							   <a href="#deleteEmployeeModal" class="deleteCita" data-toggle="modal">
 							   <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
 							   </a>
+							   </td>
 							 </tr>
 						  </tbody>
 					   </table>
@@ -152,7 +157,7 @@
       <div class="modal-body">
       <label>¿Quieres eliminar esta cita?</label>
       <div style="text-align:center;color:white"><br>
-      <a id="confirmarCita" class="btn btn-success">Confirmar</a>
+      <a id="confirmar" class="btn btn-success">Confirmar</a>
       <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
       
       </div>
@@ -160,63 +165,6 @@
       </div>
      </div> 
      </div>
-     
-	<form th:action="@{/cita/save}" method="post" enctype="multipart/form-data">			
-	<div class="modal fade" tabindex="-1" id="addEmployeeModal" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Agregar cita</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-		    <label>Nombre del paciente</label>
-			<input name="paciente_doc" type="text" placeholder="Nombre del paciente" class="form-control" required/>
-		</div>
-		<div class="form-group">
-		    <label>Nombre del odontólogo </label>
-		    <select class="input-select" type="number" name="odontologo_doc">
-		    <option value="" style="text-align: center">--- Seleccione el nombre del odontólogo ---</option>
-		    <div th:each="odonto: ${odontologos}">
-				<option th:value="${odonto.nombre}" th:text="${odonto.nombre}"></option>
-			</div>
-			</select>
-		</div>
-		<div class="form-group">
-		    <label>Motivo de cita</label>
-		    <select class="input-select" type="number" name="tratamiento_cod">
-		    <option value="" style="text-align: center">--- Seleccione el motivo de la cita ---</option>
-		    <div th:each="tratamiento: ${tratamientos}">
-				<option th:value="${tratamiento.nombre}" th:text="${tratamiento.nombre}"></option>
-			</div>
-			</select>
-		</div>
-		
-		<div class="form-group">
-		<label>Fecha de ingreso </label>
-				<input name="fecha" type="date" required></input>
-		</div>
-		<div class="form-group">
-		    <label>Hora</label>
-		    <select class="input-select" type="number" name="hora">
-		    <option value="" style="text-align: center">--- Seleccione la hora de la cita ---</option>
-		    <div th:each="hora: ${horas}">
-				<option th:value="${hora.hora}" th:text="${hora.hora}"></option>
-			</div>
-			</select>
-		</div>
-      <div class="modal-footer">
-        <button type="submit" class="btn btn-success">Agregar</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-      </div>
-      </div>
-    </div>
-  </div>
-</div>
-</form>
 </div>	
 </div>	
 </div>

@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,14 +62,15 @@ public class PacienteController {
 	private SexoService sexoService;
 	
 	@Autowired
-	private CitaService citaService;
+	private TipoDocumentoService tipoDocumentoService;
+	
 	
 	@Autowired
-	private TipoDocumentoService tipoDocumentoService;
+	private CitaService citaService;
 	
 	public static String uploadDirectory = "/home/centos/fotos";
 	
-	List<Cita> listCitasByPaciente = new ArrayList<>();
+	List<Cita> citas = new ArrayList<>();
 
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, Model model) {
@@ -95,27 +97,18 @@ public class PacienteController {
 	@GetMapping("/dashboard")
 	public String dashboard(HttpServletRequest request, Model model){
 			
-			Paciente paci = pacienteService.get((String)request.getSession().getAttribute("paciente_doc"));
-			List<Cita> listCitas = citaService.getAll();
-			List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
-			List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
-			List<Pais> pais = paisService.getAll();
-			List<Sexo> sexo = sexoService.getAll();
-			List<Eps> eps = epsService.getAll();
-			
-			listCitasByPaciente.clear();
-			listCitas.forEach((cita)->{
-				if(cita.getPaciente_doc() == paci.getNombre())
-					listCitasByPaciente.add(cita);
-			});
-			model.addAttribute("citas", listCitasByPaciente);
-			model.addAttribute("tipoDoc", tipoDoc);
-			model.addAttribute("estadocivil", estadoCivil);
-			model.addAttribute("paciente", paci);
-			model.addAttribute("eps", eps);
-			model.addAttribute("sexo", sexo);
-			model.addAttribute("pais", pais);
-			return "admindashboard";
+		Paciente paci = pacienteService.get((String)request.getSession().getAttribute("paciente_doc"));
+		List<Cita> listCitas = citaService.getAll();
+		citas.clear();
+		
+		listCitas.forEach((cita)->{
+			if(cita.getPaciente_doc().equals(paci.getNombre()))
+				citas.add(cita);
+		});
+		listCitas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
+		model.addAttribute("paciente", paci);
+		model.addAttribute("citas", citas);
+			return "pacientedashboard";
 	}
 	
 	@PostMapping("/save")
@@ -137,26 +130,24 @@ public class PacienteController {
 		return "redirect:/admin/dashboard";
 }
 	
-	@GetMapping("/edit/{documento}")
-	public String formEdit(RedirectAttributes att, HttpServletRequest request, @PathVariable("documento") String documento, Model model){
-		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
-		Administrador adm = administradorService.get(adm_doc);
+	@GetMapping("/edit")
+	public String editForPaciente(RedirectAttributes att, HttpServletRequest request, Model model){
+		
+		Paciente paci = pacienteService.get((String)request.getSession().getAttribute("paciente_doc"));
 		
 		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
 		List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
-		Paciente paciente = pacienteService.get(documento);
 		
 		List<Pais> pais = paisService.getAll();
 		List<Sexo> sexo = sexoService.getAll();
 		List<Eps> eps = epsService.getAll();
 		model.addAttribute("tipoDoc", tipoDoc);
 		model.addAttribute("estadocivil", estadoCivil);
-		model.addAttribute("paciente", paciente);
+		model.addAttribute("paciente", paci);
 		model.addAttribute("eps", eps);
 		model.addAttribute("sexo", sexo);
 		model.addAttribute("pais", pais);
-		model.addAttribute("admin", adm);
-		return "editpaciente";
+		return "pacienteedit";
 	}
 	
 	@PostMapping("/editDatos")
@@ -166,7 +157,7 @@ public class PacienteController {
 		paciente.setFoto(paci.getFoto());
 		pacienteService.save(paciente);
 		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
-		return "redirect:/admin/dashboard";
+		return "redirect:/paciente/edit";
 	}
 	
 	@PostMapping("/editFoto")
@@ -191,7 +182,7 @@ public class PacienteController {
 		paciente.setFoto(filename);
 		pacienteService.save(paciente);
 		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
-		return "redirect:/paciente/edit/"+paciente.getDocumento();
+		return "redirect:/paciente/edit";
 	}
 	
 	@GetMapping("/delete/{documento}")
@@ -199,6 +190,12 @@ public class PacienteController {
 		pacienteService.delete(documento);
 		att.addFlashAttribute("accion", "¡Paciente eliminado con éxito!");
 		return "redirect:/admin/dashboard";
+	}
+	
+	@GetMapping("/logout")
+	public String logout(HttpServletRequest request, Model model) {
+			request.getSession().invalidate();
+			return "redirect:/paciente/login";
 	}
 
 }

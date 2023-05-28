@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -108,6 +109,29 @@ public class AdministradorController {
 			}
 	}
 	
+	@GetMapping("/edit/{documento}")
+	public String editForAdmin(RedirectAttributes att, HttpServletRequest request, @PathVariable("documento") String documento, Model model){
+		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
+		Administrador adm = administradorService.get(adm_doc);
+		
+		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
+		List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
+		Paciente paciente = pacienteService.get(documento);
+		
+		List<Pais> pais = paisService.getAll();
+		List<Sexo> sexo = sexoService.getAll();
+		List<Eps> eps = epsService.getAll();
+		model.addAttribute("tipoDoc", tipoDoc);
+		model.addAttribute("estadocivil", estadoCivil);
+		model.addAttribute("paciente", paciente);
+		model.addAttribute("eps", eps);
+		model.addAttribute("sexo", sexo);
+		model.addAttribute("pais", pais);
+		model.addAttribute("paci", paciente);
+		model.addAttribute("admin", adm);
+		return "editpaciente";
+	}
+	
 	@GetMapping("/dashboard")
 	public String dashboard(HttpServletRequest request, Model model){
 			
@@ -130,47 +154,38 @@ public class AdministradorController {
 			return "admindashboard";
 	}
 	
-	@GetMapping("/citas/{nombre}")
-	public String citas(HttpServletRequest request, @PathVariable("nombre") String nombre, Model model){
+	@GetMapping("/citas/{documento}")
+	public String citas(HttpServletRequest request, @PathVariable("documento") String documento, Model model){
 		
 			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
+			Paciente paci = pacienteService.get(documento);
 			
-			request.getSession().setAttribute("nombre_paci", nombre);
-			
-			Paciente paci = pacienteService.search(nombre);
+			request.getSession().setAttribute("docPaci", documento);
 			
 			List<Cita> listCitas = citaService.getAll();
 			List<Tratamiento> tratamientos = tratamientoService.getAll();
 			List<Odontologo> odontologos = odontologoService.getAll();
-			List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
-			List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
-			List<Pais> pais = paisService.getAll();
-			List<Sexo> sexo = sexoService.getAll();
-			List<Eps> eps = epsService.getAll();
 			List<Hora> horas = horaService.getAll();
-			
 			listCitasByPaciente.clear();
 			listCitas.forEach((cita)->{
-				if(cita.getPaciente_doc().equals(nombre))
+				if(cita.getPaciente_doc().equals(paci.getNombre()))
 					listCitasByPaciente.add(cita);
 			});
+			listCitasByPaciente.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
 			model.addAttribute("tratamientos", tratamientos);
 			model.addAttribute("horas", horas);
 			model.addAttribute("odontologos", odontologos);
-			model.addAttribute("paciente", paci);
+			model.addAttribute("nombre", paci.getNombre());
+			model.addAttribute("paci", paci);
 			model.addAttribute("citas", listCitasByPaciente);
-			model.addAttribute("tipoDoc", tipoDoc);
-			model.addAttribute("estadocivil", estadoCivil);
-			model.addAttribute("eps", eps);
-			model.addAttribute("sexo", sexo);
-			model.addAttribute("pais", pais);
 			model.addAttribute("admin", adm);
 			return "citaspaciente";
 	}
 	
-	@GetMapping("/edit/{documento}")
-	public String edit(RedirectAttributes att,@PathVariable("documento") String documento,Model model){
-		Administrador admin = administradorService.get(documento);
+	@GetMapping("/edit")
+	public String edit(HttpServletRequest request, Model model){
+		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
+		Administrador admin = administradorService.get(adm_doc);
 		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
 		model.addAttribute("tipoDoc", tipoDoc);	
 		model.addAttribute("adm", admin);
@@ -186,7 +201,14 @@ public class AdministradorController {
 		return "redirect:/admin/dashboard";
 	}
 	
-	@PostMapping("/editFoto")
+	@GetMapping("/delete/{id}")
+	public String delete(RedirectAttributes att, @PathVariable("id") String id, Model model){
+		citaService.delete(Integer.parseInt(id));
+		att.addFlashAttribute("accion", "¡Cita eliminada con éxito!");
+		return "redirect:/cita/list";
+	}
+	
+	@PostMapping("/editFotoAdmin")
 	public String editFoto(RedirectAttributes att, @RequestParam("file") MultipartFile foto,HttpServletRequest request,Model model)
 	{
 		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
@@ -211,7 +233,7 @@ public class AdministradorController {
 		return "redirect:/admin/edit/"+adm.getDocumento();
 	}
 	
-	@PostMapping("/editDatos")
+	@PostMapping("/editDatosAdmin")
 	public String editDatos(RedirectAttributes att, @RequestParam("documento") String documento, @RequestParam("nombre") String nombre,
 			@RequestParam("tipodoc") String tipodoc, @RequestParam("correo") String correo, @RequestParam("celular") String celular, 
 			@RequestParam("password") String password,Model model)
@@ -227,6 +249,41 @@ public class AdministradorController {
 		administradorService.save(adm);
 		att.addFlashAttribute("accion", "¡Datos personales actualizados con éxito!");
 		return "redirect:/admin/dashboard";
+	}
+	
+	@PostMapping("/editDatosPaciente")
+	public String editPaciente(RedirectAttributes att, Paciente paciente, HttpServletRequest request, Model model)
+	{
+		Paciente paci = pacienteService.get(paciente.getDocumento());
+		paciente.setFoto(paci.getFoto());
+		pacienteService.save(paciente);
+		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
+		return "redirect:/admin/edit/"+paci.getDocumento();
+	}
+	
+	@PostMapping("/editFotoPaciente")
+	public String editFoto(RedirectAttributes att, @RequestParam("file") MultipartFile foto, 
+							@RequestParam("documento") String documento, HttpServletRequest request,Model model)
+	{
+		Paciente paciente = pacienteService.get(documento);
+		String filename = foto.getOriginalFilename(); 
+		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
+		String fotoAntigua = paciente.getFoto();
+		File borrar = new File(uploadDirectory,fotoAntigua);
+		
+		if(borrar.exists())
+			borrar.delete();
+		
+		try {
+			Files.write(fileNameAndPath, foto.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		paciente.setFoto(filename);
+		pacienteService.save(paciente);
+		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
+		return "redirect:/admin/edit/"+paciente.getDocumento();
 	}
 	
 	

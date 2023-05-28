@@ -15,7 +15,7 @@
 	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
 	 	   		<img th:src="@{'/fotos/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
 		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
-		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-info">Actualizar Datos</a>
+		   <a th:href="@{/admin/edit}" class="btn btn-info">Actualizar Datos</a>
 		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
@@ -129,10 +129,10 @@
 							 <td th:text="${paci.nombre}"></td>
 							 <td th:text="${paci.celular}"></td>
 							 <td>
-							    <a th:href="@{/paciente/edit/{documento}(documento=${paci.documento})}">
+							    <a th:href="@{/admin/edit/{documento}(documento=${paci.documento})}">
 							   <i class="material-icons" data-toggle="tooltip" title="Actualizar">&#xE254;</i>
 							   </a>
-							   <a th:href="@{/admin/citas/{nombre}(nombre=${paci.nombre})}">
+							   <a th:href="@{/admin/citas/{documento}(documento=${paci.documento})}">
 							   <i class="material-icons" data-toggle="tooltip" title="Ver citas">calendar_month</i>
 							   </a>
 							   <a href="#deleteEmployeeModal" class="delete" data-toggle="modal">
@@ -306,7 +306,7 @@
 </div>	
 </div>
 </div>
-	 <footer id="footer">
+	 <footer id="footer" >
 			<div class="col-md-12 text-center">
 					<span class="copyright" style="color:white">
 						 Adulam Store © 2022     ||     Todos los derechos reservados

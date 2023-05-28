@@ -13,36 +13,21 @@
 	  <div class="body-overlay"></div>
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
-	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
-	 	   		<img th:src="@{'/fotos/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px"/>
-		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
-		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-info">Actualizar Datos</a>
+	 	   <div th:object="${paciente}" style="display:grid;justify-content:center;align-items:center;text-align:center">
+	 	   		<img th:src="@{'/fotos/'+${paciente.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
+		   		<h3><br><span th:text="${paciente.nombre}"></span></h3><br>
+		   <a th:href="@{/paciente/edit/{documento}(documento=${paciente.documento})}" class="btn btn-info">Actualizar Datos</a>
 		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
 		  <li class="active">
-		  <a href="#homeSubmenu6" class="list-unstyled component m-0">
-		  <i class="material-icons">groups</i>Mis Pacientes
-		  </a>
+		  <a th:href="@{/paciente/dashboard}" class="dashboard"><i class="material-icons">calendar_month</i>Mis citas</a>
 		  </li>
 		  <li class="dropdown">
-		  <a th:href="@{/producto/list}" class="dashboard"><i class="material-icons">calendar_month</i>Agenda</a>
-		  </li>
-		  
-		  <li class="dropdown">
-		  <a href="#homeSubmenu1" data-toggle="collapse" aria-expanded="false" 
-		  class="dropdown-toggle">
-		  <i class="material-icons">payments</i>Administración
+		  <a th:href="@{/paciente/tratamientos}" class="list-unstyled component m-0">
+		  <i class="material-icons">vaccines</i>Mis tratamientos
 		  </a>
-		  <ul class="collapse list-unstyled menu" id="homeSubmenu1">
-			 <li><a href="#"><i class="material-icons">receipt_long</i>Informes</a></li>
-		  </ul>
-		  </li>
-		  <li class="dropdown">
-		  <a th:href="@{/pqrs/list}" class="list-unstyled component m-0">
-		  <i class="material-icons">vaccines</i>Mis Odontólogos
-		  </a>
-		  </li>		
+		  </li>	
 		</ul>
 	 </div>
    
@@ -101,10 +86,10 @@
 					   <div class="table-title">
 					     <div class="row">
 						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
-							    <h2 class="ml-lg-2">EDITAR PACIENTE</h2>
+							    <h2 class="ml-lg-2">EDITAR DATOS PERSONALES</h2>
 							 </div>
 							 <div class="but">
-							    <a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Cerrar</a>
+							    <a type="button" th:href="@{/paciente/dashboard}" class="btn btn-secondary">Cerrar</a>
 							</div>
 					     </div>
 					   </div>
@@ -117,7 +102,7 @@
      
     <div class="container-info" th:object="${paciente}"	>
      <div class="container-foto">
-     <form th:action="@{/admin/editFotoPaciente}" method="post" enctype="multipart/form-data">
+     <form th:action="@{/paciente/editFoto}" method="post" enctype="multipart/form-data">
      	<input th:field="*{documento}" type="hidden" name="documento"></input>
 		<img th:src="@{'/fotos/'+${paciente.foto}}" style="margin: 0 auto;border-radius:8%; width:360px; height:240px"/><br><br>
 		<div aria-label="Subir foto"><span>¿Quieres actualizar la foto del paciente?</span></div><br>
@@ -126,7 +111,7 @@
 	</form>
     </div>
     <div class="container col-md-7">
-	<form th:action="@{/admin/editDatosPaciente}" method="post">
+	<form th:action="@{/paciente/editDatos}" method="post">
       <div class="form-group">
 		    <label>Tipo de documento </label>
 		    <select class="input-select" type="number" name="tipodoc">
@@ -223,7 +208,6 @@
 		    <label>Poliza de seguros</label>
 			<input name="poliza" type="text" th:field="*{poliza}" placeholder="Poliza" class="form-control" required>
 		</div>
-		<input name="password" type="hidden" th:field="*{password}" class="form-control" required/>
       <div class="modal-footer" style="display:flex;align-items:center;justify-content:center">
         <button type="submit" class="btn btn-success">Guardar</button>
       </div>

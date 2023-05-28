@@ -1,5 +1,8 @@
 package co.empresa.dentalsoft.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +51,9 @@ public class CitaController {
 	@Autowired
 	private AdministradorService administradorService;
 	
+	List<Cita> listCitas = new ArrayList<>();
+	
+	
 	@GetMapping("/list")
 	public String list(HttpServletRequest request, Model model){
 		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
@@ -56,6 +62,7 @@ public class CitaController {
 		List<Tratamiento> tratamientos = tratamientoService.getAll();
 		List<Hora> horas = horaService.getAll();
 		List<Cita> citas = citaService.getAll();
+		citas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
 		model.addAttribute("odontologos", odontologos);
 		model.addAttribute("pacientes", pacientes);
 		model.addAttribute("tratamientos", tratamientos);
@@ -64,21 +71,59 @@ public class CitaController {
 		model.addAttribute("admin", adm);
 		return "agenda";
 	}
+	
 
 	@PostMapping("/save")
 	public String save(RedirectAttributes att, Cita cita, HttpServletRequest request, Model model){
-				String nombre = (String)request.getSession().getAttribute("nombre_paci");
-				cita.setPaciente_doc(nombre);
+				String documento = (String)request.getSession().getAttribute("docPaci");
+				Paciente p = pacienteService.get(documento);
+				cita.setPaciente_doc(p.getNombre());
 				citaService.save(cita);
 				att.addFlashAttribute("accion", "¡Cita agendada con éxito!");
-		return "redirect:/admin/citas/"+nombre;
+				return "redirect:/admin/citas/"+documento;
 	}
 	
 	
 	@GetMapping("/delete/{id}")
-	public String delete(RedirectAttributes att, @PathVariable("id") String id, Model model){
+	public String delete(RedirectAttributes att, HttpServletRequest request, @PathVariable("id") String id, Model model){
+		String documento = (String)request.getSession().getAttribute("docPaci");
 		citaService.delete(Integer.parseInt(id));
 		att.addFlashAttribute("accion", "¡Cita eliminada con éxito!");
-		return "redirect:/cita/list";
+		return "redirect:/admin/citas/"+documento;
 	}
+	
+	@GetMapping("/editCita/{id}")
+	public String editar(RedirectAttributes att, @PathVariable("id") String id, HttpServletRequest request, Model model) {
+		if(id!=null) {
+			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
+			String docPaci = (String)request.getSession().getAttribute("docPaci");
+			Paciente paci = pacienteService.get(docPaci);
+			List<Odontologo> odontologos = odontologoService.getAll();
+			List<Tratamiento> tratamientos = tratamientoService.getAll();
+			List<Hora> horas = horaService.getAll();
+			Cita c = citaService.get(Integer.parseInt(id));
+			model.addAttribute("nombre", paci.getNombre());
+			model.addAttribute("paci", paci);
+			model.addAttribute("cita", c);
+			model.addAttribute("odontologos", odontologos);
+			model.addAttribute("tratamientos", tratamientos);
+			model.addAttribute("horas", horas);
+			model.addAttribute("adm", adm);
+		}else {
+			model.addAttribute("cita", new Cita());
+		}
+		return "editarcita";
+	}
+	
+	@GetMapping("/atender/{id}")
+	public String atenderCita(RedirectAttributes att, @PathVariable("id") String id, HttpServletRequest request, Model model) {
+		String documento = (String)request.getSession().getAttribute("docPaci");
+		Paciente p = pacienteService.get(documento);
+		Cita cita = citaService.get(Integer.parseInt(id));
+		cita.setEstado("Finalizada");
+		citaService.save(cita);
+		return "redirect:/admin/citas/"+documento;
+	}
+	
+	
 }
