@@ -21,18 +21,26 @@
 		</div>
 		<ul class="list-unstyled component m-0">
 		  <li class="active">
-		  <a th:href="@{/admin/dashboard}" class="list-unstyled component m-0">
-		  <i class="material-icons">groups</i>Mis Pacientes
-		  </a>
+		  	<a th:href="@{/admin/dashboard}">
+		  	<i class="material-icons">groups</i>Mis Pacientes</a>
 		  </li>
 		  <li class="dropdown">
-		  <a th:href="@{/cita/list}" class="dashboard"><i class="material-icons">calendar_month</i>Agenda</a>
-		  </li>
-		  <li class="dropdown">
-		  <a th:href="@{/odontologo/list}" class="list-unstyled component m-0">
-		  <i class="material-icons">vaccines</i>Mis Odontólogos
-		  </a>
+			  <a th:href="@{/odontologo/list}" >
+			  <i class="material-icons">vaccines</i>Mis Odontólogos</a>
 		  </li>		
+		  <li class="dropdown">
+				  <a href="#homeSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+				  <i class="material-icons">calendar_month</i>Agenda</a>
+			  <ul class="collapse list-unstyled menu" id="homeSubmenu1">
+				 <li><a th:href="@{/cita/list}"><i class="material-icons">alarm_on</i>Citas pendientes</a></li>
+				 <li><a th:href="@{/cita/historial}"><i class="material-icons">receipt_long</i>Historial de citas</a></li>
+			  </ul>
+		  </li>
+		  
+		  <li class="dropdown">
+			  <a href="#" class="list-unstyled component m-0">
+			  <i class="material-icons">handshake</i>Consentimientos</a>
+		  </li>
 		</ul>
 	 </div>
    
@@ -147,7 +155,7 @@
 		</div>
 		<div class="form-group">
 		<label>Estado:  </label>
-		<label th:text="*{estado}"></label>
+		<input th:field="*{estado}" type="text" class="form-control" readonly required></input>
 		</div>
 		<div class="but">
 		<button type="submit" class="btn btn-success">Guardar</button>

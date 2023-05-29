@@ -21,28 +21,26 @@
 		</div>
 		<ul class="list-unstyled component m-0">
 		  <li class="active">
-		  <a th:href="@{/admin/dashboard}" class="list-unstyled component m-0">
-		  <i class="material-icons">groups</i>Mis Pacientes
-		  </a>
+		  	<a th:href="@{/admin/dashboard}">
+		  	<i class="material-icons">groups</i>Mis Pacientes</a>
 		  </li>
 		  <li class="dropdown">
-		  <a th:href="@{/producto/list}" class="dashboard"><i class="material-icons">calendar_month</i>Agenda</a>
+			  <a th:href="@{/odontologo/list}" >
+			  <i class="material-icons">vaccines</i>Mis Odontólogos</a>
+		  </li>		
+		  <li class="dropdown">
+				  <a href="#homeSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+				  <i class="material-icons">calendar_month</i>Agenda</a>
+			  <ul class="collapse list-unstyled menu" id="homeSubmenu1">
+				 <li><a th:href="@{/cita/list}"><i class="material-icons">alarm_on</i>Citas pendientes</a></li>
+				 <li><a th:href="@{/cita/historial}"><i class="material-icons">receipt_long</i>Historial de citas</a></li>
+			  </ul>
 		  </li>
 		  
 		  <li class="dropdown">
-		  <a href="#homeSubmenu1" data-toggle="collapse" aria-expanded="false" 
-		  class="dropdown-toggle">
-		  <i class="material-icons">payments</i>Administración
-		  </a>
-		  <ul class="collapse list-unstyled menu" id="homeSubmenu1">
-			 <li><a href="#"><i class="material-icons">receipt_long</i>Informes</a></li>
-		  </ul>
+			  <a href="#" class="list-unstyled component m-0">
+			  <i class="material-icons">handshake</i>Consentimientos</a>
 		  </li>
-		  <li class="dropdown">
-		  <a th:href="@{/pqrs/list}" class="list-unstyled component m-0">
-		  <i class="material-icons">vaccines</i>Mis Odontólogos
-		  </a>
-		  </li>		
 		</ul>
 	 </div>
    

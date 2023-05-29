@@ -84,6 +84,7 @@ public class AdministradorController {
 	public static String uploadDirectory = "/home/centos/fotos";
 	
 	List<Cita> listCitasByPaciente = new ArrayList<>();
+	List<Cita> citasHistorial = new ArrayList<>();
 	
 	
 	@GetMapping("/login")

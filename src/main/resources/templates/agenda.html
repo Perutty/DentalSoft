@@ -19,28 +19,26 @@
 		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
-		  <li class="dropdown">
-		  <a th:href="@{/admin/dashboard}" class="list-unstyled component m-0">
-		  <i class="material-icons">groups</i>Mis Pacientes
-		  </a>
+		  <li class="active">
+		  	<a th:href="@{/admin/dashboard}">
+		  	<i class="material-icons">groups</i>Mis Pacientes</a>
 		  </li>
 		  <li class="dropdown">
-		  <a th:href="@{/odontologo/list}" class="list-unstyled component m-0">
-		  <i class="material-icons">vaccines</i>Mis Odontólogos
-		  </a>
+			  <a th:href="@{/odontologo/list}" >
+			  <i class="material-icons">vaccines</i>Mis Odontólogos</a>
 		  </li>		
-		  <li class="active">
-		  <a th:href="@{/cita/list}" class="dashboard"><i class="material-icons">calendar_month</i>Agenda</a>
+		  <li class="dropdown">
+				  <a href="#homeSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+				  <i class="material-icons">calendar_month</i>Agenda</a>
+			  <ul class="collapse list-unstyled menu" id="homeSubmenu1">
+				 <li><a th:href="@{/cita/list}"><i class="material-icons">alarm_on</i>Citas pendientes</a></li>
+				 <li><a th:href="@{/cita/historial}"><i class="material-icons">receipt_long</i>Historial de citas</a></li>
+			  </ul>
 		  </li>
 		  
 		  <li class="dropdown">
-		  <a href="#h" data-toggle="collapse" aria-expanded="false" 
-		  class="dropdown-toggle">
-		  <i class="material-icons">payments</i>Administración
-		  </a>
-		  <ul class="collapse list-unstyled menu" id="homeSubmenu1">
-			 <li><a href="#"><i class="material-icons">receipt_long</i>Informes</a></li>
-		  </ul>
+			  <a href="#" class="list-unstyled component m-0">
+			  <i class="material-icons">handshake</i>Consentimientos</a>
 		  </li>
 		</ul>
 	 </div>
@@ -105,7 +103,10 @@
 						<h5 th:if="${citas.isEmpty()}" style="margin-top:30px;text-align:center">No hay citas agendadas</h5>
 					   <br>
 					   <div th:if="${!citas.isEmpty()}">
-					   <input type="text" id="search-input" placeholder="Buscar" ><br><br>
+						   <form th:action="@{/cita/buscar}" style="display:flex; align-items:center">
+							   	<input type="date" style="width:150px; height:40px" name="fecha">
+							   	<button type="submit" class="btn btn-info" style="margin-left:20px">Buscar</button>
+						   </form><br><br>
 					   <table class="table table-striped table-hover" id="tablax">
 					      <thead>
 						     <tr>
@@ -123,7 +124,7 @@
 						     <tr>
 						     <td class="id" style="display:none" th:text="${cita.id}"></td>
 							 <td th:text="${cita.paciente_doc}"></td>
-							 <td th:text="${cita.odontologo_doc}"></td>
+							 <td th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></td>
 							 <td th:text="${cita.tratamiento_cod}"></td>
 							 <td th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></td>
 							 <td th:text="${cita.hora}"></td>
