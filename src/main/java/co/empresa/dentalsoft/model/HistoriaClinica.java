@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table (name="historiaclinica")
+@Table (name="historia")
 @Data
 public class HistoriaClinica {
 
@@ -20,9 +20,6 @@ public class HistoriaClinica {
 	
 	@Column
 	private String paciente_doc;
-	
-	@Column
-	private String odontologo_doc;
 	
 	public HistoriaClinica() {};
 }

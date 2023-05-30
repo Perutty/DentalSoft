@@ -5,4 +5,5 @@ import co.empresa.dentalsoft.model.Odontologo;
 
 public interface OdontologoService extends GenericService<Odontologo, String>{
 
+	public Odontologo select(String documento, String password);
 }

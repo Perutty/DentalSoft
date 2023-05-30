@@ -6,4 +6,5 @@ import co.empresa.dentalsoft.model.Odontologo;
 
 public interface OdontologoRepository extends CrudRepository<Odontologo, String> {
 
+	public abstract Odontologo findByDocumentoAndPassword(String documento, String password);
 }

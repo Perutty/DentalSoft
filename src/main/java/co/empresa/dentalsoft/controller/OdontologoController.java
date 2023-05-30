@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,10 +22,16 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.empresa.dentalsoft.model.Administrador;
+import co.empresa.dentalsoft.model.Cita;
+import co.empresa.dentalsoft.model.Eps;
+import co.empresa.dentalsoft.model.EstadoCivil;
 import co.empresa.dentalsoft.model.Odontologo;
 import co.empresa.dentalsoft.model.Paciente;
+import co.empresa.dentalsoft.model.Pais;
+import co.empresa.dentalsoft.model.Sexo;
 import co.empresa.dentalsoft.model.TipoDocumento;
 import co.empresa.dentalsoft.service.AdministradorService;
+import co.empresa.dentalsoft.service.CitaService;
 import co.empresa.dentalsoft.service.OdontologoService;
 import co.empresa.dentalsoft.service.TipoDocumentoService;
 
@@ -40,11 +48,47 @@ public class OdontologoController {
 	@Autowired
 	private TipoDocumentoService tipoDocumentoService;
 	
+	@Autowired
+	private CitaService citaService;
+	
+	List<Cita> citas = new ArrayList<>();
+	
 	public static String uploadDirectory = "/home/centos/fotos";
 	
 	@GetMapping("/login")
 	public String login(Model model) {
 		return "loginodontologo";
+	}
+	
+	@PostMapping("/signin")
+	public String validate(RedirectAttributes att, @RequestParam String documento, @RequestParam String password, HttpServletRequest request, Model model) {
+		
+		Odontologo odonto = odontologoService.select(documento, password);
+		if(odonto != null)
+		{
+			request.getSession().setAttribute("odonto_doc", documento);
+			return "redirect:/odontologo/dashboard";
+		}else {
+			att.addFlashAttribute("loginError", "Documento o contraseña incorrecta");
+			return "redirect:/odontologo/login";
+			}
+	}
+	
+	@GetMapping("/dashboard")
+	public String dashboard(HttpServletRequest request, Model model){
+			
+		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
+		List<Cita> listCitas = citaService.getAll();
+		citas.clear();
+		
+		listCitas.forEach((cita)->{
+			if(cita.getOdontologo_doc().equals(odonto.getNombre()))
+				citas.add(cita);
+		});
+		citas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
+		model.addAttribute("odontologo", odonto);
+		model.addAttribute("citas", citas);
+			return "odontologodashboard";
 	}
 	
 	@GetMapping("/list")
@@ -76,10 +120,30 @@ public class OdontologoController {
 		return "redirect:/odontologo/list";
 	}
 	
+	@GetMapping("/edit/{documento}")
+	public String edit(RedirectAttributes att, HttpServletRequest request, @PathVariable("documento") String documento, Model model){
+		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
+		Administrador adm = administradorService.get(adm_doc);
+		Odontologo odonto = odontologoService.get(documento);
+		
+		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
+		
+		model.addAttribute("tipoDoc", tipoDoc);
+		model.addAttribute("odontologo", odonto);
+		model.addAttribute("admin", adm);
+		return "editodontologo";
+	}
+	
 	@GetMapping("/delete/{documento}")
 	public String delete(RedirectAttributes att, @PathVariable("documento") String documento, Model model){
 		odontologoService.delete(documento);
 		att.addFlashAttribute("accion", "¡Odontologo eliminado con éxito!");
 		return "redirect:/odontologo/list";
+	}
+	
+	@GetMapping("/logout")
+	public String logout(HttpServletRequest request, Model model) {
+			request.getSession().invalidate();
+			return "redirect:/odontologo/login";
 	}
 }

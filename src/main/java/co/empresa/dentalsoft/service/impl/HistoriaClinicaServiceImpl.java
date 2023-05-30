@@ -19,4 +19,5 @@ public class HistoriaClinicaServiceImpl extends GenericServiceImpl<HistoriaClini
 	public CrudRepository<HistoriaClinica, Integer> getDao(){
 		return historiaClinicaRepository;
 	}
+	
 }

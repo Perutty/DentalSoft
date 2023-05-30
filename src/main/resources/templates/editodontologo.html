@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"	xmlns:th="http://www.thymeleaf.org">
   <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
        <title>DentalSoft</title>
 	   <link rel="stylesheet" th:href="@{/css/custom.css}">
    	   <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
@@ -13,14 +13,14 @@
 	  <div class="body-overlay"></div>
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
-	 	   <div th:object="${adm}" style="display:grid;justify-content:center;align-items:center;text-align:center">
-	 	   		<img th:src="@{'/fotos/'+${adm.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
-		   		<h3><br><span th:text="${adm.nombre}"></span></h3><br>
-		   <a th:href="@{/admin/edit/{documento}(documento=${adm.documento})}" class="btn btn-info">Actualizar Datos</a>
+	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
+	 	   		<img th:src="@{'/fotos/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px"/>
+		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
+		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-info">Actualizar Datos</a>
 		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
-		  <li class="active">
+		  <li class="dropdown">
 		  	<a th:href="@{/admin/dashboard}">
 		  	<i class="material-icons">groups</i>Mis Pacientes</a>
 		  </li>
@@ -29,7 +29,7 @@
 			  <i class="material-icons">vaccines</i>Mis Odontólogos</a>
 		  </li>		
 		  <li class="dropdown">
-				  <a th:href="@{/cita/list}">
+				 <a th:href="@{/cita/list}">
 				  <i class="material-icons">calendar_month</i>Agenda</a>
 		  </li>
 		  
@@ -74,7 +74,6 @@
 							</nav>
 						 </div>
 					 </div>
-					 
 				 </div>
 				 <div class="xp-breadcrumbbar text-center">
 				    <span class="page-title" >MANRIQUE Y SOTO CENTRO ODONTOLÓGICO</span>
@@ -92,13 +91,14 @@
 			     <div class="row">
 				    <div class="col-md-12">
 					   <div class="table-wrapper">
+					     
 					   <div class="table-title">
 					     <div class="row">
 						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
-							    <h2 class="ml-lg-2">EDITAR DATOS PERSONALES</h2>
+							    <h2 class="ml-lg-2">EDITAR ODONTOLOGO</h2>
 							 </div>
 							 <div class="but">
-							    <a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Cerrar</a>
+							    <a type="button" th:href="@{/odontologo/list}" class="btn btn-secondary">Cerrar</a>
 							</div>
 					     </div>
 					   </div>
@@ -107,59 +107,56 @@
 					   </div>
 					   
 					   </div>
-					</div>
-					
-	<div class="container-info" th:object="${adm}">
-	   <div class="container-foto">
-	     <form th:action="@{/admin/editFoto}" method="post" enctype="multipart/form-data">
-			<img th:src="@{'/fotos/'+${adm.foto}}" style="margin: 0 auto;border-radius:50%; width:240px; height:240px"/><br><br>
-			<div><span>¿Quieres actualizar tu foto de perfil?</span></div><br>
-			<input type="file" name="file" accept="image/*"/><br><br>
-				<button type="submit" class="btn btn-info">Actualizar</button>
-		 </form>
-	    </div>					
-    <div class="container col-md-6">
-		<form th:action="@{/admin/editDatos}" method="post">
-	<br>
-		<div class="form-group">
-		    <label>Nombre</label>
-			<input name="nombre" th:field="*{nombre}" type="text" placeholder="Nombre" class="form-control" required>
-		</div>
-		<div class="form-group">
-		    <label>Tipo de documento </label>
-		    <select class="input-select" type="number" name="tipodoc">
-		    <div th:each="tipo: ${tipoDoc}">
-				<option th:value="${tipo.tipo}" th:text="${tipo.tipo}" th:field="*{tipodoc}"></option>
+					</div>	
+     
+    <div class="container-info" th:object="${odontologo}">
+	     <div class="container-foto">
+			     <form th:action="@{/admin/editFotoOdontologo}" method="post" enctype="multipart/form-data">
+			     	<input th:field="*{documento}" type="hidden" name="documento"></input>
+					<img th:src="@{'/fotos/'+${odontologo.foto}}" style="margin: 0 auto;border-radius:8%; width:360px; height:240px"/><br><br>
+					<div aria-label="Subir foto"><span>¿Quieres actualizar la foto del odontólogo?</span></div><br>
+					<input type="file" name="file" accept="image/*"><br><br>
+					<button type="submit" class="btn btn-info">Actualizar</button>
+				</form>
+	    </div>
+    <div class="container col-md-5">
+		<form th:action="@{/admin/editDatosOdontologo}" method="post">
+	      	<div class="form-group">
+			    <label>Tipo de documento </label>
+			    <select class="input-select" type="number" name="tipodoc">
+			    <div th:each="tipo: ${tipoDoc}">
+					<option th:value="${tipo.tipo}" th:text="${tipo.tipo}" th:field="*{tipodoc}"></option>
+				</div>
+				</select>
 			</div>
-			</select>
-		</div>
-		<div class="form-group">
-		    <label>Número de Documento</label>
-			<input name="documento" type="text" th:field="*{documento}" placeholder="No. documento" class="form-control" required>
-		</div>
-		<div class="form-group">
-		    <label>Correo electrónico</label>
-			<input name="correo" type="text" th:field="*{correo}" placeholder="Correo electrónico" class="form-control" required>
-		</div>
-		<div class="form-group">
-		    <label>Teléfono celular</label>
-			<input name="celular" type="text" th:field="*{celular}" placeholder="No. de Celular" class="form-control" required>
-		</div>
-		<div class="form-group">
-			<input name="password" type="hidden" th:field="*{password}" placeholder="Contraseña" class="form-control" required>
-		</div>
-		<div class="but">
-		<button type="submit" class="btn btn-success">Guardar</button>
-		</div>
+	        <div class="form-group">
+			    <label>Número de Documento</label>
+				<input name="documento" type="text" th:field="*{documento}" placeholder="No. documento" class="form-control" required>
+			</div>
+			<div class="form-group">
+			    <label>Nombre</label>
+				<input name="nombre" th:field="*{nombre}" type="text" placeholder="Nombre" class="form-control" required>
+			</div>
+			<div class="form-group">
+			    <label>Teléfono celular</label>
+				<input name="celular" type="text" th:field="*{celular}" placeholder="No. de Celular" class="form-control" required>
+			</div>
+			<div class="form-group">
+			    <label>Correo electrónico</label>
+				<input name="correo" type="text" th:field="*{correo}" placeholder="Correo electrónico" class="form-control" required>
+			</div>
+			<input name="password" type="hidden" th:field="*{password}" class="form-control" required/>
+	      <div class="modal-footer" style="display:flex;align-items:center;justify-content:center">
+	        <button type="submit" class="btn btn-success">Guardar</button>
+	      </div>
 	</form>
-   </div>
-   </div>
-   
-   </div>
-   </div>
-   </div> 
-  </div>
-			 <footer id="footer">
+</div>
+</div>
+</div>
+</div>
+</div>	
+</div>
+	<footer id="footer">
 				<div class="container">
 						<div class="col-md-12 text-center">
 							<span class="copyright" style="color:white">

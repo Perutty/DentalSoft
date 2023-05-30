@@ -28,12 +28,8 @@
 			  <i class="material-icons">vaccines</i>Mis Odontólogos</a>
 		  </li>		
 		  <li class="dropdown">
-				  <a href="#homeSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+				   <a th:href="@{/cita/list}">
 				  <i class="material-icons">calendar_month</i>Agenda</a>
-			  <ul class="collapse list-unstyled menu" id="homeSubmenu1">
-				 <li><a th:href="@{/cita/list}"><i class="material-icons">alarm_on</i>Citas pendientes</a></li>
-				 <li><a th:href="@{/cita/historial}"><i class="material-icons">receipt_long</i>Historial de citas</a></li>
-			  </ul>
 		  </li>
 		  
 		  <li class="dropdown">
@@ -125,20 +121,23 @@
 						  <tbody th:each="cita: ${citas}">
 						     <tr>
 						     <td class="id" style="display:none" th:text="${cita.id}"></td>
-							 <td th:text="${cita.odontologo_doc}"></td>
 							 <td th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></td>
+							 <td th:text="${cita.tratamiento_cod}"></td>
 							 <td th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></td>
 							 <td th:text="${cita.hora}"></td>
 							 <td th:text="${cita.estado}"></td>
 							 <td>
 							    <a th:href="@{/cita/editCita/{id}(id=${cita.id})}">
-							   <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+							   		<i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
 							   </a>
 							   <a th:href="@{/cita/atender/{id}(id=${cita.id})}">
-							   <i class="material-icons" data-toggle="tooltip" title="Atender">&#xE876;</i>
+							   		<i class="material-icons" data-toggle="tooltip" title="Atender">&#xE876;</i>
+							   </a>
+							   <a href="#addEvolutionModal" class="deleteCita" data-toggle="modal">
+							   		<i class="material-icons" data-toggle="tooltip" title="Generar evolución">&#xEf40;</i>
 							   </a>
 							   <a href="#deleteEmployeeModal" class="deleteCita" data-toggle="modal">
-							   <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+							   		<i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
 							   </a>
 							 </tr>
 						  </tbody>
@@ -169,6 +168,8 @@
       </div>
      </div> 
      </div>
+     
+     	<!----- FORMULARIO CREAR CITA ----->
      
 	<form th:action="@{/cita/save}" method="post">			
 	<div class="modal fade" tabindex="-1" id="addEmployeeModal" role="dialog">
@@ -227,6 +228,69 @@
   </div>
 </div>
 </form>
+
+	<!----- FORMULARIO CREAR EVOLUCION ----->
+
+<form th:action="@{/evolucion/new}" method="post">			
+	<div class="modal fade" tabindex="-1" id="addEvolutionModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Generar evolución</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+		    <label>Nombre del paciente: </label>
+		    <input name="paciente_doc" type="text" th:value="${nombre}" readonly class="form-control" required>
+		</div>
+		<div class="form-group">
+		    <label>Nombre del odontólogo: </label>
+		    <select class="input-select" type="number" name="odontologo_doc">
+		    <option value="" style="text-align: center">--- Seleccione el nombre del odontólogo ---</option>
+		    <div th:each="odonto: ${odontologos}">
+				<option th:value="${odonto.nombre}" th:text="${odonto.nombre}"></option>
+			</div>
+			</select>
+		</div>
+		<div class="form-group">
+		    <label>Motivo de cita: </label>
+		    <select class="input-select" type="number" name="tratamiento_cod">
+		    <option value="" style="text-align: center">--- Seleccione el motivo de la cita ---</option>
+		    <div th:each="tratamiento: ${tratamientos}">
+				<option th:value="${tratamiento.nombre}" th:text="${tratamiento.nombre}"></option>
+			</div>
+			</select>
+		</div>
+		
+		<div class="form-group" style="display:flex;align-items:center;justify-content:space-between">
+		<label>Fecha de cita: </label>
+				<input name="fecha" type="date" id="fecha" required></input>
+		</div>
+		<div class="form-group" style="display:flex;align-items:center;justify-content:space-between">
+		    <label>Hora: </label>
+		    <select class="input-select" type="number" name="hora">
+		    <option value="" style="text-align: center">--- Seleccione la hora de la cita ---</option>
+		    <div th:each="hora: ${horas}">
+				<option th:value="${hora.hora}" th:text="${hora.hora}"></option>
+			</div>
+			</select>
+		</div>
+		<input name="estado" type="hidden" th:value="Pendiente" class="form-control" required>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Agregar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+
+
 </div>	
 </div>	
 </div>

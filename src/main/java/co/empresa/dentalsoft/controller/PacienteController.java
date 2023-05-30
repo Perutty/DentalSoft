@@ -26,6 +26,7 @@ import co.empresa.dentalsoft.model.Administrador;
 import co.empresa.dentalsoft.model.Cita;
 import co.empresa.dentalsoft.model.Eps;
 import co.empresa.dentalsoft.model.EstadoCivil;
+import co.empresa.dentalsoft.model.HistoriaClinica;
 import co.empresa.dentalsoft.model.Paciente;
 import co.empresa.dentalsoft.model.Pais;
 import co.empresa.dentalsoft.model.Sexo;
@@ -34,6 +35,7 @@ import co.empresa.dentalsoft.service.AdministradorService;
 import co.empresa.dentalsoft.service.CitaService;
 import co.empresa.dentalsoft.service.EpsService;
 import co.empresa.dentalsoft.service.EstadoCivilService;
+import co.empresa.dentalsoft.service.HistoriaClinicaService;
 import co.empresa.dentalsoft.service.PacienteService;
 import co.empresa.dentalsoft.service.PaisService;
 import co.empresa.dentalsoft.service.SexoService;
@@ -47,10 +49,10 @@ public class PacienteController {
 	private PacienteService pacienteService;
 	
 	@Autowired
-	private AdministradorService administradorService;
+	private PaisService paisService;
 	
 	@Autowired
-	private PaisService paisService;
+	private HistoriaClinicaService historiaClinicaService;
 	
 	@Autowired
 	private EpsService epsService;
@@ -105,7 +107,7 @@ public class PacienteController {
 			if(cita.getPaciente_doc().equals(paci.getNombre()))
 				citas.add(cita);
 		});
-		listCitas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
+		citas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
 		model.addAttribute("paciente", paci);
 		model.addAttribute("citas", citas);
 			return "pacientedashboard";
@@ -126,6 +128,9 @@ public class PacienteController {
 				
 				paciente.setFoto(filename);
 				pacienteService.save(paciente);
+				HistoriaClinica hc = new HistoriaClinica();
+				hc.setPaciente_doc(paciente.getDocumento());
+				historiaClinicaService.save(hc);
 				att.addFlashAttribute("accion", "¡Paciente registrado con éxito!");
 		return "redirect:/admin/dashboard";
 }

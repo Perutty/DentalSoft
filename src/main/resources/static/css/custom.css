@@ -101,6 +101,7 @@ body,html{
   .wrapper{
 	position:relative;
 	width:100%;
+	height:38em;
 	overflow: auto;
   }
   

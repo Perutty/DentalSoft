@@ -25,6 +25,7 @@ import co.empresa.dentalsoft.model.Administrador;
 import co.empresa.dentalsoft.model.Cita;
 import co.empresa.dentalsoft.model.Eps;
 import co.empresa.dentalsoft.model.EstadoCivil;
+import co.empresa.dentalsoft.model.HistoriaClinica;
 import co.empresa.dentalsoft.model.Hora;
 import co.empresa.dentalsoft.model.Odontologo;
 import co.empresa.dentalsoft.model.Paciente;
@@ -36,6 +37,7 @@ import co.empresa.dentalsoft.service.AdministradorService;
 import co.empresa.dentalsoft.service.CitaService;
 import co.empresa.dentalsoft.service.EpsService;
 import co.empresa.dentalsoft.service.EstadoCivilService;
+import co.empresa.dentalsoft.service.HistoriaClinicaService;
 import co.empresa.dentalsoft.service.HoraService;
 import co.empresa.dentalsoft.service.OdontologoService;
 import co.empresa.dentalsoft.service.PacienteService;
@@ -76,6 +78,9 @@ public class AdministradorController {
 	private HoraService horaService;
 	
 	@Autowired
+	private HistoriaClinicaService historiaClinicaService;
+	
+	@Autowired
 	private EstadoCivilService estadoCivilService;
 	
 	@Autowired
@@ -85,6 +90,7 @@ public class AdministradorController {
 	
 	List<Cita> listCitasByPaciente = new ArrayList<>();
 	List<Cita> citasHistorial = new ArrayList<>();
+	List<HistoriaClinica> listaHistoria = new ArrayList<>();
 	
 	
 	@GetMapping("/login")
@@ -160,6 +166,7 @@ public class AdministradorController {
 		
 			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 			Paciente paci = pacienteService.get(documento);
+			List<HistoriaClinica> listHC = historiaClinicaService.getAll();
 			
 			request.getSession().setAttribute("docPaci", documento);
 			
@@ -167,6 +174,11 @@ public class AdministradorController {
 			List<Tratamiento> tratamientos = tratamientoService.getAll();
 			List<Odontologo> odontologos = odontologoService.getAll();
 			List<Hora> horas = horaService.getAll();
+			listaHistoria.clear();
+			listHC.forEach((hc)->{
+				if(hc.getPaciente_doc().equals(paci.getDocumento()))
+					listaHistoria.add(hc);
+			});
 			listCitasByPaciente.clear();
 			listCitas.forEach((cita)->{
 				if(cita.getPaciente_doc().equals(paci.getNombre()))
@@ -179,6 +191,7 @@ public class AdministradorController {
 			model.addAttribute("nombre", paci.getNombre());
 			model.addAttribute("paci", paci);
 			model.addAttribute("citas", listCitasByPaciente);
+			model.addAttribute("historias", listaHistoria);
 			model.addAttribute("admin", adm);
 			return "citaspaciente";
 	}
@@ -210,7 +223,7 @@ public class AdministradorController {
 	}
 	
 	@PostMapping("/editFotoAdmin")
-	public String editFoto(RedirectAttributes att, @RequestParam("file") MultipartFile foto,HttpServletRequest request,Model model)
+	public String editFotoAdmin(RedirectAttributes att, @RequestParam("file") MultipartFile foto,HttpServletRequest request,Model model)
 	{
 		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 		
@@ -235,7 +248,7 @@ public class AdministradorController {
 	}
 	
 	@PostMapping("/editDatosAdmin")
-	public String editDatos(RedirectAttributes att, @RequestParam("documento") String documento, @RequestParam("nombre") String nombre,
+	public String editDatosAdmin(RedirectAttributes att, @RequestParam("documento") String documento, @RequestParam("nombre") String nombre,
 			@RequestParam("tipodoc") String tipodoc, @RequestParam("correo") String correo, @RequestParam("celular") String celular, 
 			@RequestParam("password") String password,Model model)
 	{
@@ -262,8 +275,18 @@ public class AdministradorController {
 		return "redirect:/admin/edit/"+paci.getDocumento();
 	}
 	
+	@PostMapping("/editDatosOdontologo")
+	public String editOdontologo(RedirectAttributes att, Odontologo odontologo, HttpServletRequest request, Model model)
+	{
+		Odontologo odonto = odontologoService.get(odontologo.getDocumento());
+		odontologo.setFoto(odonto.getFoto());
+		odontologoService.save(odontologo);
+		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
+		return "redirect:/odontologo/edit/"+odonto.getDocumento();
+	}
+	
 	@PostMapping("/editFotoPaciente")
-	public String editFoto(RedirectAttributes att, @RequestParam("file") MultipartFile foto, 
+	public String editFotoPaciente(RedirectAttributes att, @RequestParam("file") MultipartFile foto, 
 							@RequestParam("documento") String documento, HttpServletRequest request,Model model)
 	{
 		Paciente paciente = pacienteService.get(documento);
@@ -285,6 +308,31 @@ public class AdministradorController {
 		pacienteService.save(paciente);
 		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
 		return "redirect:/admin/edit/"+paciente.getDocumento();
+	}
+	
+	@PostMapping("/editFotoOdontologo")
+	public String editFotoOdontologo(RedirectAttributes att, @RequestParam("file") MultipartFile foto, 
+							@RequestParam("documento") String documento, HttpServletRequest request,Model model){
+		
+		Odontologo odonto = odontologoService.get(documento);
+		String filename = foto.getOriginalFilename(); 
+		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
+		String fotoAntigua = odonto.getFoto();
+		File borrar = new File(uploadDirectory,fotoAntigua);
+		
+		if(borrar.exists())
+			borrar.delete();
+		
+		try {
+			Files.write(fileNameAndPath, foto.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		odonto.setFoto(filename);
+		odontologoService.save(odonto);
+		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
+		return "redirect:/odontologo/edit/"+odonto.getDocumento();
 	}
 	
 	
