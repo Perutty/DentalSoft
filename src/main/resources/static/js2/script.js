@@ -1,4 +1,5 @@
 const deletePaciente = document.querySelectorAll('.delete');
+const newEvolution = document.querySelectorAll('.newEvolution');
 const deleteOdontologo = document.querySelectorAll('.deleteOdontologo');
 const deleteCita = document.querySelectorAll('.deleteCita');
 const confirmarCita = document.querySelector('#confirmarCita');
@@ -97,6 +98,16 @@ if(confirmarOdonto){
 		window.location.href = '/odontologo/delete/'+localStorage.getItem('documento');
 	});
 	localStorage.clear();
+}
+
+if(newEvolution){
+	newEvolution.forEach(function(newEvolution){
+		newEvolution.addEventListener('click', function(){
+			var idCita = this.closest('tr').querySelector('.id');
+			var numeroDocumento = documento.textContent;
+			localStorage.setItem('documento', numeroDocumento);
+		});
+	});
 }
 
 function togglePassword() {

@@ -91,7 +91,7 @@ public class AdministradorController {
 	List<Cita> listCitasByPaciente = new ArrayList<>();
 	List<Cita> citasHistorial = new ArrayList<>();
 	List<HistoriaClinica> listaHistoria = new ArrayList<>();
-	
+	HistoriaClinica historia = new HistoriaClinica();
 	
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, Model model) {
@@ -150,6 +150,7 @@ public class AdministradorController {
 			List<Pais> pais = paisService.getAll();
 			List<Sexo> sexo = sexoService.getAll();
 			List<Eps> eps = epsService.getAll();
+			paciente.sort(Comparator.comparing(Paciente::getNombre));
 			model.addAttribute("tipoDoc", tipoDoc);
 			model.addAttribute("estadocivil", estadoCivil);
 			model.addAttribute("paciente", paciente);
@@ -177,8 +178,9 @@ public class AdministradorController {
 			listaHistoria.clear();
 			listHC.forEach((hc)->{
 				if(hc.getPaciente_doc().equals(paci.getDocumento()))
-					listaHistoria.add(hc);
+				historia = historiaClinicaService.get(hc.getId());
 			});
+			model.addAttribute("hc", historia.getId());
 			listCitasByPaciente.clear();
 			listCitas.forEach((cita)->{
 				if(cita.getPaciente_doc().equals(paci.getNombre()))

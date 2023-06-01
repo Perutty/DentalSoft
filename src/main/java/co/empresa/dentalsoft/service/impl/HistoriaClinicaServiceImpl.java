@@ -18,6 +18,6 @@ public class HistoriaClinicaServiceImpl extends GenericServiceImpl<HistoriaClini
 	@Override
 	public CrudRepository<HistoriaClinica, Integer> getDao(){
 		return historiaClinicaRepository;
-	}
+	}	
 	
 }
