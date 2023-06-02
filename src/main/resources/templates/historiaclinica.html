@@ -92,17 +92,27 @@
 					   <div class="table-title" >
 					     <div class="row">
 						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
-							    <h2 class="ml-lg-2">Gestionar Historia clínica</h2>
+							    <h2 class="ml-lg-2">Historia clínica del paciente</h2><h2 th:text="${nombre}"></h2>
 							 </div>
 					     </div>
 					   </div>
-						<h5 th:if="${historia.isEmpty()}" style="margin-top:30px;text-align:center">No hay historia clínica registrada</h5>
+						<h5 th:if="${evos.isEmpty()}" style="margin-top:30px;text-align:center">No hay evoluciones registradas</h5>
 					   <br>
-					   <div th:if="${!historia.isEmpty()}">
+					   <div th:if="${!evos.isEmpty()}">
 					   
-					   	<div class="historia-content">
-					   		<div class="historia-info">
-					   			<label th:text="*{}"></label>
+					   	<div class="historia-content" th:each="evo: ${evos}">
+					   		<div class="historia-info" th:each="cita: ${cita}">
+					   		<div th:if="${evo.cita_id == cita.id}" style="border:1px solid #00B8B0;padding:15px;margin:5px">
+					   			<label style="font-weight:bold" th:text="${cita.tratamiento_cod}"></label><br>
+					   			<label style="font-weight:bold">Fecha: </label>
+					   			<label th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></label>
+					   			<label style="font-weight:bold">Hora: </label>
+					   			<label th:text="${cita.hora}"></label><br>
+					   			<label style="font-weight:bold">Odontólogo: </label>
+					   			<label th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></label><br>
+					   			<label style="font-weight:bold">Observación: </label><br>
+					   			<label th:text="${evo.descripcion}"></label>
+					   		</div>
 					   		</div>
 					   	</div>
 					   	
@@ -118,7 +128,7 @@
 	 <footer id="footer">
 			<div class="col-md-12 text-center">
 					<span class="copyright" style="color:white">
-						 Adulam Store © 2022     ||     Todos los derechos reservados
+						 DentalSoft © 2023     ||     Todos los derechos reservados
 					</span>
 			</div>
 	</footer>

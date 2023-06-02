@@ -142,7 +142,6 @@ public class PacienteController {
 		
 		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
 		List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
-		
 		List<Pais> pais = paisService.getAll();
 		List<Sexo> sexo = sexoService.getAll();
 		List<Eps> eps = epsService.getAll();
@@ -156,8 +155,7 @@ public class PacienteController {
 	}
 	
 	@PostMapping("/editDatos")
-	public String editPaciente(RedirectAttributes att, Paciente paciente, HttpServletRequest request, Model model)
-	{
+	public String editPaciente(RedirectAttributes att, Paciente paciente, HttpServletRequest request, Model model){
 		Paciente paci = pacienteService.get(paciente.getDocumento());
 		paciente.setFoto(paci.getFoto());
 		pacienteService.save(paciente);

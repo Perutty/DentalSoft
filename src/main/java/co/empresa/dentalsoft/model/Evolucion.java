@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table (name="estadocivil")
+@Table (name="evolucion")
 @Data
 public class Evolucion {
 	

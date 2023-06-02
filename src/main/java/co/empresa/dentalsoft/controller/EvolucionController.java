@@ -59,13 +59,15 @@ public class EvolucionController {
 	}
 	
 	@PostMapping("/save")
-	public String save(Model model, @RequestParam  Integer historia_id, @RequestParam Integer cita_id, 
-						@RequestParam String descripcion, RedirectAttributes att) {
+	public String save(RedirectAttributes att, Model model, @RequestParam  String historia_id, @RequestParam String cita_id, 
+						@RequestParam String descripcion) {
 		Evolucion evo = new Evolucion();
-		evo.setCita_id(cita_id);
-		evo.setHistoria_id(historia_id);
+		String documento = historiaClinicaService.get(Integer.valueOf(historia_id)).getPaciente_doc();
+		evo.setCita_id(Integer.valueOf(cita_id));
+		evo.setHistoria_id(Integer.valueOf(historia_id));
 		evo.setDescripcion(descripcion);
 		evolucionService.save(evo);
-		return "redirect:/citas/ver";
+		att.addFlashAttribute("accion", "¡Evolución agregada con éxito!");
+		return "redirect:/admin/citas/"+documento;
 	}
 }

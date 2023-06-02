@@ -128,14 +128,14 @@
 							 <td th:text="${cita.hora}"></td>
 							 <td th:text="${cita.estado}"></td>
 							 <td>
+							   <a th:href="@{/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${hc})}">
+							   		<i class="material-icons" data-toggle="tooltip" title="Generar evolución">&#xEf40;</i>
+							   </a>
 							    <a th:href="@{/cita/editCita/{id}(id=${cita.id})}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
 							   </a>
-							   <a th:href="@{/cita/atender/{id}(id=${cita.id})}">
+							   <a th:if="${cita.estado == 'Pendiente'}" th:href="@{/cita/atender/{id}(id=${cita.id})}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Atender">&#xE876;</i>
-							   </a>
-							   <a th:href="@{/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${hc})}">
-							   		<i class="material-icons" data-toggle="tooltip" title="Generar evolución">&#xEf40;</i>
 							   </a>
 							   <a href="#deleteEmployeeModal" class="deleteCita" data-toggle="modal">
 							   		<i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
@@ -236,7 +236,7 @@
 	 <footer id="footer">
 			<div class="col-md-12 text-center">
 					<span class="copyright" style="color:white">
-						 Adulam Store © 2022     ||     Todos los derechos reservados
+						 DentalSoft © 2023     ||     Todos los derechos reservados
 					</span>
 			</div>
 	</footer>

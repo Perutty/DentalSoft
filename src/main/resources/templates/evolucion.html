@@ -112,8 +112,8 @@
   <div class="container-info-cita" th:object="${cita}">
     <div class="container col-md-30">
 	<form th:action="@{/evolucion/save}" method="post" th:object="${historia}">
-  		<input name="historia_id" th:field="${historia.id}" type="hidden" readonly class="form-control"></input>
-  		<input name="cita_id" type="hidden" th:field="${cita.id}" readonly class="form-control">
+  		<input name="historia_id" th:value="${historia.id}" type="hidden" class="form-control"></input>
+  		<input name="cita_id" type="hidden" th:value="${cita.id}"  class="form-control"></input>
         <div class="form-group">
 		    <label>Nombre del paciente</label>
 			<input name="paciente_doc" type="text" th:field="${cita.paciente_doc}" readonly class="form-control">
@@ -138,7 +138,6 @@
 		<label>Descripción: </label>
 				<textarea name="descripcion" cols="50" rows="4" class="form-control"></textarea>
 		</div>
-		<input name="estado" th:field="${cita.estado}" type="hidden" readonly class="form-control"></input>
       <div class="modal-footer" style="display:flex;align-items:center;justify-content:center">
         <button type="submit" class="btn btn-success">Guardar</button>
       </div>
@@ -153,7 +152,7 @@
 				<div class="container">
 						<div class="col-md-12 text-center">
 							<span class="copyright" style="color:white">
-								 Adulam Store © 2022     ||     Todos los derechos reservados
+								 DentalSoft © 2023     ||     Todos los derechos reservados
 							</span>
 						</div>
 				</div>

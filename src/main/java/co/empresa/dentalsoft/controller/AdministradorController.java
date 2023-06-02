@@ -268,9 +268,15 @@ public class AdministradorController {
 	}
 	
 	@PostMapping("/editDatosPaciente")
-	public String editPaciente(RedirectAttributes att, Paciente paciente, HttpServletRequest request, Model model)
-	{
+	public String editPaciente(RedirectAttributes att, Paciente paciente, HttpServletRequest request, Model model){
+		List<Cita> citas = citaService.getAll();
 		Paciente paci = pacienteService.get(paciente.getDocumento());
+		citas.forEach((cita) -> {
+			if(cita.getPaciente_doc().equals(paci.getNombre())) {
+				cita.setPaciente_doc(paciente.getNombre());
+				citaService.save(cita);
+			}
+		});
 		paciente.setFoto(paci.getFoto());
 		pacienteService.save(paciente);
 		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
