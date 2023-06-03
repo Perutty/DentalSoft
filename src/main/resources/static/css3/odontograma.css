@@ -1,0 +1,21 @@
+#main{
+	border: 1px solid 'navy';
+	display:flex;
+	justify-content:center;
+}
+
+#odontograma-wrapper{
+	text-align:center;
+	display: table-cell;  
+	width: 620px;	
+}
+#tratamiento{
+	display: table-cell;  
+	width: 400px;    	
+	margin-bottom:5px;
+}
+#tratamiento select{	
+	margin-bottom:20px;
+}
+
+

@@ -142,7 +142,6 @@ public class CitaController {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<Cita> citas = citaService.getAll();
 		listBuscarCita.clear();
-		listCitas.clear();
 		citas.forEach((cita) -> {
 			String fechaCita = dateFormat.format(cita.getFecha());
 			String fechaBuscar = dateFormat.format(fecha);

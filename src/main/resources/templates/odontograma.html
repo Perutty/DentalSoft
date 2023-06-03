@@ -1,44 +1,26 @@
-<!DOCTYPE html>
-<html lang="en"	xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8">
-       <title>DentalSoft</title>
-	   <link rel="stylesheet" th:href="@{/css/custom.css}">
-   	   <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-      <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
-  </head>
-  <body>
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>DentalSoft</title>
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" th:href="@{/css/custom2.css}">
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css3/jquery-ui-1.8.17.custom.css}">
+  <link rel="stylesheet" th:href="@{/css3/jquery.svg.css}">
+  <link rel="stylesheet" th:href="@{/css3/odontograma.css}">
+ 
+  <script th:src="@{/j3/modernizr-2.0.6.min.js}"></script>
+  <script th:src="@{/j3/tratamientos.js}"></script>
+</head>
+
+<body>
 <div class="wrapper">
-	 	<div id="sidebar">
-	    <div class="sidebar-header">
-	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
-	 	   		<img th:src="@{'/fotos/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
-		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
-		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-info">Actualizar Datos</a>
-		   </div>
-		</div>
-		<ul class="list-unstyled component m-0">
-		  <li class="active">
-		  	<a th:href="@{/admin/dashboard}">
-		  	<i class="material-icons">groups</i>Mis Pacientes</a>
-		  </li>
-		  <li class="dropdown">
-			  <a th:href="@{/odontologo/list}" >
-			  <i class="material-icons">vaccines</i>Mis Odontólogos</a>
-		  </li>		
-		  <li class="dropdown">
-				 <a th:href="@{/cita/list}">
-				  <i class="material-icons">calendar_month</i>Agenda</a>
-		  </li>
-		  
-		  <li class="dropdown">
-			  <a href="#" class="list-unstyled component m-0">
-			  <i class="material-icons">handshake</i>Consentimientos</a>
-		  </li>
-		</ul>
-	 </div>
-   
+	 	
       <div id="content">
 		  <div class="top-navbar">
 		     <div class="xd-topbar">
@@ -82,8 +64,7 @@
 				 </div>
 			 </div>
 		  </div>
-		     
-		      <div class="main-content">
+		  <div class="main-content">
 			     <div class="row">
 				    <div class="col-md-12" >
 				   
@@ -93,49 +74,53 @@
 					     <div class="row">
 						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
 							    <h2 class="ml-lg-2">
-								  Historia clínica del paciente:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								  Odontograma del paciente:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 								  <span th:text="${nombre}"></span>
 								</h2>
 							 </div>
 					     </div>
 					   </div>
-						<h5 th:if="${evos.isEmpty()}" style="margin-top:30px;text-align:center">No hay evoluciones registradas</h5>
-					   <br>
-					   <div th:if="${!evos.isEmpty()}">
-					   
-					   	<div class="historia-content" th:each="evo: ${evos}">
-					   		<div class="historia-info" th:each="cita: ${cita}">
-					   		<div class="evoluciones" th:if="${evo.cita_id == cita.id}">
-					   			<label style="font-weight:bold" th:text="${cita.tratamiento_cod}"></label><br>
-					   			<label style="font-weight:bold">Fecha: </label>
-					   			<label th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></label>
-					   			<label style="font-weight:bold">Hora: </label>
-					   			<label th:text="${cita.hora}"></label><br>
-					   			<label style="font-weight:bold">Odontólogo: </label>
-					   			<label th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></label><br>
-					   			<label style="font-weight:bold">Observación: </label><br>
-					   			<label th:text="${evo.descripcion}"></label>
-					   		</div>
-					   		</div>
-					   	</div>
-					   	
-					   </div>
-					   <div class="clearfix">
-					   </div>
-					</div>	
+					   </div>	
 					</div>
-</div>	
-</div>	
-</div>
-</div>
-	 <footer id="footer">
+				</div>	
+
+
+    <div id="main" role="main">      
+      <div id="tratamiento" class="col-md-6 order-1 order-md-1">
+        <h2>Tratamiento</h2>
+        <select 
+          data-bind=" options: tratamientosPosibles, 
+                      value: tratamientoSeleccionado, 
+                      optionsText: function(item){ return item.nombre; },
+                      optionsCaption: 'Seleccione un tratamiento...'">
+        </select>
+        <ul data-bind="foreach: tratamientosAplicados">
+          <li>
+            P<span data-bind="text: diente.id"></span><span data-bind="text: cara"></span>
+            -            
+            <span data-bind="text: tratamiento.nombre"></span>
+            | 
+            <a href="#" data-bind="click: $parent.quitarTratamiento">Eliminar</a>
+          </li>
+        </ul>
+      </div>
+      <div id="odontograma-wrapper" class="order-1 order-md-2">
+        <h2 class="odontograma">Odontograma</h2>
+        <div id="odontograma"></div>
+      </div>      
+    </div>
+  
+  
+  </div>
+  </div>
+  </div>	
+   <footer id="footer">
 			<div class="col-md-12 text-center">
 					<span class="copyright" style="color:white">
 						 DentalSoft © 2023     ||     Todos los derechos reservados
 					</span>
 			</div>
 	</footer>
-
    <script src="https://kit.fontawesome.com/379287da3b.js" crossorigin="anonymous"></script>
    <script th:src="@{/js2/script.js}"></script>
    <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
@@ -143,6 +128,14 @@
    <script th:src="@{/js/bootstrap.min.js}"></script>
    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+  <script defer th:src="@{/j3/jquery-1.7.1.min.js}"></script>
+  <script defer th:src="@{/j3/plugins.js}"></script>
+  <script defer th:src="@{/j3/jquery-ui-1.8.17.custom.min.js}"></script>
+  <script defer th:src="@{/j3/jquery.tmpl.js}"></script>
+  <script defer th:src="@{/j3/knockout-2.0.0.js}"></script>
+  <script defer th:src="@{/j3/jquery.svg.min.js}"></script>  
+  <script defer th:src="@{/j3/jquery.svggraph.min.js}"></script>  
+  <script defer th:src="@{/j3/odontograma.js}"></script>
   
   <script type="text/javascript" th:inline="javascript">
        $(document).ready(function(){
@@ -157,5 +150,6 @@
 		  
 	   });
   </script>
-  </body>
-  </html>
+
+</body>
+</html>
