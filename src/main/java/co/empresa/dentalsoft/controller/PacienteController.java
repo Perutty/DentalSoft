@@ -81,6 +81,8 @@ public class PacienteController {
 	List<Cita> citas = new ArrayList<>();
 	
 	List<Cita> listBuscarCita = new ArrayList<>();
+	
+	boolean exist;
 
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, Model model) {
@@ -125,6 +127,7 @@ public class PacienteController {
 	public String save(RedirectAttributes att,@RequestParam("file") MultipartFile foto,Paciente paciente, 
 				Model model){
 		
+				List<Paciente> pacientes = pacienteService.getAll();
 				String filename = foto.getOriginalFilename();
 				Path fileNameAndPath = Paths.get(uploadDirectory,filename);
 				
@@ -134,13 +137,25 @@ public class PacienteController {
 					e.printStackTrace();
 				}
 				
-				paciente.setFoto(filename);
-				pacienteService.save(paciente);
-				HistoriaClinica hc = new HistoriaClinica();
-				hc.setPaciente_doc(paciente.getDocumento());
-				historiaClinicaService.save(hc);
-				att.addFlashAttribute("accion", "¡Paciente registrado con éxito!");
-		return "redirect:/admin/dashboard";
+				
+				
+				pacientes.forEach((p) ->{
+					if(p.getDocumento().equals(paciente.getDocumento())) {
+						exist = true;
+					}
+				});
+				if(exist==true) {
+					att.addFlashAttribute("accion", "¡El documento de identidad ya se encuentra registrado!");
+					return "redirect:/admin/dashboard";
+				}else {
+					paciente.setFoto(filename);
+					pacienteService.save(paciente);
+					HistoriaClinica hc = new HistoriaClinica();
+					hc.setPaciente_doc(paciente.getDocumento());
+					historiaClinicaService.save(hc);
+					att.addFlashAttribute("accion", "¡Paciente registrado con éxito!");
+					return "redirect:/admin/dashboard";
+				}
 }
 	
 	@GetMapping("/edit")
