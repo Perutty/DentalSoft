@@ -183,6 +183,7 @@ public class AdministradorController {
 					historia = historiaClinicaService.get(hc.getId());
 				
 			});
+			
 			listCitasByPaciente.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
 			model.addAttribute("hc", historia.getId());
 			model.addAttribute("tratamientos", tratamientos);

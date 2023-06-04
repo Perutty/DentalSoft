@@ -87,7 +87,7 @@
 			     <div class="row">
 				    <div class="col-md-12" >
 				   
-					   <div class="table-wrapper">
+					 <div class="table-wrapper">
 					     
 					   <div class="table-title" >
 					     <div class="row">
@@ -98,7 +98,7 @@
 								</h2>
 							 </div>
 							 <div class="col-sm-5 p-0 flex justify-content-lg-end justify-content-center">
-							   <a href="#addEmployeeModal" class="btn btn-secondary" data-toggle="modal">
+							   <a href="#addEmployeeModal" class="btn btn-secondary" data-toggle="modal" id="agregar">
 							   <i class="material-icons">&#xE147;</i>
 							   <span>Agregar cita</span>
 							   </a>
@@ -153,11 +153,11 @@
 						     <td class="id" style="display:none" th:text="${hc}"></td>
 							 <td class="nameDoc" th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></td>
 							 <td class="namePaci" th:text="${cita.tratamiento_cod}"></td>
-							 <td th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></td>
-							 <td th:text="${cita.hora}"></td>
+							 <td class="fecha" th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></td>
+							 <td class="hora" th:text="${cita.hora}"></td>
 							 <td th:text="${cita.estado}"></td>
 							 <td>
-							   <a th:href="@{/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${hc})}">
+							   <a id="ref" th:href="@{/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${hc})}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Generar evolución">&#xEf40;</i>
 							   </a>
 							    <a th:href="@{/cita/editCita/{id}(id=${cita.id})}">
@@ -237,14 +237,14 @@
 		
 		<div class="form-group" style="display:flex;align-items:center;justify-content:space-between">
 		<label>Fecha de cita: </label>
-				<input name="fecha" type="date" id="fecha" required></input>
+				<input name="fecha" type="date" id="fechacita" required></input>
 		</div>
-		<div class="form-group" style="display:flex;align-items:center;justify-content:space-between">
+		<div class="form-group" style="display:flex;align-items:center;justify-content:space-between;">
 		    <label>Hora: </label>
-		    <select class="input-select" type="number" name="hora">
+		    <select class="input-select" type="number" name="hora" >
 		    <option value="" style="text-align: center">--- Seleccione la hora de la cita ---</option>
 		    <div th:each="hora: ${horas}">
-				<option th:value="${hora.hora}" th:text="${hora.hora}"></option>
+				<option th:value="${hora.hora}" th:text="${hora.hora}" id="horacita"></option>
 			</div>
 			</select>
 		</div>
@@ -277,22 +277,8 @@
    <script th:src="@{/js/bootstrap.min.js}"></script>
    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-  
-  <script type="text/javascript" th:inline="javascript">
-       $(document).ready(function(){
-	      $(".xp-menubar").on('click',function(){
-		    $("#sidebar").toggleClass('active');
-			$("#content").toggleClass('active');
-		  });
-		  
-		  $('.xp-menubar,.body-overlay').on('click',function(){
-		     $("#sidebar,.body-overlay").toggleClass('show-nav');
-		  });
-		  
-	   });
-  </script>
   <script>
-    var inputFecha = document.getElementById('fecha');
+    var inputFecha = document.getElementById('fechacita');
 
     // Escuchar el evento de clic en el campo de entrada de fecha
     inputFecha.addEventListener('click', function() {
@@ -309,5 +295,18 @@
         inputFecha.min = fechaFormateada;
     });
 </script>
+  <script type="text/javascript" th:inline="javascript">
+       $(document).ready(function(){
+	      $(".xp-menubar").on('click',function(){
+		    $("#sidebar").toggleClass('active');
+			$("#content").toggleClass('active');
+		  });
+		  
+		  $('.xp-menubar,.body-overlay').on('click',function(){
+		     $("#sidebar,.body-overlay").toggleClass('show-nav');
+		  });
+		  
+	   });
+  </script>
   </body>
   </html>
