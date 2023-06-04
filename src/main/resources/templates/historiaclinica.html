@@ -97,6 +97,12 @@
 								  <span th:text="${nombre}"></span>
 								</h2>
 							 </div>
+							 <div class="col-sm-5 p-0 flex justify-content-lg-end justify-content-center" th:object="${paci}">
+							   <a th:href="@{/historiaclinica/exportarpdf/{documento}(documento=${paci.documento})}" class="btn btn-secondary">Descargar</a>
+							 </div>
+							 <div class="col-sm-1 p-0 flex justify-content-lg-end justify-content-center">
+							   <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Salir</a>
+							 </div>
 					     </div>
 					   </div>
 						<h5 th:if="${evos.isEmpty()}" style="margin-top:30px;text-align:center">No hay evoluciones registradas</h5>

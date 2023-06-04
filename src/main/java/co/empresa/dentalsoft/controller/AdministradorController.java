@@ -168,32 +168,29 @@ public class AdministradorController {
 			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 			Paciente paci = pacienteService.get(documento);
 			List<HistoriaClinica> listHC = historiaClinicaService.getAll();
-			
 			request.getSession().setAttribute("docPaci", documento);
-			
 			List<Cita> listCitas = citaService.getAll();
 			List<Tratamiento> tratamientos = tratamientoService.getAll();
 			List<Odontologo> odontologos = odontologoService.getAll();
 			List<Hora> horas = horaService.getAll();
-			listaHistoria.clear();
-			listHC.forEach((hc)->{
-				if(hc.getPaciente_doc().equals(paci.getDocumento()))
-				historia = historiaClinicaService.get(hc.getId());
-			});
-			model.addAttribute("hc", historia.getId());
 			listCitasByPaciente.clear();
 			listCitas.forEach((cita)->{
 				if(cita.getPaciente_doc().equals(paci.getNombre()))
 					listCitasByPaciente.add(cita);
 			});
+			listHC.forEach((hc)->{
+				if(hc.getPaciente_doc().equals(paci.getDocumento())) 
+					historia = historiaClinicaService.get(hc.getId());
+				
+			});
 			listCitasByPaciente.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
+			model.addAttribute("hc", historia.getId());
 			model.addAttribute("tratamientos", tratamientos);
 			model.addAttribute("horas", horas);
 			model.addAttribute("odontologos", odontologos);
 			model.addAttribute("nombre", paci.getNombre());
 			model.addAttribute("paci", paci);
 			model.addAttribute("citas", listCitasByPaciente);
-			model.addAttribute("historias", listaHistoria);
 			model.addAttribute("admin", adm);
 			return "citaspaciente";
 	}

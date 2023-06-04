@@ -43,20 +43,29 @@ public class EvolucionController {
 	List<Evolucion> listEvo = new ArrayList<>();
 	
 	@GetMapping("/new/{idCita}/{idHistoria}")
-	public String generarEvo(HttpServletRequest request, Model model, @PathVariable("idCita") Integer idCita,  @PathVariable("idHistoria") Integer idHistoria) {
+	public String generarEvo(RedirectAttributes att, HttpServletRequest request, Model model, @PathVariable("idCita") Integer idCita,  @PathVariable("idHistoria") Integer idHistoria) {
 			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
+			List<Evolucion> evos = evolucionService.getAll();
+			listEvo.clear();
+			evos.forEach((e)->{
+				if(e.getCita_id().equals(idCita) && e.getHistoria_id().equals(idHistoria)) {
+					listEvo.add(e);
+				}
+			});
 			Cita cita = citaService.get(idCita);
 			HistoriaClinica hc = historiaClinicaService.get(idHistoria);
+			if(listEvo.isEmpty()) {
+			model.addAttribute("paci", hc.getPaciente_doc());
 			model.addAttribute("cita", cita);
 			model.addAttribute("historia", hc);
 			model.addAttribute("admin", adm);
-		return "evolucion";
+				return "evolucion";
+			}else {
+				att.addFlashAttribute("accion", "¡Esta cita ya cuenta con una evolución!");
+				return "redirect:/admin/citas/"+hc.getPaciente_doc();
+			}
 	}
 	
-	@GetMapping("/ver")
-	public String ver(HttpServletRequest request, Model model) {
-		return "";
-	}
 	
 	@PostMapping("/save")
 	public String save(RedirectAttributes att, Model model, @RequestParam  String historia_id, @RequestParam String cita_id, 

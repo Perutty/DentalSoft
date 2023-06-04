@@ -74,10 +74,12 @@
 					     <div class="row">
 						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
 							    <h2 class="ml-lg-2">
-								  Odontograma del paciente:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								  <span th:text="${nombre}"></span>
+								  Odontograma del paciente:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span th:text="${nombre}"></span>
 								</h2>
 							 </div>
+							 <div class="but" th:object="${paci}">
+							    <a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Salir</a>
+							</div>
 					     </div>
 					   </div>
 					   </div>	

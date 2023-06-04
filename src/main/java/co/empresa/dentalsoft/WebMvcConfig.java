@@ -10,9 +10,10 @@ public class WebMvcConfig implements WebMvcConfigurer{
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		WebMvcConfigurer.super.addResourceHandlers(registry);
-		
 		registry.addResourceHandler("/fotos/**").addResourceLocations("file:/C:/home/centos/fotos/");
 	}
+	
+	
 	
 	
 	
