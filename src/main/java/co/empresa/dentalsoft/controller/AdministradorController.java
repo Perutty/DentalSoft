@@ -227,24 +227,36 @@ public class AdministradorController {
 	}
 	
 	@PostMapping("/editFotoAdmin")
-	public String editFotoAdmin(RedirectAttributes att, @RequestParam("file") MultipartFile foto,HttpServletRequest request,Model model)
+	public String editFotoAdmin(RedirectAttributes att, @RequestParam("file") MultipartFile foto,HttpServletRequest request,Model model) throws IOException
 	{
 		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 		
-		String filename = foto.getOriginalFilename();
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append(System.getProperty("user.home"));
+		builder.append(File.separator);
+		builder.append("prueba");
+		builder.append(File.separator);
+		builder.append(foto.getOriginalFilename());
+		
+		byte[] fileBytes = foto.getBytes();
+		Path path = Paths.get(builder.toString());
+		Files.write(path, fileBytes);
+		
+		/*String filename = foto.getOriginalFilename();
 		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
 		String fotoAntigua = adm.getFoto();
 		File borrar = new File(uploadDirectory,fotoAntigua);
 		
 		if(borrar.exists())
-			borrar.delete();
+			borrar.delete();*/
 		
-		try {
+		/*try {
 			Files.write(fileNameAndPath, foto.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-			adm.setFoto(filename);
+		}*/
+			adm.setFoto(foto.getOriginalFilename());
 			administradorService.save(adm);
 			att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
 		
