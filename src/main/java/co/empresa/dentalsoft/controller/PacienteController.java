@@ -29,6 +29,7 @@ import co.empresa.dentalsoft.model.Administrador;
 import co.empresa.dentalsoft.model.Cita;
 import co.empresa.dentalsoft.model.Eps;
 import co.empresa.dentalsoft.model.EstadoCivil;
+import co.empresa.dentalsoft.model.Evolucion;
 import co.empresa.dentalsoft.model.HistoriaClinica;
 import co.empresa.dentalsoft.model.Paciente;
 import co.empresa.dentalsoft.model.Pais;
@@ -38,6 +39,7 @@ import co.empresa.dentalsoft.service.AdministradorService;
 import co.empresa.dentalsoft.service.CitaService;
 import co.empresa.dentalsoft.service.EpsService;
 import co.empresa.dentalsoft.service.EstadoCivilService;
+import co.empresa.dentalsoft.service.EvolucionService;
 import co.empresa.dentalsoft.service.HistoriaClinicaService;
 import co.empresa.dentalsoft.service.PacienteService;
 import co.empresa.dentalsoft.service.PaisService;
@@ -70,6 +72,10 @@ public class PacienteController {
 	private TipoDocumentoService tipoDocumentoService;
 	
 	@Autowired
+	private EvolucionService evolucionService;
+	
+	
+	@Autowired
 	private AdministradorService administradorService;
 	
 	
@@ -78,6 +84,10 @@ public class PacienteController {
 	
 	public static String uploadDirectory = "/home/centos/fotos";
 	
+	public List<Evolucion> ev = new ArrayList<>();
+	
+	public List<Cita> cita = new ArrayList<>();
+
 	List<Cita> citas = new ArrayList<>();
 	
 	List<Cita> listBuscarCita = new ArrayList<>();
@@ -215,15 +225,14 @@ public class PacienteController {
 	public String buscarCitas(@RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, 
 								@RequestParam("estado") String estado, HttpServletRequest request, 
 								RedirectAttributes att,Model model) {
-		
-		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
+		Paciente paci = pacienteService.get((String)request.getSession().getAttribute("paciente_doc"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<Cita> listcitas = citaService.getAll();
 		listBuscarCita.clear();
 		listcitas.forEach((cita) -> {
 			String fechaCita = dateFormat.format(cita.getFecha());
 			String fechaBuscar = dateFormat.format(fecha);
-		if(fechaCita.equals(fechaBuscar) && cita.getEstado().equals(estado)) {
+		if(fechaCita.equals(fechaBuscar) && cita.getEstado().equals(estado) && cita.getPaciente_doc().equals(paci.getNombre())) {
 				listBuscarCita.add(cita);
 				listBuscarCita.sort(Comparator.comparing(Cita::getHora));	
 				model.addAttribute("fecha", fechaBuscar);
@@ -234,9 +243,9 @@ public class PacienteController {
 			model.addAttribute("estado", estado);
 		}
 		});
+		model.addAttribute("paciente", paci);
 		model.addAttribute("citas", listBuscarCita);
-		model.addAttribute("admin", adm);
-		return "citaspaciente";
+		return "pacientedashboard";
 	}
 	
 	@GetMapping("/delete/{documento}")
@@ -246,11 +255,43 @@ public class PacienteController {
 		return "redirect:/admin/dashboard";
 	}
 	
-	@GetMapping("/historia")
+	@GetMapping("/odontograma")
 	public String historia(Model model, HttpServletRequest request) {
 		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 		model.addAttribute("admin", adm);
 		return "odontograma";
+	}
+	
+	@GetMapping("/tratamientos")
+	public String tratamientos(Model model, HttpServletRequest request) {
+		
+		Paciente paci = pacienteService.get((String)request.getSession().getAttribute("paciente_doc"));
+		
+		List<HistoriaClinica> historias = historiaClinicaService.getAll();
+		List<Cita> citas = citaService.getAll();
+		List<Evolucion> evos = evolucionService.getAll();
+		ev.clear();
+		cita.clear();
+		historias.forEach((historia)->{
+			if(historia.getPaciente_doc().equals(paci.getDocumento())){
+				evos.forEach((e)->{
+					if(e.getHistoria_id().equals(historia.getId()))
+					{
+						ev.add(e);
+						citas.forEach((c)->{
+							if(c.getId().equals(e.getCita_id())) {
+								cita.add(c);
+							}
+						});
+					}
+				});
+			}
+		});
+		model.addAttribute("cita", cita);
+		model.addAttribute("evos", ev);
+		model.addAttribute("nombre", paci.getNombre());
+		model.addAttribute("paci", paci);
+		return "tratamientos";
 	}
 	
 	@GetMapping("/logout")

@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -92,6 +95,7 @@ public class AdministradorController {
 	List<Cita> citasHistorial = new ArrayList<>();
 	List<HistoriaClinica> listaHistoria = new ArrayList<>();
 	HistoriaClinica historia = new HistoriaClinica();
+	List<Cita> listBuscarCita = new ArrayList<>();
 	
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, Model model) {
@@ -244,7 +248,7 @@ public class AdministradorController {
 			administradorService.save(adm);
 			att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
 		
-		return "redirect:/admin/edit/"+adm.getDocumento();
+		return "redirect:/admin/edit";
 	}
 	
 	@PostMapping("/editDatosAdmin")
@@ -262,7 +266,7 @@ public class AdministradorController {
 		adm.setFoto(adm.getFoto());
 		administradorService.save(adm);
 		att.addFlashAttribute("accion", "¡Datos personales actualizados con éxito!");
-		return "redirect:/admin/dashboard";
+		return "redirect:/admin/edit";
 	}
 	
 	@PostMapping("/editDatosPaciente")
@@ -339,6 +343,34 @@ public class AdministradorController {
 		odontologoService.save(odonto);
 		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
 		return "redirect:/odontologo/edit/"+odonto.getDocumento();
+	}
+	
+	@GetMapping("/buscar")
+	public String buscarCitas(@RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, 
+								@RequestParam("estado") String estado, HttpServletRequest request, 
+								RedirectAttributes att,Model model) {
+		
+		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		List<Cita> listcitas = citaService.getAll();
+		listBuscarCita.clear();
+		listcitas.forEach((cita) -> {
+			String fechaCita = dateFormat.format(cita.getFecha());
+			String fechaBuscar = dateFormat.format(fecha);
+		if(fechaCita.equals(fechaBuscar) && cita.getEstado().equals(estado)) {
+				listBuscarCita.add(cita);
+				listBuscarCita.sort(Comparator.comparing(Cita::getHora));	
+				model.addAttribute("fecha", fechaBuscar);
+				model.addAttribute("estado", estado);
+		}else
+		{
+			model.addAttribute("fecha", fechaBuscar);
+			model.addAttribute("estado", estado);
+		}
+		});
+		model.addAttribute("citas", listBuscarCita);
+		model.addAttribute("admin", adm);
+		return "citaspaciente";
 	}
 	
 	

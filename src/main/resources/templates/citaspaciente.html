@@ -151,8 +151,8 @@
 						     <tr>
 						     <td class="id" style="display:none" th:text="${cita.id}"></td>
 						     <td class="id" style="display:none" th:text="${hc}"></td>
-							 <td class="nameDoc" th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></td>
-							 <td class="namePaci" th:text="${cita.tratamiento_cod}"></td>
+							 <td th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></td>
+							 <td th:text="${cita.tratamiento_cod}"></td>
 							 <td class="fecha" th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></td>
 							 <td class="hora" th:text="${cita.hora}"></td>
 							 <td th:text="${cita.estado}"></td>
@@ -169,6 +169,7 @@
 							   <a href="#deleteEmployeeModal" class="deleteCita" data-toggle="modal">
 							   		<i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
 							   </a>
+							   </td>
 							 </tr>
 						  </tbody>
 					   </table>

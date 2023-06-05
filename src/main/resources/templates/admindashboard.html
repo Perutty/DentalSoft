@@ -101,7 +101,9 @@
 							 </div>
 					     </div>
 					   </div>
+					   <h5 th:if="${paciente.isEmpty()}" style="margin-top:30px;text-align:center">No hay pacientes registrados</h5>
 					   <br>
+					   <div th:if="${!paciente.isEmpty()}">
 					   <input type="text" id="search-input" placeholder="Buscar"><br><br>
 					   <table class="table table-striped table-hover" id="tablax">
 					      <thead>
@@ -129,7 +131,7 @@
 							   <a th:href="@{/admin/citas/{documento}(documento=${paci.documento})}">
 							  		 <i class="material-icons" data-toggle="tooltip" title="Citas">calendar_month</i>
 							   </a>
-							   <a th:href="@{/paciente/historia}">
+							   <a th:href="@{/paciente/odontograma}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Odontograma">&#xe913;</i>
 							   </a>
 							    <a th:href="@{/admin/edit/{documento}(documento=${paci.documento})}">
@@ -142,6 +144,7 @@
 							 </tr>
 						  </tbody>
 					   </table>
+					   </div>
 					   <div class="clearfix">
 					   </div>
 					</div>	

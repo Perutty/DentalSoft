@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.empresa.dentalsoft.model.Administrador;
 import co.empresa.dentalsoft.model.Cita;
-import co.empresa.dentalsoft.model.Eps;
-import co.empresa.dentalsoft.model.EstadoCivil;
 import co.empresa.dentalsoft.model.Odontologo;
-import co.empresa.dentalsoft.model.Paciente;
-import co.empresa.dentalsoft.model.Pais;
-import co.empresa.dentalsoft.model.Sexo;
 import co.empresa.dentalsoft.model.TipoDocumento;
 import co.empresa.dentalsoft.service.AdministradorService;
 import co.empresa.dentalsoft.service.CitaService;
@@ -52,6 +50,10 @@ public class OdontologoController {
 	private CitaService citaService;
 	
 	List<Cita> citas = new ArrayList<>();
+	
+	boolean exist;
+	
+	List<Cita> listBuscarCita = new ArrayList<>();
 	
 	public static String uploadDirectory = "/home/centos/fotos";
 	
@@ -107,6 +109,7 @@ public class OdontologoController {
 				Model model){
 		String filename = foto.getOriginalFilename();
 		Path fileNameAndPath = Paths.get(uploadDirectory,filename);
+		List<Odontologo> odontologos = odontologoService.getAll();
 		
 		try {
 			Files.write(fileNameAndPath, foto.getBytes());
@@ -114,10 +117,22 @@ public class OdontologoController {
 			e.printStackTrace();
 		}
 		
-		odontologo.setFoto(filename);
-		odontologoService.save(odontologo);
-		att.addFlashAttribute("accion", "¡Odontologo registrado con éxito!");
-		return "redirect:/odontologo/list";
+		odontologos.forEach((o) ->{
+			if(o.getDocumento().equals(odontologo.getDocumento())) {
+				exist = true;
+			}
+		});
+		
+		if(exist == true) {
+			att.addFlashAttribute("accion", "¡Documento de identidad ya se encuentra registrado!");
+			return "redirect:/odontologo/list";
+		}else {
+			odontologo.setFoto(filename);
+			odontologoService.save(odontologo);
+			att.addFlashAttribute("accion", "¡Odontologo registrado con éxito!");
+			return "redirect:/odontologo/list";
+		}
+		
 	}
 	
 	@GetMapping("/edit/{documento}")
@@ -132,6 +147,33 @@ public class OdontologoController {
 		model.addAttribute("odontologo", odonto);
 		model.addAttribute("admin", adm);
 		return "editodontologo";
+	}
+	
+	@GetMapping("/buscar")
+	public String buscarCitas(@RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, 
+								@RequestParam("estado") String estado, HttpServletRequest request, 
+								RedirectAttributes att,Model model) {
+		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		List<Cita> listcitas = citaService.getAll();
+		listBuscarCita.clear();
+		listcitas.forEach((cita) -> {
+			String fechaCita = dateFormat.format(cita.getFecha());
+			String fechaBuscar = dateFormat.format(fecha);
+		if(fechaCita.equals(fechaBuscar) && cita.getEstado().equals(estado) && cita.getOdontologo_doc().equals(odonto.getNombre())) {
+				listBuscarCita.add(cita);
+				listBuscarCita.sort(Comparator.comparing(Cita::getHora));	
+				model.addAttribute("fecha", fechaBuscar);
+				model.addAttribute("estado", estado);
+		}else
+		{
+			model.addAttribute("fecha", fechaBuscar);
+			model.addAttribute("estado", estado);
+		}
+		});
+		model.addAttribute("odontologo", odonto);
+		model.addAttribute("citas", listBuscarCita);
+		return "odontologodashboard";
 	}
 	
 	@GetMapping("/delete/{documento}")

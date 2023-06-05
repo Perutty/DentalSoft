@@ -5,7 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import co.empresa.dentalsoft.commands.GenericServiceImpl;
-import co.empresa.dentalsoft.model.Administrador;
 import co.empresa.dentalsoft.model.Odontologo;
 import co.empresa.dentalsoft.repository.OdontologoRepository;
 import co.empresa.dentalsoft.service.OdontologoService;
