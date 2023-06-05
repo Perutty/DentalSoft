@@ -111,7 +111,7 @@
 					
 	<div class="container-info" th:object="${adm}">
 	   <div class="container-foto">
-	     <form th:action="@{/admin/editFoto}" method="post" enctype="multipart/form-data">
+	     <form th:action="@{/admin/editFotoAdmin}" method="post" enctype="multipart/form-data">
 			<img th:src="@{'/fotos/'+${adm.foto}}" style="margin: 0 auto;border-radius:50%; width:240px; height:240px"/><br><br>
 			<div><span>¿Quieres actualizar tu foto de perfil?</span></div><br>
 			<input type="file" name="file" accept="image/*"/><br><br>
