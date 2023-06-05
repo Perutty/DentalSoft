@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"	xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+       <title>DentalSoft</title>
+	   <link rel="stylesheet" th:href="@{/css/custom.css}">
+   	   <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+      <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body>
+<div class="wrapper">
+	 	<div id="sidebar">
+	    <div class="sidebar-header">
+	 	   <div th:object="${paci}" style="display:grid;justify-content:center;align-items:center;text-align:center">
+	 	   		<img th:src="@{'/fotos/'+${paci.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
+		   		<h3><br><span th:text="${paci.nombre}"></span></h3><br>
+		   <a th:href="@{/paci/edit}" class="btn btn-info">Actualizar Datos</a>
+		   </div>
+		</div>
+		<ul class="list-unstyled component m-0">
+		  <li class="dropdown">
+		  <a th:href="@{/paciente/dashboard}" class="dashboard"><i class="material-icons">calendar_month</i>Mis citas</a>
+		  </li>
+		  <li class="active">
+		  <a th:href="@{/paciente/tratamientos}" class="list-unstyled component m-0">
+		  <i class="material-icons">vaccines</i>Mis tratamientos
+		  </a>
+		  </li>		
+		</ul>
+	 </div>
+   
+      <div id="content">
+		  <div class="top-navbar">
+		     <div class="xd-topbar">
+			     <div class="row">
+				     <div class="col-1 col-md-1 col-lg-1 order-1 order-md-1 align-self-center">
+					    <div class="xp-menubar">
+						    <span class="material-icons text-white">signal_cellular_alt</span>
+						</div>
+					 </div>
+					 
+					 <div class="col-md-1 order-1 order-md-3">
+					     <div class="xp-profilebar text-right">
+						    <nav class="navbar p-0">
+							   <ul class="nav navbar-nav flex-row ml-auto">
+							   <li class="dropdown nav-item">
+							     <a class="nav-link" href="#" data-toggle="dropdown">
+								  <i class="material-icons">power_settings_new</i>
+								  <span class="xp-user-live"></span>
+								 </a>
+								  <ul class="dropdown-menu small-menu">
+									 <li><a th:href="@{/admin/logout}">
+									 <span class="material-icons">logout</span>
+									 Cerrar sesión
+									 </a></li>
+								  </ul>
+							   </li>
+							  </ul>
+						</nav>
+						</div>
+					 </div>
+					<div class="xp-breadcrumbbar text-center order-1 order-md-2">
+							    <span class="page-title" >MANRIQUE Y SOTO CENTRO ODONTOLÓGICO</span>
+					</div>
+				 </div>
+				 
+				 <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${accion != null }">
+					<label th:text="${accion}"></label>
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    						<span aria-hidden="true">&times;</span>
+						</button>
+				 </div>
+			 </div>
+		  </div>
+		     
+		      <div class="main-content">
+			     <div class="row">
+				    <div class="col-md-12" >
+				   
+					   <div class="table-wrapper">
+					     
+					   <div class="table-title" >
+					     <div class="row">
+						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
+							    <h2 class="ml-lg-2">
+								  Mis tratamientos realizados
+								</h2>
+							 </div>
+							 <div class="col-sm-1 p-0 flex justify-content-lg-end justify-content-center">
+							   <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Salir</a>
+							 </div>
+					     </div>
+					   </div>
+						<h5 th:if="${evos.isEmpty()}" style="margin-top:30px;text-align:center">No hay evoluciones registradas</h5>
+					   <br>
+					   <div th:if="${!evos.isEmpty()}">
+					   
+					   	<div class="historia-content" th:each="evo: ${evos}">
+					   		<div class="historia-info" th:each="cita: ${cita}">
+					   		<div class="evoluciones" th:if="${evo.cita_id == cita.id}">
+					   			<label style="font-weight:bold" th:text="${cita.tratamiento_cod}"></label><br>
+					   			<label style="font-weight:bold">Fecha: </label>
+					   			<label th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></label>
+					   			<label style="font-weight:bold">Hora: </label>
+					   			<label th:text="${cita.hora}"></label><br>
+					   			<label style="font-weight:bold">Odontólogo: </label>
+					   			<label th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></label><br>
+					   			<label style="font-weight:bold">Observación: </label><br>
+					   			<label th:text="${evo.descripcion}"></label>
+					   		</div>
+					   		</div>
+					   	</div>
+					   	
+					   </div>
+					   <div class="clearfix">
+					   </div>
+					</div>	
+					</div>
+</div>	
+</div>	
+</div>
+</div>
+	 <footer id="footer">
+			<div class="col-md-12 text-center">
+					<span class="copyright" style="color:white">
+						 DentalSoft © 2023     ||     Todos los derechos reservados
+					</span>
+			</div>
+	</footer>
+
+   <script src="https://kit.fontawesome.com/379287da3b.js" crossorigin="anonymous"></script>
+   <script th:src="@{/js2/script.js}"></script>
+   <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
+   <script th:src="@{/js/popper.min.js}"></script>
+   <script th:src="@{/js/bootstrap.min.js}"></script>
+   <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+   <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+  
+  <script type="text/javascript" th:inline="javascript">
+       $(document).ready(function(){
+	      $(".xp-menubar").on('click',function(){
+		    $("#sidebar").toggleClass('active');
+			$("#content").toggleClass('active');
+		  });
+		  
+		  $('.xp-menubar,.body-overlay').on('click',function(){
+		     $("#sidebar,.body-overlay").toggleClass('show-nav');
+		  });
+		  
+	   });
+  </script>
+  </body>
+  </html>
