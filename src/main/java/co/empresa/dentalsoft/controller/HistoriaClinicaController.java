@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.lowagie.text.DocumentException;
 
@@ -86,7 +87,8 @@ public class HistoriaClinicaController {
 	}
 	
 	@GetMapping("/exportarpdf/{documento}")
-	public void exportarPDF(HttpServletResponse response, @PathVariable("documento") String documento) throws DocumentException, IOException {
+	public void exportarPDF(HttpServletResponse response,RedirectAttributes att, 
+								@PathVariable("documento") String documento) throws DocumentException, IOException {
 		
 		Paciente paci = pacienteService.get(documento);
 		List<HistoriaClinica> historias = historiaClinicaService.getAll();
@@ -109,13 +111,13 @@ public class HistoriaClinicaController {
 				});
 			}
 		});
+			response.setContentType("application/pdf");
+			String cabecera = "Content-Disposition";
+			String valor = "attachment; filename=HC_" + paci.getNombre() + ".pdf";
+			response.setHeader(cabecera, valor);
+			
+			HistoriaClinicaExport hc = new HistoriaClinicaExport(ev, cita, paci.getNombre());
+			hc.exportar(response);
 		
-		response.setContentType("application/pdf");
-		String cabecera = "Content-Disposition";
-		String valor = "attachment; filename=HC_" + paci.getNombre() + ".pdf";
-		response.setHeader(cabecera, valor);
-		
-		HistoriaClinicaExport hc = new HistoriaClinicaExport(ev, cita, paci.getNombre());
-		hc.exportar(response);
 	}
 }
