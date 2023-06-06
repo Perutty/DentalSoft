@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -89,7 +90,7 @@ public class AdministradorController {
 	@Autowired
 	private SexoService sexoService;
 	
-	public static String uploadDirectory = "/home/centos/fotos";
+	public static String uploadDirectory = System.getProperty("user.home") + "/dentalsoft";
 	
 	List<Cita> listCitasByPaciente = new ArrayList<>();
 	List<Cita> citasHistorial = new ArrayList<>();
@@ -231,31 +232,22 @@ public class AdministradorController {
 	{
 		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 		
-		
-		StringBuilder builder = new StringBuilder();
-		builder.append(System.getProperty("user.home"));
-		builder.append(File.separator);
-		builder.append("prueba");
-		builder.append(File.separator);
-		builder.append(foto.getOriginalFilename());
-		
-		byte[] fileBytes = foto.getBytes();
-		Path path = Paths.get(builder.toString());
-		Files.write(path, fileBytes);
-		
-		/*String filename = foto.getOriginalFilename();
+		String filename = foto.getOriginalFilename();
 		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
+		
 		String fotoAntigua = adm.getFoto();
 		File borrar = new File(uploadDirectory,fotoAntigua);
 		
 		if(borrar.exists())
-			borrar.delete();*/
+			borrar.delete();
 		
-		/*try {
+		
+		try {
 			Files.write(fileNameAndPath, foto.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
+		}
+			
 			adm.setFoto(foto.getOriginalFilename());
 			administradorService.save(adm);
 			att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
