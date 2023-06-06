@@ -13,7 +13,7 @@
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
 	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
-	 	   		<img th:src="@{'/fotos/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
+	 	   		<img th:src="${admin.foto}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
 		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
 		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-info">Actualizar Datos</a>
 		   </div>
@@ -111,7 +111,7 @@
 						<div th:if="${citas.isEmpty()}">
 					   		<h5 style="margin-top:30px;text-align:center">No hay citas agendadas</h5><br>
 					   		<label>Buscar por: </label>
-					   		  <form th:action="@{/paciente/buscar}" style="display:flex; align-items:center">
+					   		  <form th:action="@{/admin/buscar}" style="display:flex; align-items:center">
 							   	<input type="date" th:attr="value=${fecha}" style="width:150px; height:40px" name="fecha">
 							   	<label style="margin-left:30px;display:flex; align-items:center">Escoja la opción:  	
 							   	 <select name="estado" style="margin-left:20px">
