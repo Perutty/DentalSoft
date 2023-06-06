@@ -133,17 +133,11 @@
 								 <td th:text="${cita.hora}"></td>
 								 <td th:text="${cita.estado}"></td>
 								 <td>
-							   <a id="ref" th:href="@{/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${hc})}">
+							   <a id="ref" th:href="@{/odontologo/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${hc})}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Generar evolución">&#xEf40;</i>
-							   </a>
-							    <a th:href="@{/cita/editCita/{id}(id=${cita.id})}">
-							   		<i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
 							   </a>
 							   <a th:if="${cita.estado == 'Pendiente'}" th:href="@{/odontologo/atender/{id}(id=${cita.id})}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Atender">&#xE876;</i>
-							   </a>
-							   <a href="#deleteEmployeeModal" class="deleteCita" data-toggle="modal">
-							   		<i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
 							   </a>
 							   </td>
 							 </tr>

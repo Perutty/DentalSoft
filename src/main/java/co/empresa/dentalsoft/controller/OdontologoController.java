@@ -93,6 +93,7 @@ public class OdontologoController {
 	public List<Evolucion> ev = new ArrayList<>();
 	
 	public List<Cita> cita = new ArrayList<>();
+	List<Evolucion> listEvo = new ArrayList<>();
 	
 	public static String uploadDirectory = "/home/centos/fotos";
 	
@@ -276,6 +277,42 @@ public class OdontologoController {
 		model.addAttribute("paciente", paci);
 		model.addAttribute("odontologo", odonto);
 		return "verpaciente";
+	}
+	
+	@GetMapping("/evolucion/new/{idCita}/{idHistoria}")
+	public String generarEvo(RedirectAttributes att, HttpServletRequest request, Model model, @PathVariable("idCita") Integer idCita,  @PathVariable("idHistoria") Integer idHistoria) {
+			Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
+			List<Evolucion> evos = evolucionService.getAll();
+			listEvo.clear();
+			evos.forEach((e)->{
+				if(e.getCita_id().equals(idCita) && e.getHistoria_id().equals(idHistoria)) {
+					listEvo.add(e);
+				}
+			});
+			Cita cita = citaService.get(idCita);
+			HistoriaClinica hc = historiaClinicaService.get(idHistoria);
+			if(listEvo.isEmpty()) {
+			model.addAttribute("paci", hc.getPaciente_doc());
+			model.addAttribute("cita", cita);
+			model.addAttribute("historia", hc);
+			model.addAttribute("odontologo", odonto);
+				return "evolucionodonto";
+			}else {
+				att.addFlashAttribute("accion", "¡Esta cita ya cuenta con una evolución!");
+				return "redirect:/odontologo/dashboard/";
+			}
+	}
+	
+	@PostMapping("/saveevo")
+	public String save(RedirectAttributes att, Model model, @RequestParam  String historia_id, @RequestParam String cita_id, 
+						@RequestParam String descripcion) {
+		Evolucion evo = new Evolucion();
+		evo.setCita_id(Integer.valueOf(cita_id));
+		evo.setHistoria_id(Integer.valueOf(historia_id));
+		evo.setDescripcion(descripcion);
+		evolucionService.save(evo);
+		att.addFlashAttribute("accion", "¡Evolución agregada con éxito!");
+		return "redirect:/odontologo/dashboard/";
 	}
 	
 	@GetMapping("/verhistoria/{documento}")
