@@ -18,11 +18,11 @@
 		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
-		  <li class="active">
+		  <li class="dropdown">
 		  	<a th:href="@{/odontologo/dashboard}" class="dashboard">
 		  		<i class="material-icons">calendar_month</i>Mis citas</a>
 		  </li>
-		  <li class="dropdown">
+		  <li class="active">
 			  <a th:href="@{/odontologo/pacientes}" class="list-unstyled component m-0">
 			 	 <i class="material-icons">groups</i>Mis pacientes</a>
 		  </li>		
@@ -82,82 +82,48 @@
 					   <div class="table-title" >
 					     <div class="row">
 						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
-							    <h2 class="ml-lg-2">Listado de mis citas odontológicas</h2>
+							    <h2 class="ml-lg-2">
+								  Historia clínica del paciente:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								  <span th:text="${nombre}"></span>
+								</h2>
+							 </div>
+							 <div class="col-sm-5 p-0 flex justify-content-lg-end justify-content-center" th:object="${paci}">
+							   <a th:if="${!evos.isEmpty()}" th:href="@{/historiaclinica/exportarpdf/{documento}(documento=${paci.documento})}" class="btn btn-secondary">Descargar</a>
+							 </div>
+							 <div class="col-sm-1 p-0 flex justify-content-lg-end justify-content-center">
+							   <a th:href="@{/odontologo/pacientes}" class="btn btn-secondary">Salir</a>
 							 </div>
 					     </div>
 					   </div>
-						<div th:if="${citas.isEmpty()}">
-					   		<h5 style="margin-top:30px;text-align:center">No hay citas agendadas</h5><br>
-					   		<label>Buscar por: </label>
-					   		  <form th:action="@{/odontologo/buscar}" style="display:flex; align-items:center">
-							   	<input type="date" th:attr="value=${fecha}" style="width:150px; height:40px" name="fecha">
-							   	<label style="margin-left:30px;display:flex; align-items:center">Escoja la opción:  	
-							   	 <select name="estado" style="margin-left:20px">
-									  <option th:value="Pendiente" th:selected="${estado == 'Pendiente'}">Pendiente</option>
-									  <option th:value="Finalizada" th:selected="${estado == 'Finalizada'}">Finalizada</option>
-								 </select>
-							   	<button type="submit" class="btn btn-info" style="margin-left:20px">Buscar</button>
-							   </label>
-						   </form><br>
-					   </div>
+						<h5 th:if="${evos.isEmpty()}" style="margin-top:30px;text-align:center">No hay evoluciones registradas</h5>
 					   <br>
-					   <div th:if="${!citas.isEmpty()}">
-					   <label>Buscar por: </label>
-						   <form th:action="@{/odontologo/buscar}" style="display:flex; align-items:center">
-							   	<input type="date" th:attr="value=${fecha}" style="width:150px; height:40px" name="fecha">
-							   	<label style="margin-left:30px;display:flex; align-items:center">Escoja la opción:  	
-							   	 <select name="estado" style="margin-left:20px" >
-									  <option th:value="Pendiente" th:selected="${estado == 'Pendiente'}">Pendiente</option>
-									  <option th:value="Finalizada" th:selected="${estado == 'Finalizada'}">Finalizada</option>
-								 </select>
-							   	<button type="submit" class="btn btn-info" style="margin-left:20px">Buscar</button>
-							   </label>
-						   </form><br>
-					   <table class="table table-striped table-hover" id="tablax">
-					      <thead>
-						     <tr>
-								 <th style="font-weight:bold">Motivo cita</th>
-								 <th style="font-weight:bold">Nombre del Paciente</th>
-								 <th style="font-weight:bold">Fecha</th>
-								 <th style="font-weight:bold">Hora</th>
-								 <th style="font-weight:bold">Estado</th>
-								 <th style="font-weight:bold">Acciones</th>
-							 </tr>
-						  </thead>
-						  
-						  <tbody th:each="cita: ${citas}">
-						     <tr>
-								 <td th:text="${cita.tratamiento_cod}"></td>
-								 <td th:text="${cita.paciente_doc}"></td>
-								 <td th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></td>
-								 <td th:text="${cita.hora}"></td>
-								 <td th:text="${cita.estado}"></td>
-								 <td>
-							   <a id="ref" th:href="@{/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${hc})}">
-							   		<i class="material-icons" data-toggle="tooltip" title="Generar evolución">&#xEf40;</i>
-							   </a>
-							    <a th:href="@{/cita/editCita/{id}(id=${cita.id})}">
-							   		<i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
-							   </a>
-							   <a th:if="${cita.estado == 'Pendiente'}" th:href="@{/odontologo/atender/{id}(id=${cita.id})}">
-							   		<i class="material-icons" data-toggle="tooltip" title="Atender">&#xE876;</i>
-							   </a>
-							   <a href="#deleteEmployeeModal" class="deleteCita" data-toggle="modal">
-							   		<i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
-							   </a>
-							   </td>
-							 </tr>
-						  </tbody>
-					   </table>
+					   <div th:if="${!evos.isEmpty()}">
+					   
+					   	<div class="historia-content" th:each="evo: ${evos}">
+					   		<div class="historia-info" th:each="cita: ${cita}">
+					   		<div class="evoluciones" th:if="${evo.cita_id == cita.id}">
+					   			<label style="font-weight:bold" th:text="${cita.tratamiento_cod}"></label><br>
+					   			<label style="font-weight:bold">Fecha: </label>
+					   			<label th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></label>
+					   			<label style="font-weight:bold">Hora: </label>
+					   			<label th:text="${cita.hora}"></label><br>
+					   			<label style="font-weight:bold">Odontólogo: </label>
+					   			<label th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></label><br>
+					   			<label style="font-weight:bold">Observación: </label><br>
+					   			<label th:text="${evo.descripcion}"></label>
+					   		</div>
+					   		</div>
+					   	</div>
+					   	
 					   </div>
 					   <div class="clearfix">
 					   </div>
 					</div>	
-				  </div>
-				</div>	
-			  </div>	
-			</div>
-		  </div>
+					</div>
+</div>	
+</div>	
+</div>
+</div>
 	 <footer id="footer">
 			<div class="col-md-12 text-center">
 					<span class="copyright" style="color:white">

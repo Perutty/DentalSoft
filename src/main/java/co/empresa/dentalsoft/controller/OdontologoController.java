@@ -26,11 +26,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.empresa.dentalsoft.model.Administrador;
 import co.empresa.dentalsoft.model.Cita;
+import co.empresa.dentalsoft.model.Eps;
+import co.empresa.dentalsoft.model.EstadoCivil;
+import co.empresa.dentalsoft.model.Evolucion;
+import co.empresa.dentalsoft.model.HistoriaClinica;
 import co.empresa.dentalsoft.model.Odontologo;
+import co.empresa.dentalsoft.model.Paciente;
+import co.empresa.dentalsoft.model.Pais;
+import co.empresa.dentalsoft.model.Sexo;
 import co.empresa.dentalsoft.model.TipoDocumento;
 import co.empresa.dentalsoft.service.AdministradorService;
 import co.empresa.dentalsoft.service.CitaService;
+import co.empresa.dentalsoft.service.EpsService;
+import co.empresa.dentalsoft.service.EstadoCivilService;
+import co.empresa.dentalsoft.service.EvolucionService;
+import co.empresa.dentalsoft.service.HistoriaClinicaService;
 import co.empresa.dentalsoft.service.OdontologoService;
+import co.empresa.dentalsoft.service.PacienteService;
+import co.empresa.dentalsoft.service.PaisService;
+import co.empresa.dentalsoft.service.SexoService;
 import co.empresa.dentalsoft.service.TipoDocumentoService;
 
 @Controller
@@ -47,6 +61,27 @@ public class OdontologoController {
 	private TipoDocumentoService tipoDocumentoService;
 	
 	@Autowired
+	private PacienteService pacienteService;
+	
+	@Autowired
+	private PaisService paisService;
+	
+	@Autowired
+	private EpsService epsService;
+	
+	@Autowired
+	private SexoService sexoService;
+	
+	@Autowired
+	private HistoriaClinicaService historiaClinicaService;
+	
+	@Autowired
+	private EvolucionService evolucionService;
+	
+	@Autowired
+	private EstadoCivilService estadoCivilService;
+	
+	@Autowired
 	private CitaService citaService;
 	
 	List<Cita> citas = new ArrayList<>();
@@ -54,6 +89,10 @@ public class OdontologoController {
 	boolean exist;
 	
 	List<Cita> listBuscarCita = new ArrayList<>();
+	List<Paciente> listBuscarPaciente = new ArrayList<>();
+	public List<Evolucion> ev = new ArrayList<>();
+	
+	public List<Cita> cita = new ArrayList<>();
 	
 	public static String uploadDirectory = "/home/centos/fotos";
 	
@@ -184,9 +223,92 @@ public class OdontologoController {
 		return "redirect:/odontologo/list";
 	}
 	
+	@GetMapping("/atender/{id}")
+	public String atenderCita(RedirectAttributes att, @PathVariable("id") String id, HttpServletRequest request, Model model) {
+		
+		Cita cita = citaService.get(Integer.parseInt(id));
+		cita.setEstado("Finalizada");
+		citaService.save(cita);
+		att.addFlashAttribute("accion", "¡Cita finalizada con éxito!");
+		return "redirect:/odontologo/dashboard";
+	}
+	
 	@GetMapping("/logout")
 	public String logout(HttpServletRequest request, Model model) {
 			request.getSession().invalidate();
 			return "redirect:/odontologo/login";
+	}
+	
+	@GetMapping("/pacientes")
+	public String pacientes(Model model, HttpServletRequest request) {
+		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
+		List<Cita> listcitas = citaService.getAll();
+		List<Paciente> pacientes = pacienteService.getAll();
+		listBuscarPaciente.clear();
+		listcitas.forEach((c)->{
+			pacientes.forEach((p)->{
+				if(c.getOdontologo_doc().equals(odonto.getNombre()) && c.getPaciente_doc().equals(p.getNombre()))
+							if(!listBuscarPaciente.contains(p))
+							listBuscarPaciente.add(p);
+					});
+		});
+		listBuscarPaciente.sort(Comparator.comparing(Paciente::getNombre));
+		model.addAttribute("odontologo", odonto);
+		model.addAttribute("pacientes", listBuscarPaciente);
+		return "odontologopacientes";
+	}
+	
+	@GetMapping("/verpaciente/{documento}")
+	public String verPaciente(Model model, HttpServletRequest request,@PathVariable("documento") String documento) {
+		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
+		Paciente paci = pacienteService.get(documento);
+		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
+		List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
+		List<Pais> pais = paisService.getAll();
+		List<Sexo> sexo = sexoService.getAll();
+		List<Eps> eps = epsService.getAll();
+		model.addAttribute("tipoDoc", tipoDoc);
+		model.addAttribute("estadocivil", estadoCivil);
+		model.addAttribute("paciente", paci);
+		model.addAttribute("eps", eps);
+		model.addAttribute("sexo", sexo);
+		model.addAttribute("pais", pais);
+		model.addAttribute("paciente", paci);
+		model.addAttribute("odontologo", odonto);
+		return "verpaciente";
+	}
+	
+	@GetMapping("/verhistoria/{documento}")
+	public String list(HttpServletRequest request,  @PathVariable("documento") String documento, Model model){
+		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
+		
+		Paciente paci = pacienteService.get(documento);
+		
+		List<HistoriaClinica> historias = historiaClinicaService.getAll();
+		List<Cita> citas = citaService.getAll();
+		List<Evolucion> evos = evolucionService.getAll();
+		ev.clear();
+		cita.clear();
+		historias.forEach((historia)->{
+			if(historia.getPaciente_doc().equals(paci.getDocumento())){
+				evos.forEach((e)->{
+					if(e.getHistoria_id().equals(historia.getId()))
+					{
+						ev.add(e);
+						citas.forEach((c)->{
+							if(c.getId().equals(e.getCita_id())) {
+								cita.add(c);
+							}
+						});
+					}
+				});
+			}
+		});
+		model.addAttribute("cita", cita);
+		model.addAttribute("evos", ev);
+		model.addAttribute("nombre", paci.getNombre());
+		model.addAttribute("paci", paci);
+		model.addAttribute("odontologo", odonto);
+		return "historiapaciente";
 	}
 }

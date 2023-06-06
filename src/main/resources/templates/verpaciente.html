@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en"	xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+       <title>DentalSoft</title>
+	   <link rel="stylesheet" th:href="@{/css/custom.css}">
+   	   <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+      <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body>
+<div class="wrapper">
+	  <div class="body-overlay"></div>
+	 	<div id="sidebar">
+	    <div class="sidebar-header">
+	 	   <div th:object="${odontologo}" style="display:grid;justify-content:center;align-items:center;text-align:center">
+	 	   		<img th:src="${odontologo.foto}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px"/>
+		   		<h3><br><span th:text="${odontologo.nombre}"></span></h3><br>
+		   </div>
+		</div>
+		<ul class="list-unstyled component m-0">
+		  <li class="dropdown">
+		  	<a th:href="@{/odontologo/dashboard}" class="dashboard">
+		  		<i class="material-icons">calendar_month</i>Mis citas</a>
+		  </li>
+		  <li class="active">
+			  <a th:href="@{/odontologo/pacientes}" class="list-unstyled component m-0">
+			 	 <i class="material-icons">groups</i>Mis pacientes</a>
+		  </li>		
+		</ul>
+	 </div>
+   
+      <div id="content" style="margin-bottom:60px">
+		  <div class="top-navbar">
+		     <div class="xd-topbar">
+			     <div class="row">
+				     <div class="col-2 col-md-1 col-lg-1 order-2 order-md-1 align-self-center">
+					    <div class="xp-menubar">
+						    <span class="material-icons text-white">signal_cellular_alt</span>
+						</div>
+					 </div>
+					 
+					 <div class="col-md-5 col-lg-3 order-3 order-md-2">
+					 </div>
+					 
+					 
+					 <div class="col-10 col-md-6 col-lg-8 order-1 order-md-3">
+					     <div class="xp-profilebar text-right">
+						    <nav class="navbar p-0">
+							   <ul class="nav navbar-nav flex-row ml-auto">
+							   <li class="dropdown nav-item">
+							     <a class="nav-link" href="#" data-toggle="dropdown">
+								  <i class="material-icons">power_settings_new</i>
+								  <span class="xp-user-live"></span>
+								 </a>
+								  <ul class="dropdown-menu small-menu">
+									 <li><a th:href="@{/odontologo/logout}">
+									 <span class="material-icons">logout</span>
+									 Cerrar sesión
+									 </a></li>
+								  </ul>
+							   </li>
+							   </ul>
+							</nav>
+						 </div>
+					 </div>
+				 </div>
+				 <div class="xp-breadcrumbbar text-center">
+				    <span class="page-title" >MANRIQUE Y SOTO CENTRO ODONTOLÓGICO</span>
+				 </div>
+				 <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${accion != null }">
+					<label th:text="${accion}"></label>
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    						<span aria-hidden="true">&times;</span>
+						</button>
+				 </div>
+			 </div>
+		  </div>
+		     
+		      <div class="main-content">
+			     <div class="row">
+				    <div class="col-md-12">
+					   <div class="table-wrapper">
+					     
+					   <div class="table-title">
+					     <div class="row">
+						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
+							    <h2 class="ml-lg-2">EDITAR PACIENTE</h2>
+							 </div>
+							 <div class="but">
+							    <a type="button" th:href="@{/odontologo/dashboard}" class="btn btn-secondary">Cerrar</a>
+							</div>
+					     </div>
+					   </div>
+					   
+					   <div class="clearfix">
+					   </div>
+					   
+					   </div>
+					</div>	
+     
+    <div class="container-info" th:object="${paciente}"	>
+     <div class="container-foto">
+		<img th:src="${paciente.foto}" style="margin: 0 auto;border-radius:8%; width:360px; height:240px"/><br><br>
+    </div>
+    <div class="container col-md-7">
+	
+      <div class="form-group">
+		    <label>Tipo de documento </label>
+		    <select class="input-select" type="number" name="tipodoc">
+		    <div th:each="tipo: ${tipoDoc}">
+				<option th:value="${tipo.tipo}" th:text="${tipo.tipo}" readonly th:field="*{tipodoc}"></option>
+			</div>
+			</select>
+		</div>
+        <div class="form-group">
+		    <label>Número de Documento</label>
+			<input name="documento" type="text" th:field="*{documento}" readonly placeholder="No. documento" class="form-control" required>
+		</div>
+		<div class="form-group">
+		    <label>Nombre</label>
+			<input name="nombre" th:field="*{nombre}" type="text"  readonly placeholder="Nombre" class="form-control" required>
+		</div>
+		<div class="form-group">
+		<label>Sexo </label>
+		    <select class="input-select" type="number" name="sexo">
+		    <div th:each="sexo: ${sexo}">
+				<option th:value="${sexo.sexo}" th:text="${sexo.sexo}" readonly th:field="*{sexo}"></option>
+			</div>
+			</select>
+		<label>Estado Civil </label>
+		  <select class="input-select" type="number" name="estadocivil">
+		    <div th:each="civil: ${estadocivil}">
+				<option th:value="${civil.estado}" th:text="${civil.estado}" readonly th:field="*{estadocivil}"></option>
+			</div>
+		  </select>
+		 </div>
+		 <div class="form-group">
+		<label>País de nacimiento </label>
+		  <select class="input-select" type="number" name="paisnac">
+		    <div th:each="pais: ${pais}">
+				<option th:value="${pais.nombre}" th:text="${pais.nombre}"  readonly th:field="*{paisnac}"></option>
+			</div>
+		  </select>
+		  </div>
+		  <div class="form-group">
+		    <label>Ciudad de nacimiento</label>
+			<input name="ciudadnac" type="text" th:field="*{ciudadnac}" readonly placeholder="ciudad de nacimiento" class="form-control" required>
+		</div>
+		<div class="form-group">
+		<label>Fecha de nacimiento </label>
+				<input name="fechanac" th:field="*{fechanac}" type="date" readonly required></input>
+		<label>Fecha de ingreso </label>
+				<input name="fechaingreso" th:field="*{fechaingreso}" type="date" readonly required></input>
+		</div>
+		<div class="form-group">
+		<label>País de residencia </label>
+		  <select class="input-select" type="number" name="paisdomi">
+		    <div th:each="pais: ${pais}">
+				<option th:value="${pais.nombre}" th:text="${pais.nombre}" readonly th:field="*{paisdomi}"></option>
+			</div>
+		  </select>
+		  </div>
+		  <div class="form-group">
+		    <label>Ciudad de residencia</label>
+			<input name="ciudaddomi" type="text" th:field="*{ciudaddomi}" readonly placeholder="ciudad de residencia" class="form-control" required>
+		</div>
+		<div class="form-group">
+		    <label>Dirección de residencia</label>
+			<input name="direcciondomi" type="text" th:field="*{direcciondomi}" readonly placeholder="Dirección de residencia" class="form-control" required>
+		</div>
+		<div class="form-group">
+		    <label>Barrio de residencia</label>
+			<input name="barriodomi" type="text" th:field="*{barriodomi}" readonly placeholder="Barrio de residencia" class="form-control" required>
+		</div>
+		<div class="form-group">
+		    <label>Teléfono celular</label>
+			<input name="celular" type="text" th:field="*{celular}" readonly placeholder="No. de Celular" class="form-control" required>
+		</div>
+		<div class="form-group">
+		    <label>Correo electrónico</label>
+			<input name="correo" type="text" th:field="*{correo}" readonly placeholder="Correo electrónico" class="form-control" required>
+		</div>
+		<div class="form-group">
+		    <label>Ocupación</label>
+			<input name="ocupacion" type="text" th:field="*{ocupacion}" readonly placeholder="Ocupación" class="form-control" required>
+		</div>
+		<div class="form-group">
+		<label>Eps de afiliación</label>
+		  <select class="input-select" type="number" name="eps">
+		    <div th:each="eps: ${eps}">
+				<option th:value="${eps.nombre}" th:text="${eps.nombre}" readonly th:field="*{eps}"></option>
+			</div>
+		  </select>
+		  </div>
+		  <div class="form-group">
+		    <label>Tipo afiliación</label>
+			<input name="tipoafiliacion" type="text" th:field="*{tipoafiliacion}" readonly placeholder="Tipo de afiliación" class="form-control" required>
+		</div>
+		<div class="form-group">
+		    <label>Poliza de seguros</label>
+			<input name="poliza" type="text" th:field="*{poliza}" readonly placeholder="Poliza" class="form-control" required>
+		</div>
+		<input name="password" type="hidden" th:field="*{password}" class="form-control" required/>
+</div>
+</div>
+</div>
+</div>
+</div>	
+</div>
+	<footer id="footer">
+				<div class="container">
+						<div class="col-md-12 text-center">
+							<span class="copyright" style="color:white">
+								 DentalSoft © 2023     ||     Todos los derechos reservados
+							</span>
+						</div>
+				</div>
+		</footer>
+
+   <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
+   <script th:src="@{/js/popper.min.js}"></script>
+   <script th:src="@{/js/bootstrap.min.js}"></script>
+   <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+   
+  <script type="text/javascript" th:inline="javascript">
+       $(document).ready(function(){
+	      $(".xp-menubar").on('click',function(){
+		    $("#sidebar").toggleClass('active');
+			$("#content").toggleClass('active');
+		  });
+		  
+		  $('.xp-menubar,.body-overlay').on('click',function(){
+		     $("#sidebar,.body-overlay").toggleClass('show-nav');
+		  });
+		  
+	   });
+  </script>
+  </body>
+  </html>
