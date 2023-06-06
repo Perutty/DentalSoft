@@ -90,7 +90,7 @@ public class AdministradorController {
 	@Autowired
 	private SexoService sexoService;
 	
-	public static String uploadDirectory = System.getProperty("user.home") + "/dentalsoft";
+	public static String uploadDirectory = System.getProperty("user.dir") + "/src/main/resources/images";
 	
 	List<Cita> listCitasByPaciente = new ArrayList<>();
 	List<Cita> citasHistorial = new ArrayList<>();
