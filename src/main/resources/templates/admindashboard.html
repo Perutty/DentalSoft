@@ -119,7 +119,7 @@
 						  
 						  <tbody th:each="paci: ${paciente}">
 						     <tr>
-						     <td><img th:src="@{'/fotos/'+${paci.foto}}" style="width:90px; height:80px; border-radius:6%"></td>
+						     <td><img th:src="${paci.foto}" style="width:90px; height:80px; border-radius:6%"></td>
 							 <td th:text="${paci.tipodoc}"></td>
 							 <td class="documento" th:text="${paci.documento}"></td>
 							 <td th:text="${paci.nombre}"></td>
@@ -293,8 +293,8 @@
 			<input name="password" type="text" placeholder="Contraseña" class="form-control" required/>
 		</div>
 		<div class="form-group">
-		<label>Foto de perfil</label>
-			<input type="file" name="file" accept="image/*"/>
+		<label>URL foto de perfil</label>
+			<input type="text" name="imagen"/>
 		</div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-success">Agregar</button>

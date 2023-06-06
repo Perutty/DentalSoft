@@ -105,17 +105,18 @@ public class OdontologoController {
 	}
 	
 	@PostMapping("/save")
-	public String save(RedirectAttributes att,@RequestParam("file") MultipartFile foto,Odontologo odontologo, 
+	public String save(RedirectAttributes att,@RequestParam("imagen") String imagen,Odontologo odontologo, 
 				Model model){
-		String filename = foto.getOriginalFilename();
-		Path fileNameAndPath = Paths.get(uploadDirectory,filename);
 		List<Odontologo> odontologos = odontologoService.getAll();
+		
+		/*String filename = foto.getOriginalFilename();
+		Path fileNameAndPath = Paths.get(uploadDirectory,filename);
 		
 		try {
 			Files.write(fileNameAndPath, foto.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		odontologos.forEach((o) ->{
 			if(o.getDocumento().equals(odontologo.getDocumento())) {
@@ -127,7 +128,7 @@ public class OdontologoController {
 			att.addFlashAttribute("accion", "¡Documento de identidad ya se encuentra registrado!");
 			return "redirect:/odontologo/list";
 		}else {
-			odontologo.setFoto(filename);
+			odontologo.setFoto(imagen);
 			odontologoService.save(odontologo);
 			att.addFlashAttribute("accion", "¡Odontologo registrado con éxito!");
 			return "redirect:/odontologo/list";

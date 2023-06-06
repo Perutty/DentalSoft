@@ -134,18 +134,18 @@ public class PacienteController {
 	}
 	
 	@PostMapping("/save")
-	public String save(RedirectAttributes att,@RequestParam("file") MultipartFile foto,Paciente paciente, 
+	public String save(RedirectAttributes att,@RequestParam("imagen") String imagen,Paciente paciente, 
 				Model model){
 		
 				List<Paciente> pacientes = pacienteService.getAll();
-				String filename = foto.getOriginalFilename();
+				/*String filename = foto.getOriginalFilename();
 				Path fileNameAndPath = Paths.get(uploadDirectory,filename);
 				
 				try {
 					Files.write(fileNameAndPath, foto.getBytes());
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
+				}*/
 				
 				
 				
@@ -158,7 +158,7 @@ public class PacienteController {
 					att.addFlashAttribute("accion", "¡El documento de identidad ya se encuentra registrado!");
 					return "redirect:/admin/dashboard";
 				}else {
-					paciente.setFoto(filename);
+					paciente.setFoto(imagen);
 					pacienteService.save(paciente);
 					HistoriaClinica hc = new HistoriaClinica();
 					hc.setPaciente_doc(paciente.getDocumento());
