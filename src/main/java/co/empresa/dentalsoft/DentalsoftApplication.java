@@ -14,7 +14,6 @@ public class DentalsoftApplication {
 
 	public static void main(String[] args) {
 		
-		new File(AdministradorController.uploadDirectory).mkdir();
 		SpringApplication.run(DentalsoftApplication.class, args);
 	}
 

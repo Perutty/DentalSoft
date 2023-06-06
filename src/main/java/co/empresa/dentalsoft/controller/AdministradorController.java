@@ -90,7 +90,7 @@ public class AdministradorController {
 	@Autowired
 	private SexoService sexoService;
 	
-	public static String uploadDirectory = System.getProperty("user.dir") + "/src/main/resources/images";
+	//public static String uploadDirectory = System.getProperty("user.dir") + "/uploads";
 	
 	List<Cita> listCitasByPaciente = new ArrayList<>();
 	List<Cita> citasHistorial = new ArrayList<>();
@@ -228,11 +228,11 @@ public class AdministradorController {
 	}
 	
 	@PostMapping("/editFotoAdmin")
-	public String editFotoAdmin(RedirectAttributes att, @RequestParam("file") MultipartFile foto,HttpServletRequest request,Model model) throws IOException
+	public String editFotoAdmin(RedirectAttributes att, @RequestParam("imagen") String imagen,HttpServletRequest request,Model model) throws IOException
 	{
 		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 		
-		String filename = foto.getOriginalFilename();
+		/*String filename = foto.getOriginalFilename();
 		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
 		
 		String fotoAntigua = adm.getFoto();
@@ -246,9 +246,10 @@ public class AdministradorController {
 			Files.write(fileNameAndPath, foto.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 			
-			adm.setFoto(foto.getOriginalFilename());
+			adm.setFoto(imagen);
+		
 			administradorService.save(adm);
 			att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
 		
@@ -300,11 +301,11 @@ public class AdministradorController {
 	}
 	
 	@PostMapping("/editFotoPaciente")
-	public String editFotoPaciente(RedirectAttributes att, @RequestParam("file") MultipartFile foto, 
+	public String editFotoPaciente(RedirectAttributes att, @RequestParam("imagen") String imagen, 
 							@RequestParam("documento") String documento, HttpServletRequest request,Model model)
 	{
 		Paciente paciente = pacienteService.get(documento);
-		String filename = foto.getOriginalFilename(); 
+		/*String filename = foto.getOriginalFilename(); 
 		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
 		String fotoAntigua = paciente.getFoto();
 		File borrar = new File(uploadDirectory,fotoAntigua);
@@ -316,20 +317,20 @@ public class AdministradorController {
 			Files.write(fileNameAndPath, foto.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
-		paciente.setFoto(filename);
+		paciente.setFoto(imagen);
 		pacienteService.save(paciente);
 		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
 		return "redirect:/admin/edit/"+paciente.getDocumento();
 	}
 	
 	@PostMapping("/editFotoOdontologo")
-	public String editFotoOdontologo(RedirectAttributes att, @RequestParam("file") MultipartFile foto, 
+	public String editFotoOdontologo(RedirectAttributes att, @RequestParam("imagen") String imagen, 
 							@RequestParam("documento") String documento, HttpServletRequest request,Model model){
 		
 		Odontologo odonto = odontologoService.get(documento);
-		String filename = foto.getOriginalFilename(); 
+		/*String filename = foto.getOriginalFilename(); 
 		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
 		String fotoAntigua = odonto.getFoto();
 		File borrar = new File(uploadDirectory,fotoAntigua);
@@ -342,8 +343,8 @@ public class AdministradorController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		odonto.setFoto(filename);
+		*/
+		odonto.setFoto(imagen);
 		odontologoService.save(odonto);
 		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
 		return "redirect:/odontologo/edit/"+odonto.getDocumento();

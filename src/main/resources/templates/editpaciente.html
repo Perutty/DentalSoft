@@ -14,7 +14,7 @@
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
 	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
-	 	   		<img th:src="@{'/fotos/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px"/>
+	 	   		<img th:src="${admin.foto}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px"/>
 		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
 		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-info">Actualizar Datos</a>
 		   </div>
@@ -113,9 +113,9 @@
      <div class="container-foto">
      <form th:action="@{/admin/editFotoPaciente}" method="post" enctype="multipart/form-data">
      	<input th:field="*{documento}" type="hidden" name="documento"></input>
-		<img th:src="@{'/fotos/'+${paciente.foto}}" style="margin: 0 auto;border-radius:8%; width:360px; height:240px"/><br><br>
+		<img th:src="+${paciente.foto}" style="margin: 0 auto;border-radius:8%; width:360px; height:240px"/><br><br>
 		<div aria-label="Subir foto"><span>¿Quieres actualizar la foto del paciente?</span></div><br>
-		<input type="file" name="file" accept="image/*"><br><br>
+		<input type="text" name="imagen"><br><br>
 		<button type="submit" class="btn btn-info">Actualizar</button>
 	</form>
     </div>

@@ -14,7 +14,7 @@
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
 	 	   <div th:object="${adm}" style="display:grid;justify-content:center;align-items:center;text-align:center">
-	 	   		<img th:src="@{'/fotos/'+${adm.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
+	 	   		<img th:src="${adm.foto}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
 		   		<h3><br><span th:text="${adm.nombre}"></span></h3><br>
 		   <a th:href="@{/admin/edit/{documento}(documento=${adm.documento})}" class="btn btn-info">Actualizar Datos</a>
 		   </div>

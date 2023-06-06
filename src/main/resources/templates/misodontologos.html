@@ -13,7 +13,7 @@
 	 	<div id="sidebar">
 	    <div class="sidebar-header">
 	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
-	 	   		<img th:src="@{'/fotos/'+${admin.foto}}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
+	 	   		<img th:src="${admin.foto}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
 		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
 		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-info">Actualizar Datos</a>
 		   </div>
@@ -120,7 +120,7 @@
 						  
 						  <tbody th:each="odonto: ${odontologos}">
 						     <tr>
-						     <td><img th:src="@{'/fotos/'+${odonto.foto}}" style="width:90px; height:80px; border-radius:6%"></td>
+						     <td><img th:src="${odonto.foto}" style="width:90px; height:80px; border-radius:6%"></td>
 							 <td th:text="${odonto.tipodoc}"></td>
 							 <td class="documento" th:text="${odonto.documento}"></td>
 							 <td th:text="'Dr. '+${odonto.nombre}"></td>
