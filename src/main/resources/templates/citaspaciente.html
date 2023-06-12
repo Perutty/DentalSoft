@@ -125,7 +125,7 @@
 					   <br>
 					   <div th:if="${!citas.isEmpty()}">
 					   <label>Buscar por: </label>
-						   <form th:action="@{/paciente/buscar}" style="display:flex; align-items:center">
+						   <form th:action="@{/admin/buscar}" style="display:flex; align-items:center">
 							   	<input type="date" th:attr="value=${fecha}" style="width:150px; height:40px" name="fecha">
 							   	<label style="margin-left:30px;display:flex; align-items:center">Escoja la opción:  	
 							   	 <select name="estado" style="margin-left:20px" >
@@ -157,7 +157,7 @@
 							 <td class="hora" th:text="${cita.hora}"></td>
 							 <td th:text="${cita.estado}"></td>
 							 <td>
-							   <a id="ref" th:if="${cita.estado == 'Pendiente'}" th:href="@{/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${hc})}">
+							   <a id="ref" th:if="${!#lists.contains(evos.![cita_id], cita.id)}" th:href="@{/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${hc})}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Generar evolución">&#xEf40;</i>
 							   </a>
 							    <a th:href="@{/cita/editCita/{id}(id=${cita.id})}">

@@ -56,6 +56,7 @@ public class HistoriaClinicaExport {
 		documento.open();
 		
 		Chunk saltolinea = new Chunk("\n");
+		Chunk espacio = new Chunk("						");
 		Font fuente = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, Font.BOLD);
 		Font fuente2 = FontFactory.getFont(FontFactory.TIMES_ROMAN, 11);
 		Font fuente3 = FontFactory.getFont(FontFactory.TIMES_ROMAN, 9, Font.ITALIC);
@@ -68,7 +69,7 @@ public class HistoriaClinicaExport {
 		documento.add(nombrePaciente);
 		documento.add(saltolinea);
 		documento.add(saltolinea);
-		Paragraph fechageneracion = new Paragraph("Generado el día 0"+dia+" del mes 0"+mes+" del año "+año+" a las "+h+":"+minutos+":"+segundos, fuente3);
+		Paragraph fechageneracion = new Paragraph("Generado el día "+dia+" del mes "+mes+" del año "+año+" a las "+h+":"+minutos+":"+segundos, fuente3);
 		fechageneracion.setAlignment(Paragraph.ALIGN_RIGHT);
 		documento.add(fechageneracion);
 		documento.add(saltolinea);
@@ -84,14 +85,14 @@ public class HistoriaClinicaExport {
 				Chunk hora = new Chunk("Hora: 	", fuente);
 				Chunk fechainfo = new Chunk(fechaFormateada,fuente2);
 				Chunk horainfo = new Chunk(cita.getHora(),fuente2);
-				Chunk odontologo = new Chunk("Odontologo:	 ", fuente);
-				Chunk odontologoinfo = new Chunk(cita.getOdontologo_doc(),fuente2);
+				Chunk odontologo = new Chunk("Odontólogo:	 ", fuente);
+				Chunk odontologoinfo = new Chunk("DR. "+cita.getOdontologo_doc(),fuente2);
 				documento.add(motivo);
 				documento.add(tituloEvolucion);
-				documento.add(saltolinea);
+				documento.add(espacio);
 				documento.add(fecha);
 				documento.add(fechainfo);
-				documento.add(saltolinea);
+				documento.add(espacio);
 				documento.add(hora);
 				documento.add(horainfo);
 				documento.add(saltolinea);
@@ -116,7 +117,7 @@ public class HistoriaClinicaExport {
         @Override
         public void onEndPage(PdfWriter writer, Document documento) {
             try {
-                Image imagen = Image.getInstance("C:\\home\\centos\\fotos\\logo.png");
+                Image imagen = Image.getInstance("https://i.imgur.com/ejtLfAQ.png");
                 float paginaAncho = documento.getPageSize().getWidth();
                 float paginaAlto = documento.getPageSize().getHeight();
                 float imagenAncho = imagen.getScaledWidth();

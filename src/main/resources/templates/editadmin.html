@@ -16,11 +16,10 @@
 	 	   <div th:object="${adm}" style="display:grid;justify-content:center;align-items:center;text-align:center">
 	 	   		<img th:src="${adm.foto}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px;"/>
 		   		<h3><br><span th:text="${adm.nombre}"></span></h3><br>
-		   <a th:href="@{/admin/edit/{documento}(documento=${adm.documento})}" class="btn btn-info">Actualizar Datos</a>
 		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
-		  <li class="active">
+		  <li class="dropdown">
 		  	<a th:href="@{/admin/dashboard}">
 		  	<i class="material-icons">groups</i>Mis Pacientes</a>
 		  </li>
@@ -114,7 +113,7 @@
 	     <form th:action="@{/admin/editFotoAdmin}" method="post" enctype="multipart/form-data">
 			<img th:src="${adm.foto}" style="margin: 0 auto;border-radius:50%; width:240px; height:240px"/><br><br>
 			<div><span>¿Quieres actualizar tu foto de perfil?</span></div><br>
-			<input type="text" name="imagen"/><br><br>
+			<input type="text" name="imagen" placeholder="URL de la foto"/><br><br>
 				<button type="submit" class="btn btn-info">Actualizar</button>
 		 </form>
 	    </div>					

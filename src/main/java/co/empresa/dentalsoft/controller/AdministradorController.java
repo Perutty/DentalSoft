@@ -29,6 +29,7 @@ import co.empresa.dentalsoft.model.Administrador;
 import co.empresa.dentalsoft.model.Cita;
 import co.empresa.dentalsoft.model.Eps;
 import co.empresa.dentalsoft.model.EstadoCivil;
+import co.empresa.dentalsoft.model.Evolucion;
 import co.empresa.dentalsoft.model.HistoriaClinica;
 import co.empresa.dentalsoft.model.Hora;
 import co.empresa.dentalsoft.model.Odontologo;
@@ -41,6 +42,7 @@ import co.empresa.dentalsoft.service.AdministradorService;
 import co.empresa.dentalsoft.service.CitaService;
 import co.empresa.dentalsoft.service.EpsService;
 import co.empresa.dentalsoft.service.EstadoCivilService;
+import co.empresa.dentalsoft.service.EvolucionService;
 import co.empresa.dentalsoft.service.HistoriaClinicaService;
 import co.empresa.dentalsoft.service.HoraService;
 import co.empresa.dentalsoft.service.OdontologoService;
@@ -86,6 +88,9 @@ public class AdministradorController {
 	
 	@Autowired
 	private EstadoCivilService estadoCivilService;
+	
+	@Autowired
+	private EvolucionService evolucionService;
 	
 	@Autowired
 	private SexoService sexoService;
@@ -177,6 +182,7 @@ public class AdministradorController {
 			List<Cita> listCitas = citaService.getAll();
 			List<Tratamiento> tratamientos = tratamientoService.getAll();
 			List<Odontologo> odontologos = odontologoService.getAll();
+			List<Evolucion> ev = evolucionService.getAll();
 			List<Hora> horas = horaService.getAll();
 			listCitasByPaciente.clear();
 			listCitas.forEach((cita)->{
@@ -193,6 +199,7 @@ public class AdministradorController {
 			model.addAttribute("hc", historia.getId());
 			model.addAttribute("tratamientos", tratamientos);
 			model.addAttribute("horas", horas);
+			model.addAttribute("evos", ev);
 			model.addAttribute("odontologos", odontologos);
 			model.addAttribute("nombre", paci.getNombre());
 			model.addAttribute("paci", paci);
@@ -357,6 +364,7 @@ public class AdministradorController {
 		
 		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		List<Evolucion> ev = evolucionService.getAll();
 		List<Cita> listcitas = citaService.getAll();
 		listBuscarCita.clear();
 		listcitas.forEach((cita) -> {
@@ -373,6 +381,7 @@ public class AdministradorController {
 			model.addAttribute("estado", estado);
 		}
 		});
+		model.addAttribute("evos", ev);
 		model.addAttribute("citas", listBuscarCita);
 		model.addAttribute("admin", adm);
 		return "citaspaciente";

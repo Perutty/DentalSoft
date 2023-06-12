@@ -91,9 +91,10 @@ public class OdontologoController {
 	List<Cita> listBuscarCita = new ArrayList<>();
 	List<Paciente> listBuscarPaciente = new ArrayList<>();
 	public List<Evolucion> ev = new ArrayList<>();
-	
+	HistoriaClinica historia = new HistoriaClinica();
 	public List<Cita> cita = new ArrayList<>();
 	List<Evolucion> listEvo = new ArrayList<>();
+	List<HistoriaClinica> hcs = new ArrayList<>();
 	
 	public static String uploadDirectory = "/home/centos/fotos";
 	
@@ -121,13 +122,14 @@ public class OdontologoController {
 			
 		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
 		List<Cita> listCitas = citaService.getAll();
+		List<Evolucion> ev = evolucionService.getAll();
 		citas.clear();
-		
 		listCitas.forEach((cita)->{
 			if(cita.getOdontologo_doc().equals(odonto.getNombre()))
 				citas.add(cita);
 		});
 		citas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
+		model.addAttribute("evos", ev);
 		model.addAttribute("odontologo", odonto);
 		model.addAttribute("citas", citas);
 			return "odontologodashboard";
@@ -197,6 +199,7 @@ public class OdontologoController {
 		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<Cita> listcitas = citaService.getAll();
+		List<Evolucion> ev = evolucionService.getAll();
 		listBuscarCita.clear();
 		listcitas.forEach((cita) -> {
 			String fechaCita = dateFormat.format(cita.getFecha());
@@ -212,6 +215,7 @@ public class OdontologoController {
 			model.addAttribute("estado", estado);
 		}
 		});
+		model.addAttribute("evos", ev);
 		model.addAttribute("odontologo", odonto);
 		model.addAttribute("citas", listBuscarCita);
 		return "odontologodashboard";
@@ -279,23 +283,34 @@ public class OdontologoController {
 		return "verpaciente";
 	}
 	
-	@GetMapping("/evolucion/new/{idCita}/{idHistoria}")
-	public String generarEvo(RedirectAttributes att, HttpServletRequest request, Model model, @PathVariable("idCita") Integer idCita,  @PathVariable("idHistoria") Integer idHistoria) {
+	@GetMapping("/evolucion/new/{idCita}/{documento}")
+	public String generarEvo(RedirectAttributes att, HttpServletRequest request, Model model, @PathVariable("idCita") Integer idCita,
+			@PathVariable("documento") String documento) {
+		
 			Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
+			
 			List<Evolucion> evos = evolucionService.getAll();
+			List<HistoriaClinica> hc = historiaClinicaService.getAll();
 			listEvo.clear();
+			List<Paciente> pacientes = pacienteService.getAll();
 			evos.forEach((e)->{
-				if(e.getCita_id().equals(idCita) && e.getHistoria_id().equals(idHistoria)) {
-					listEvo.add(e);
-				}
+				hc.forEach((h)->{
+					pacientes.forEach((p)->{
+						if(p.getNombre().equals(documento)) {
+							if(h.getPaciente_doc().equals(p.getDocumento())) {
+								if(e.getCita_id().equals(idCita) && e.getHistoria_id().equals(h.getId())) {
+									listEvo.add(e);
+								}
+							}
+						}
+					});
+				});
 			});
 			Cita cita = citaService.get(idCita);
-			HistoriaClinica hc = historiaClinicaService.get(idHistoria);
 			if(listEvo.isEmpty()) {
-			model.addAttribute("paci", hc.getPaciente_doc());
+			model.addAttribute("paci", pacienteService.get(documento).getNombre());
 			model.addAttribute("cita", cita);
-			model.addAttribute("historia", hc);
-			model.addAttribute("odontologo", odonto);
+			model.addAttribute("odonto", odonto);
 				return "evolucionodonto";
 			}else {
 				att.addFlashAttribute("accion", "¡Esta cita ya cuenta con una evolución!");
@@ -347,5 +362,12 @@ public class OdontologoController {
 		model.addAttribute("paci", paci);
 		model.addAttribute("odontologo", odonto);
 		return "historiapaciente";
+	}
+	
+	@GetMapping("/odontograma")
+	public String historia(Model model, HttpServletRequest request) {
+		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
+		model.addAttribute("odonto", odonto);
+		return "odontograma";
 	}
 }

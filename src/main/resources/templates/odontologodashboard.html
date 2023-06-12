@@ -127,15 +127,17 @@
 						  
 						  <tbody th:each="cita: ${citas}">
 						     <tr>
+						     	 <td class="id" style="display:none" th:text="${cita.id}"></td>
+						     	 <td class="id" style="display:none" th:text="${hc}"></td>
 								 <td th:text="${cita.tratamiento_cod}"></td>
 								 <td th:text="${cita.paciente_doc}"></td>
 								 <td th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></td>
 								 <td th:text="${cita.hora}"></td>
 								 <td th:text="${cita.estado}"></td>
 								 <td>
-							   <a id="ref" th:href="@{/odontologo/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${hc})}">
-							   		<i class="material-icons" data-toggle="tooltip" title="Generar evolución">&#xEf40;</i>
-							   </a>
+							    <a th:if="${!#lists.contains(evos.![cita_id], cita.id)}" th:href="@{/odontologo/evolucion/new/{idCita}/{documento}(idCita=${cita.id},documento=${cita.paciente_doc})}">
+							        <i class="material-icons" data-toggle="tooltip" title="Generar evolución">&#xEf40;</i>
+							    </a>
 							   <a th:if="${cita.estado == 'Pendiente'}" th:href="@{/odontologo/atender/{id}(id=${cita.id})}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Atender">&#xE876;</i>
 							   </a>

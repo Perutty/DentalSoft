@@ -78,7 +78,12 @@
 								</h2>
 							 </div>
 							 <div class="but" th:object="${paci}">
-							    <a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Salir</a>
+							 	<div th:if="${admin != null}">
+							    	<a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Salir</a>
+							    </div>
+							    <div th:if="${odonto != null}">
+							    	<a type="button" th:href="@{/odontologo/dashboard}" class="btn btn-secondary">Salir</a>
+							    </div>
 							</div>
 					     </div>
 					   </div>
