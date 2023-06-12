@@ -56,7 +56,7 @@ public class HistoriaClinicaExport {
 		documento.open();
 		
 		Chunk saltolinea = new Chunk("\n");
-		Chunk espacio = new Chunk("						");
+		Chunk espacio = new Chunk("																	");
 		Font fuente = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, Font.BOLD);
 		Font fuente2 = FontFactory.getFont(FontFactory.TIMES_ROMAN, 11);
 		Font fuente3 = FontFactory.getFont(FontFactory.TIMES_ROMAN, 9, Font.ITALIC);
