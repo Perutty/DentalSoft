@@ -18,7 +18,7 @@ const tableRows = table.getElementsByTagName('tr');
 const tableHeader = table.getElementsByTagName('thead')[0];
 const headerRow = tableHeader.getElementsByTagName('tr')[0];
 
-function search(){
+
 searchInput.addEventListener('keyup', function() {
   const searchValue = this.value.toLowerCase();
   const searchResults = [];
@@ -46,7 +46,7 @@ searchInput.addEventListener('keyup', function() {
     }
   }
 });
-}
+
 
 
 if(deletePaciente){

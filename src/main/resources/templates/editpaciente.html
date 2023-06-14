@@ -16,7 +16,7 @@
 	 	   <div th:object="${admin}" style="display:grid;justify-content:center;align-items:center;text-align:center">
 	 	   		<img th:src="${admin.foto}" style="margin: 0 auto; border-radius: 50%; width: 120px; height: 120px"/>
 		   		<h3><br><span th:text="${admin.nombre}"></span></h3><br>
-		   <a th:href="@{/admin/edit/{documento}(documento=${admin.documento})}" class="btn btn-info">Actualizar Datos</a>
+		   <a th:href="@{/admin/edit}" class="btn btn-info">Actualizar Datos</a>
 		   </div>
 		</div>
 		<ul class="list-unstyled component m-0">
