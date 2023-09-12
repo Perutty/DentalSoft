@@ -250,6 +250,18 @@ public class PacienteController {
 	
 	@GetMapping("/delete/{documento}")
 	public String delete(RedirectAttributes att, @PathVariable("documento") String documento, Model model){
+		List<HistoriaClinica> hcs = historiaClinicaService.getAll();
+		List<Evolucion> evo = evolucionService.getAll();
+		hcs.forEach((hc)->{
+				if(hc.getPaciente_doc().equals(documento)) {
+					evo.forEach((e)->{
+						if(e.getHistoria_id().equals(hc.getId())) {
+							evolucionService.delete(e.getId());
+						}
+					});
+					historiaClinicaService.delete(hc.getId());
+				}
+		});
 		pacienteService.delete(documento);
 		att.addFlashAttribute("accion", "¡Paciente eliminado con éxito!");
 		return "redirect:/admin/dashboard";

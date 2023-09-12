@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -51,6 +52,7 @@ import co.empresa.dentalsoft.service.PaisService;
 import co.empresa.dentalsoft.service.SexoService;
 import co.empresa.dentalsoft.service.TipoDocumentoService;
 import co.empresa.dentalsoft.service.TratamientoService;
+import co.empresa.dentalsoft.service.impl.EmailService;
 
 @Controller
 @RequestMapping("/admin")
@@ -58,6 +60,9 @@ public class AdministradorController {
 
 	@Autowired
 	private AdministradorService administradorService;
+	
+	@Autowired
+    private EmailService emailService;
 	
 	@Autowired
 	private OdontologoService odontologoService;
@@ -113,7 +118,8 @@ public class AdministradorController {
 	}
 	
 	@PostMapping("/signin")
-	public String validate(RedirectAttributes att, @RequestParam String documento, @RequestParam String password, HttpServletRequest request, Model model) {
+	public String validate(RedirectAttributes att, @RequestParam String documento, 
+			@RequestParam String password, HttpServletRequest request, Model model) {
 		
 		Administrador admin = administradorService.select(documento, password);
 		if(admin != null)
@@ -126,8 +132,19 @@ public class AdministradorController {
 			}
 	}
 	
+	@GetMapping("/enviarcorreo/{documento}/{fecha}/{hora}/{doctor}")
+    public String enviarCorreo(RedirectAttributes att, HttpServletRequest request, @PathVariable("documento") String documento, @PathVariable("fecha") String fecha,
+    						@PathVariable("hora") String hora, @PathVariable("doctor") String doctor, Model model) throws ParseException {
+		Paciente paciente = pacienteService.get(documento);
+        emailService.sendEmail(""+paciente.getCorreo(), "Recordatorio cita odontológica", "Señor: "+paciente.getNombre()+"\n\nCordial saludo\n\n\nLe recordamos que tiene una cita programada el día "+fecha+" a las "+hora+", con el "+doctor+" en el edificio Colegio Médico oficina 402.\n\n\nPor favor, si no puede asistir, notifíquenos por nuestros medios de atención.\n\n\n\nGracias por su atención.");
+       
+        att.addFlashAttribute("accion", "¡Notificación de cita enviada con éxito!");
+  
+        return "redirect:/admin/citas/"+documento;
+    }
+	
 	@GetMapping("/edit/{documento}")
-	public String editForAdmin(RedirectAttributes att, HttpServletRequest request, @PathVariable("documento") String documento, Model model){
+	public String editForAdmin(HttpServletRequest request, @PathVariable("documento") String documento, Model model){
 		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
 		Administrador adm = administradorService.get(adm_doc);
 		
@@ -177,6 +194,7 @@ public class AdministradorController {
 		
 			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 			Paciente paci = pacienteService.get(documento);
+			request.getSession().setAttribute("docPaci", documento);
 			List<HistoriaClinica> listHC = historiaClinicaService.getAll();
 			request.getSession().setAttribute("docPaci", documento);
 			List<Cita> listCitas = citaService.getAll();
@@ -196,6 +214,7 @@ public class AdministradorController {
 			});
 			
 			listCitasByPaciente.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
+			tratamientos.sort(Comparator.comparing(Tratamiento::getNombre));
 			model.addAttribute("hc", historia.getId());
 			model.addAttribute("tratamientos", tratamientos);
 			model.addAttribute("horas", horas);
