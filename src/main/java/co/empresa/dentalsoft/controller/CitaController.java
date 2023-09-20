@@ -1,10 +1,16 @@
 package co.empresa.dentalsoft.controller;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,20 +23,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.empresa.dentalsoft.model.Administrador;
 import co.empresa.dentalsoft.model.Cita;
+import co.empresa.dentalsoft.model.Evolucion;
 import co.empresa.dentalsoft.model.Hora;
 import co.empresa.dentalsoft.model.Odontologo;
 import co.empresa.dentalsoft.model.Paciente;
 import co.empresa.dentalsoft.model.Tratamiento;
 import co.empresa.dentalsoft.service.AdministradorService;
 import co.empresa.dentalsoft.service.CitaService;
+import co.empresa.dentalsoft.service.EvolucionService;
 import co.empresa.dentalsoft.service.HoraService;
 import co.empresa.dentalsoft.service.OdontologoService;
 import co.empresa.dentalsoft.service.PacienteService;
 import co.empresa.dentalsoft.service.TratamientoService;
+import co.empresa.dentalsoft.service.impl.EmailService;
 
 @Controller
 @RequestMapping("/cita")
@@ -38,6 +48,9 @@ public class CitaController {
 	
 	@Autowired
 	private PacienteService pacienteService;
+	
+	@Autowired
+    private EmailService emailService;
 	
 	@Autowired
 	private OdontologoService odontologoService;
@@ -54,11 +67,13 @@ public class CitaController {
 	@Autowired
 	private AdministradorService administradorService;
 	
-	List<Cita> listCitas = new ArrayList<>();
-	
 	List<Cita> listBuscarCita = new ArrayList<>();
-
-	List<Cita> citasHistorial = new ArrayList<>();
+	
+	Set<Hora> horasDisponiblesSet = new HashSet<>();
+	
+	List<String> horasOcupadas = new ArrayList<>();
+	
+	ArrayList<String> meses = new ArrayList<String>(Arrays.asList("Enero","Febrero","Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"));
 	
 	
 	@GetMapping("/list")
@@ -81,12 +96,25 @@ public class CitaController {
 	
 
 	@PostMapping("/save")
-	public String save(RedirectAttributes att, Cita cita, HttpServletRequest request, Model model){
+	public String save(RedirectAttributes att, Cita cita,HttpServletRequest request, Model model){
 				String documento = (String)request.getSession().getAttribute("docPaci");
 				Paciente p = pacienteService.get(documento);
+				Date f = new Date();
+				SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy");
+				String fechaString = formatoFecha.format(f);
+				String[] fecha = fechaString.split("-");
+				String mes = "";
+				for(int i = 0; i < meses.size();i++) {
+					if(i == Integer.parseInt(fecha[1])-1) {
+						mes = meses.get(Integer.parseInt(fecha[1])-1);						
+					}
+				}
+				String fechaCompleta = ""+fecha[0]+" de "+mes+" del año "+fecha[2];
 				cita.setPaciente_doc(p.getNombre());
 				citaService.save(cita);
-				att.addFlashAttribute("accion", "¡Cita agendada con éxito!");
+				emailService.sendEmail(""+p.getCorreo(), "Recordatorio cita odontológica", "Señor: "+p.getNombre()+"\n\nCordial saludo\n\n\nSu cita "+cita.getTratamiento_cod().toUpperCase()+" ha sido programada para el día "+fechaCompleta+" en el horario de "+cita.getHora()+", con el Dr. "+cita.getOdontologo_doc()+" en el edificio Colegio Médico oficina 402.\n\n\nPor favor, si no puede asistir notifíquenos por nuestros medios de atención.\n\n\n\nGracias.");
+				att.addFlashAttribute("accion", "¡Cita agendada con éxito! se envió notificación vía email");
+				System.out.println(fechaCompleta);
 				return "redirect:/admin/citas/"+documento;
 	}
 	
@@ -120,6 +148,31 @@ public class CitaController {
 			model.addAttribute("cita", new Cita());
 		}
 		return "editarcita";
+	}
+	
+	@GetMapping("/horasocupadas/{fecha}/{odontologo}")
+	@ResponseBody
+	public String horasDisponibles(@PathVariable("fecha") String fecha, @PathVariable("odontologo") String odontologo,Model model){
+		List<Cita> citas = citaService.getAll();
+		List<Hora> horas = horaService.getAll();
+		horasOcupadas.clear();
+		citas.forEach((c)->{
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(c.getFecha());
+			int year = cal.get(Calendar.YEAR);
+			int month = cal.get(Calendar.MONTH) + 1;
+			int day = cal.get(Calendar.DAY_OF_MONTH);
+
+			String fechaCitaString = String.format("%04d-%02d-%02d", year, month, day);
+			if((fechaCitaString.equals(fecha) && c.getOdontologo_doc().equals(odontologo))) {
+				horas.forEach((h) -> {
+					if(h.getHora().equals(c.getHora()))
+						horasOcupadas.add(h.getHora());
+				});
+			}
+		});
+		Collections.sort(horasOcupadas);
+		return horasOcupadas.toString();
 	}
 	
 	@GetMapping("/atender/{id}")

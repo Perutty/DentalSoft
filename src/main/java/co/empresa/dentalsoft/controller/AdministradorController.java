@@ -103,7 +103,7 @@ public class AdministradorController {
 	//public static String uploadDirectory = System.getProperty("user.dir") + "/uploads";
 	
 	List<Cita> listCitasByPaciente = new ArrayList<>();
-	List<Cita> citasHistorial = new ArrayList<>();
+	List<Hora> horasDisponibles = new ArrayList<>();
 	List<HistoriaClinica> listaHistoria = new ArrayList<>();
 	HistoriaClinica historia = new HistoriaClinica();
 	List<Cita> listBuscarCita = new ArrayList<>();
@@ -212,7 +212,6 @@ public class AdministradorController {
 					historia = historiaClinicaService.get(hc.getId());
 				
 			});
-			
 			listCitasByPaciente.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
 			tratamientos.sort(Comparator.comparing(Tratamiento::getNombre));
 			model.addAttribute("hc", historia.getId());
@@ -221,6 +220,7 @@ public class AdministradorController {
 			model.addAttribute("evos", ev);
 			model.addAttribute("odontologos", odontologos);
 			model.addAttribute("nombre", paci.getNombre());
+			model.addAttribute("documento", documento);
 			model.addAttribute("paci", paci);
 			model.addAttribute("citas", listCitasByPaciente);
 			model.addAttribute("admin", adm);

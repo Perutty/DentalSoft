@@ -7,6 +7,7 @@
    	   <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
       <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
   </head>
   <body>
 <div class="wrapper">
@@ -151,6 +152,7 @@
 						     <tr>
 						     <td class="idcita" style="display:none" th:text="${cita.id}"></td>
 						     <td class="idhc" style="display:none" th:text="${hc}"></td>
+						     <td class="paci" style="display:none" th:text="${paci.nombre}"></td>
 						     <td class="documento" th:object="${paci}" style="display:none" th:text="${paci.documento}"></td>
 							 <td class="doctor" th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></td>
 							 <td th:text="${cita.tratamiento_cod}"></td>
@@ -231,7 +233,7 @@
      
      	<!----- FORMULARIO CREAR CITA ----->
      
-	<form th:action="@{/cita/save}" method="post">			
+	<form th:action="@{/cita/save}" method="post" id="form">			
 	<div class="modal fade" tabindex="-1" id="addEmployeeModal" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -248,7 +250,7 @@
 		</div>
 		<div class="form-group">
 		    <label>Nombre del odontólogo: </label>
-		    <select class="input-select" type="number" name="odontologo_doc" required>
+		    <select id="odontologo" class="input-select" type="number" name="odontologo_doc" required>
 		    <option value="" style="text-align: center">--- Seleccione el nombre del odontólogo ---</option>
 		    <div th:each="odonto: ${odontologos}">
 				<option th:value="${odonto.nombre}" th:text="${odonto.nombre}"></option>
@@ -271,10 +273,10 @@
 		</div>
 		<div class="form-group" style="display:flex;align-items:center;justify-content:space-between;">
 		    <label>Hora: </label>
-		    <select class="input-select" type="number" name="hora" required>
+		    <select id="hora" class="input-select" type="number" name="hora" required>
 		    <option value="" style="text-align: center">--- Seleccione la hora de la cita ---</option>
 		    <div th:each="hora: ${horas}">
-				<option th:value="${hora.hora}" th:text="${hora.hora}" id="horacita"></option>
+				<option th:value="${hora.hora}" th:text="${hora.hora}" class="horacita"></option>
 			</div>
 			</select>
 		</div>
@@ -301,7 +303,7 @@
 	</footer>
 
    <script src="https://kit.fontawesome.com/379287da3b.js" crossorigin="anonymous"></script>
-   <script th:src="@{/js2/script.js}"></script>
+   <script th:src="@{/js2/horas.js}"></script>
    <script th:src="@{/js2/deletes.js}"></script>
    <script th:src="@{/js2/notify.js}"></script>
    <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
@@ -309,6 +311,7 @@
    <script th:src="@{/js/bootstrap.min.js}"></script>
    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
   <script>
     var inputFecha = document.getElementById('fechacita');
 

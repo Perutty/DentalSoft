@@ -1,4 +1,9 @@
 const searchInput = document.getElementById('search-input');
+const table = document.getElementById('tablax');
+
+const tableRows = table.getElementsByTagName('tr');
+const tableHeader = table.getElementsByTagName('thead')[0];
+const headerRow = tableHeader.getElementsByTagName('tr')[0];
 
 searchInput.addEventListener('keyup', function() {
   const searchValue = this.value.toLowerCase();
