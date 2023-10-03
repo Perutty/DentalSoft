@@ -1,7 +1,11 @@
 package co.empresa.dentalsoft.controller;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -57,7 +62,7 @@ import co.empresa.dentalsoft.service.impl.EmailService;
 @Controller
 @RequestMapping("/admin")
 public class AdministradorController {
-
+	
 	@Autowired
 	private AdministradorService administradorService;
 	

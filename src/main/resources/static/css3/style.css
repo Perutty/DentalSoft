@@ -30,11 +30,20 @@ audio:not([controls]) { display: none; }
  * 3. Prevent iOS text size adjust on device orientation change, without disabling user zoom: h5bp.com/g
  */
 
-html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; 
+	overflow:hidden;}
 
-body { margin: 0; font-size: 13px; line-height: 1.231; }
+body { margin: 0; font-size: 13px; line-height: 1.231; 
+	overflow:hidden;}
 
 body, button, input, select, textarea { font-family: sans-serif; color: #222; }
+
+.wrapper{
+	position:relative;
+	width:100%;
+	height:38em;
+	overflow: hidden;
+  }
 
 /* 
  * Remove text-shadow in selection highlight: h5bp.com/i
@@ -268,7 +277,6 @@ td { vertical-align: top; }
   /* Style adjustments for viewports 768px and over go here */
 
 }
-
 
 
 /* ==|== print styles =======================================================

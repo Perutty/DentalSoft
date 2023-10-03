@@ -267,10 +267,12 @@ public class PacienteController {
 		return "redirect:/admin/dashboard";
 	}
 	
-	@GetMapping("/odontograma")
-	public String historia(Model model, HttpServletRequest request) {
+	@GetMapping("/odontograma/{documento}")
+	public String historia(Model model, HttpServletRequest request, @PathVariable("documento") String documento) {
+		Paciente p = pacienteService.get(documento);
 		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 		model.addAttribute("admin", adm);
+		model.addAttribute("paci", p);
 		return "odontograma";
 	}
 	

@@ -1,150 +1,154 @@
 <!doctype html>
 <html class="no-js" lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>DentalSoft</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DentalSoft</title>
 
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" th:href="@{/css/custom2.css}">
-  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/css3/jquery-ui-1.8.17.custom.css}">
-  <link rel="stylesheet" th:href="@{/css3/jquery.svg.css}">
-  <link rel="stylesheet" th:href="@{/css3/odontograma.css}">
- 
-  <script th:src="@{/j3/modernizr-2.0.6.min.js}"></script>
-  <script th:src="@{/j3/tratamientos.js}"></script>
+<link rel="stylesheet" th:href="@{/css/custom2.css}">
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css3/style.css}">
+<link rel="stylesheet" th:href="@{/css3/jquery-ui-1.8.17.custom.css}">
+<link rel="stylesheet" th:href="@{/css3/jquery.svg.css}">
+<link rel="stylesheet" th:href="@{/css3/odontograma.css}">
 </head>
-
 <body>
-<div class="wrapper">
-	 	
-      <div id="content">
-		  <div class="top-navbar">
-		     <div class="xd-topbar">
-			     <div class="row">
-				     <div class="col-1 col-md-1 col-lg-1 order-1 order-md-1 align-self-center">
-					    <div class="xp-menubar">
-						    <span class="material-icons text-white">signal_cellular_alt</span>
-						</div>
-					 </div>
-					 
-					 <div class="col-md-1 order-1 order-md-3">
-					     <div class="xp-profilebar text-right">
-						    <nav class="navbar p-0">
-							   <ul class="nav navbar-nav flex-row ml-auto">
-							   <li class="dropdown nav-item">
-							     <a class="nav-link" href="#" data-toggle="dropdown">
-								  <i class="material-icons">power_settings_new</i>
-								  <span class="xp-user-live"></span>
-								 </a>
-								  <ul class="dropdown-menu small-menu">
-									 <li><a th:href="@{/admin/logout}">
-									 <span class="material-icons">logout</span>
-									 Cerrar sesión
-									 </a></li>
-								  </ul>
-							   </li>
-							  </ul>
-						</nav>
-						</div>
-					 </div>
-					<div class="xp-breadcrumbbar text-center order-1 order-md-2">
-							    <span class="page-title" >MANRIQUE Y SOTO CENTRO ODONTOLÓGICO</span>
-					</div>
-				 </div>
-				 
-				 <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${accion != null }">
-					<label th:text="${accion}"></label>
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    						<span aria-hidden="true">&times;</span>
-						</button>
-				 </div>
-			 </div>
-		  </div>
-		  <div class="main-content">
-			     <div class="row">
-				    <div class="col-md-12" >
-				   
-					   <div class="table-wrapper">
-					     
-					   <div class="table-title" >
-					     <div class="row">
-						     <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
-							    <h2 class="ml-lg-2">
-								  Odontograma del paciente:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span th:text="${nombre}"></span>
-								</h2>
-							 </div>
-							 <div class="but" th:object="${paci}">
-							 	<div th:if="${admin != null}">
-							    	<a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Salir</a>
-							    </div>
-							    <div th:if="${odonto != null}">
-							    	<a type="button" th:href="@{/odontologo/dashboard}" class="btn btn-secondary">Salir</a>
-							    </div>
+	<div class="wrapper">
+
+		<div id="content">
+			<div class="top-navbar">
+				<div class="xd-topbar">
+					<div class="row">
+						<div
+							class="col-1 col-md-1 col-lg-1 order-1 order-md-1 align-self-center">
+							<div class="xp-menubar">
+								<span class="material-icons text-white">signal_cellular_alt</span>
 							</div>
-					     </div>
-					   </div>
-					   </div>	
+						</div>
+
+						<div class="col-md-1 order-1 order-md-3">
+							<div class="xp-profilebar text-right">
+								<nav class="navbar p-0">
+									<ul class="nav navbar-nav flex-row ml-auto">
+										<li class="dropdown nav-item"><a class="nav-link"
+											href="#" data-toggle="dropdown"> <i
+												class="material-icons">power_settings_new</i> <span
+												class="xp-user-live"></span>
+										</a>
+											<ul class="dropdown-menu small-menu">
+												<li><a th:href="@{/admin/logout}"> <span
+														class="material-icons">logout</span> Cerrar sesión
+												</a></li>
+											</ul></li>
+									</ul>
+								</nav>
+							</div>
+						</div>
+						<div class="xp-breadcrumbbar text-center order-1 order-md-2">
+							<span class="page-title">MANRIQUE Y SOTO CENTRO
+								ODONTOLÓGICO</span>
+						</div>
 					</div>
-				</div>	
+
+					<div class="alert alert-success alert-dismissible fade show"
+						role="alert" th:if="${accion != null }">
+						<label th:text="${accion}"></label>
+						<button type="button" class="close" data-dismiss="alert"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="main-content">
+				<div class="row">
+					<div class="col-md-12">
+
+						<div class="table-wrapper">
+
+							<div class="table-title">
+								<div th:if="${admin != null or odonto != null}">
+								<div class="row">
+									<div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
+										<h2 class="ml-lg-2" th:object="${paci}">
+											Odontograma del paciente:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+												th:text="${paci.nombre}"></span>
+										</h2>
+									</div>
+									  <div class="col-md-5 p-0 flex justify-content-lg-end justify-content-center">
+										<a type="button" id="download" class="btn btn-secondary">
+										<i class="material-icons">&#xf090;</i>
+										<span>Descargar</span>
+										</a> 
+									  </div>
+									  <div class="col-md-1 p-0 flex justify-content-lg-start justify-content-center">
+										<a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Salir</a>
+									  </div>
+								</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
 
-    <div id="main" role="main">      
-      <div id="tratamiento" class="col-md-6 order-1 order-md-1">
-        <h2>Tratamiento</h2>
-        <select 
-          data-bind=" options: tratamientosPosibles, 
+				<div id="main" role="main">
+					<div id="tratamiento" class="col-md-6 order-1 order-md-1">
+						<h2>Tratamiento</h2>
+						<select
+							data-bind=" options: tratamientosPosibles, 
                       value: tratamientoSeleccionado, 
                       optionsText: function(item){ return item.nombre; },
                       optionsCaption: 'Seleccione un tratamiento...'">
-        </select>
-        <ul data-bind="foreach: tratamientosAplicados">
-          <li>
-            P<span data-bind="text: diente.id"></span><span data-bind="text: cara"></span>
-            -            
-            <span data-bind="text: tratamiento.nombre"></span>
-            | 
-            <a href="#" data-bind="click: $parent.quitarTratamiento">Eliminar</a>
-          </li>
-        </ul>
-      </div>
-      <div id="odontograma-wrapper" class="order-1 order-md-2">
-        <h2 class="odontograma">Odontograma</h2>
-        <div id="odontograma"></div>
-      </div>      
-    </div>
-  
-  
-  </div>
-  </div>
-  </div>	
-   <footer id="footer">
-			<div class="col-md-12 text-center">
-					<span class="copyright" style="color:white">
-						 DentalSoft © 2023     ||     Todos los derechos reservados
-					</span>
+						</select>
+						<ul data-bind="foreach: tratamientosAplicados">
+							<li>P<span data-bind="text: diente.id"></span><span
+								data-bind="text: cara"></span> - <span
+								data-bind="text: tratamiento.nombre"></span> | <a href="#"
+								data-bind="click: $parent.quitarTratamiento">Eliminar</a>
+							</li>
+						</ul>
+					</div>
+					<div id="odontograma-wrapper" class="order-1 order-md-2">
+						<h2 class="odontograma">Odontograma</h2>
+						<div id="odontograma"></div>
+					</div>
+				</div>
+
+
 			</div>
+		</div>
+	</div>
+	<footer id="footer">
+		<div class="col-md-12 text-center">
+			<span class="copyright" style="color: white"> DentalSoft ©
+				2023 || Todos los derechos reservados </span>
+		</div>
 	</footer>
-   <script src="https://kit.fontawesome.com/379287da3b.js" crossorigin="anonymous"></script>
-   <script th:src="@{/js2/script.js}"></script>
-   <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
-   <script th:src="@{/js/popper.min.js}"></script>
-   <script th:src="@{/js/bootstrap.min.js}"></script>
-   <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
-   <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-  <script defer th:src="@{/j3/jquery-1.7.1.min.js}"></script>
-  <script defer th:src="@{/j3/plugins.js}"></script>
-  <script defer th:src="@{/j3/jquery-ui-1.8.17.custom.min.js}"></script>
-  <script defer th:src="@{/j3/jquery.tmpl.js}"></script>
-  <script defer th:src="@{/j3/knockout-2.0.0.js}"></script>
-  <script defer th:src="@{/j3/jquery.svg.min.js}"></script>  
-  <script defer th:src="@{/j3/jquery.svggraph.min.js}"></script>  
-  <script defer th:src="@{/j3/odontograma.js}"></script>
-  
-  <script type="text/javascript" th:inline="javascript">
+	<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+	<script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
+	<script th:src="@{/js/popper.min.js}"></script>
+	<script th:src="@{/js/bootstrap.min.js}"></script>
+	<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+	<script defer th:src="@{/j3/jquery-1.7.1.min.js}"></script>
+	<script defer th:src="@{/j3/plugins.js}"></script>
+	<script defer th:src="@{/j3/jquery-ui-1.8.17.custom.min.js}"></script>
+	<script defer th:src="@{/j3/jquery.tmpl.js}"></script>
+	<script defer th:src="@{/j3/knockout-2.0.0.js}"></script>
+	<script defer th:src="@{/j3/jquery.svg.min.js}"></script>
+	<script defer th:src="@{/j3/jquery.svggraph.min.js}"></script>
+	<script defer th:src="@{/j3/odontograma.js}"></script>
+	<script th:src="@{/j3/html2canvas.hertzen.com_dist_html2canvas.js}"></script>
+	<script th:src="@{/j3/html2canvas.hertzen.com_dist_html2canvas.min.js}"></script>
+	<script th:src="@{/j3/modernizr-2.0.6.min.js}"></script>
+	<script th:src="@{/j3/tratamientos.js}"></script>
+	<script th:src="@{/j3/screenshot.js}"></script>
+	
+
+	<script type="text/javascript" th:inline="javascript">
        $(document).ready(function(){
 	      $(".xp-menubar").on('click',function(){
 		    $("#sidebar").toggleClass('active');

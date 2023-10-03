@@ -1,6 +1,6 @@
 body,html{
 	line-height:1.8;
-	font-family:'Poppins',sans-serif;
+	font-family:'Poppins',sans-serif, woff2;
 	color:#555e58;
 	text-transform:capitalize;
 	font-weight:400;
