@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -45,6 +47,7 @@ import co.empresa.dentalsoft.service.PacienteService;
 import co.empresa.dentalsoft.service.PaisService;
 import co.empresa.dentalsoft.service.SexoService;
 import co.empresa.dentalsoft.service.TipoDocumentoService;
+import co.empresa.dentalsoft.service.impl.CloudinaryService;
 
 @Controller
 @RequestMapping("/paciente")
@@ -81,6 +84,9 @@ public class PacienteController {
 	
 	@Autowired
 	private CitaService citaService;
+	
+	@Autowired
+	private CloudinaryService cloudinaryService;
 	
 	public static String uploadDirectory = "/home/centos/fotos";
 	
@@ -134,21 +140,9 @@ public class PacienteController {
 	}
 	
 	@PostMapping("/save")
-	public String save(RedirectAttributes att,@RequestParam("imagen") String imagen,Paciente paciente, 
-				Model model){
+	public String save(RedirectAttributes att,Paciente paciente, @RequestParam MultipartFile file, Model model) throws IOException{
 		
 				List<Paciente> pacientes = pacienteService.getAll();
-				/*String filename = foto.getOriginalFilename();
-				Path fileNameAndPath = Paths.get(uploadDirectory,filename);
-				
-				try {
-					Files.write(fileNameAndPath, foto.getBytes());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}*/
-				
-				
-				
 				pacientes.forEach((p) ->{
 					if(p.getDocumento().equals(paciente.getDocumento())) {
 						exist = true;
@@ -158,7 +152,8 @@ public class PacienteController {
 					att.addFlashAttribute("accion", "¡El documento de identidad ya se encuentra registrado!");
 					return "redirect:/admin/dashboard";
 				}else {
-					paciente.setFoto(imagen);
+					
+					paciente.setFoto(cloudinaryService.upload(file).get("url").toString());
 					pacienteService.save(paciente);
 					HistoriaClinica hc = new HistoriaClinica();
 					hc.setPaciente_doc(paciente.getDocumento());

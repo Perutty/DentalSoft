@@ -7,7 +7,6 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,106 +56,115 @@ import co.empresa.dentalsoft.service.PaisService;
 import co.empresa.dentalsoft.service.SexoService;
 import co.empresa.dentalsoft.service.TipoDocumentoService;
 import co.empresa.dentalsoft.service.TratamientoService;
+import co.empresa.dentalsoft.service.impl.CloudinaryService;
 import co.empresa.dentalsoft.service.impl.EmailService;
 
 @Controller
 @RequestMapping("/admin")
 public class AdministradorController {
-	
+
 	@Autowired
 	private AdministradorService administradorService;
-	
+
 	@Autowired
-    private EmailService emailService;
-	
+	private EmailService emailService;
+
 	@Autowired
 	private OdontologoService odontologoService;
-	
+
 	@Autowired
 	private TipoDocumentoService tipoDocumentoService;
-	
+
 	@Autowired
 	private PacienteService pacienteService;
-	
+
 	@Autowired
 	private PaisService paisService;
-	
+
 	@Autowired
 	private CitaService citaService;
-	
+
 	@Autowired
 	private EpsService epsService;
-	
+
 	@Autowired
 	private TratamientoService tratamientoService;
 
 	@Autowired
 	private HoraService horaService;
-	
+
 	@Autowired
 	private HistoriaClinicaService historiaClinicaService;
-	
+
 	@Autowired
 	private EstadoCivilService estadoCivilService;
-	
+
 	@Autowired
 	private EvolucionService evolucionService;
-	
+
 	@Autowired
 	private SexoService sexoService;
-	
-	//public static String uploadDirectory = System.getProperty("user.dir") + "/uploads";
-	
+
+	@Autowired
+	private CloudinaryService cloudinaryService;
+
+	// public static String uploadDirectory = System.getProperty("user.dir") +
+	// "/uploads";
+
 	List<Cita> listCitasByPaciente = new ArrayList<>();
 	List<Hora> horasDisponibles = new ArrayList<>();
 	List<HistoriaClinica> listaHistoria = new ArrayList<>();
 	HistoriaClinica historia = new HistoriaClinica();
 	List<Cita> listBuscarCita = new ArrayList<>();
-	
+
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, Model model) {
-		
-		if(request.getSession().getAttribute("admin_doc") != null) {
+
+		if (request.getSession().getAttribute("admin_doc") != null) {
 			return "redirect:/admin/admindashboard";
-		}else
+		} else
 			return "loginadmin";
 	}
-	
+
 	@PostMapping("/signin")
-	public String validate(RedirectAttributes att, @RequestParam String documento, 
-			@RequestParam String password, HttpServletRequest request, Model model) {
-		
+	public String validate(RedirectAttributes att, @RequestParam String documento, @RequestParam String password,
+			HttpServletRequest request, Model model) {
+
 		Administrador admin = administradorService.select(documento, password);
-		if(admin != null)
-		{
+		if (admin != null) {
 			request.getSession().setAttribute("admin_doc", documento);
 			return "redirect:/admin/dashboard";
-		}else {
+		} else {
 			att.addFlashAttribute("loginError", "Documento o contraseña incorrecta");
 			return "redirect:/admin/login";
-			}
+		}
 	}
-	
+
 	@GetMapping("/enviarcorreo/{documento}/{fecha}/{hora}/{doctor}")
-    public String enviarCorreo(RedirectAttributes att, HttpServletRequest request, @PathVariable("documento") String documento, @PathVariable("fecha") String fecha,
-    						@PathVariable("hora") String hora, @PathVariable("doctor") String doctor, Model model) throws ParseException {
+	public String enviarCorreo(RedirectAttributes att, HttpServletRequest request,
+			@PathVariable("documento") String documento, @PathVariable("fecha") String fecha,
+			@PathVariable("hora") String hora, @PathVariable("doctor") String doctor, Model model)
+			throws ParseException {
 		Paciente paciente = pacienteService.get(documento);
-        emailService.sendEmail(""+paciente.getCorreo(), "Recordatorio cita odontológica", "Señor: "+paciente.getNombre()+"\n\nCordial saludo\n\n\nLe recordamos que tiene una cita programada el día "+fecha+" a las "+hora+", con el "+doctor+" en el edificio Colegio Médico oficina 402.\n\n\nPor favor, si no puede asistir, notifíquenos por nuestros medios de atención.\n\n\n\nGracias por su atención.");
-       
-        att.addFlashAttribute("accion", "¡Notificación de cita enviada con éxito!");
-  
-        return "redirect:/admin/citas/"+documento;
-    }
-	
+		emailService.sendEmail("" + paciente.getCorreo(), "Recordatorio cita odontológica", "Señor: "
+				+ paciente.getNombre() + "\n\nCordial saludo\n\n\nLe recordamos que tiene una cita programada el día "
+				+ fecha + " a las " + hora + ", con el " + doctor
+				+ " en el edificio Colegio Médico oficina 402.\n\n\nPor favor, si no puede asistir, notifíquenos por nuestros medios de atención.\n\n\n\nGracias por su atención.");
+
+		att.addFlashAttribute("accion", "¡Notificación de cita enviada con éxito!");
+
+		return "redirect:/admin/citas/" + documento;
+	}
+
 	@GetMapping("/edit/{documento}")
-	public String editForAdmin(HttpServletRequest request, @PathVariable("documento") String documento, Model model){
-		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
+	public String editForAdmin(HttpServletRequest request, @PathVariable("documento") String documento, Model model) {
+		String adm_doc = (String) request.getSession().getAttribute("admin_doc");
 		Administrador adm = administradorService.get(adm_doc);
-		
+
 		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
 		List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
 		Paciente paciente = pacienteService.get(documento);
-		
+
 		List<Pais> pais = paisService.getAll();
 		List<Sexo> sexo = sexoService.getAll();
 		List<Eps> eps = epsService.getAll();
@@ -170,128 +178,112 @@ public class AdministradorController {
 		model.addAttribute("admin", adm);
 		return "editpaciente";
 	}
-	
+
 	@GetMapping("/dashboard")
-	public String dashboard(HttpServletRequest request, Model model){
-			
-			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
-			
-			List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
-			List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
-			List<Paciente> paciente = pacienteService.getAll();
-			List<Pais> pais = paisService.getAll();
-			List<Sexo> sexo = sexoService.getAll();
-			List<Eps> eps = epsService.getAll();
-			paciente.sort(Comparator.comparing(Paciente::getNombre));
-			model.addAttribute("tipoDoc", tipoDoc);
-			model.addAttribute("estadocivil", estadoCivil);
-			model.addAttribute("paciente", paciente);
-			model.addAttribute("eps", eps);
-			model.addAttribute("sexo", sexo);
-			model.addAttribute("pais", pais);
-			model.addAttribute("admin", adm);
-			
-			return "admindashboard";
+	public String dashboard(HttpServletRequest request, Model model) {
+
+		Administrador adm = administradorService.get((String) request.getSession().getAttribute("admin_doc"));
+
+		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
+		List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
+		List<Paciente> paciente = pacienteService.getAll();
+		List<Pais> pais = paisService.getAll();
+		List<Sexo> sexo = sexoService.getAll();
+		List<Eps> eps = epsService.getAll();
+		paciente.sort(Comparator.comparing(Paciente::getNombre));
+		model.addAttribute("tipoDoc", tipoDoc);
+		model.addAttribute("estadocivil", estadoCivil);
+		model.addAttribute("paciente", paciente);
+		model.addAttribute("eps", eps);
+		model.addAttribute("sexo", sexo);
+		model.addAttribute("pais", pais);
+		model.addAttribute("admin", adm);
+
+		return "admindashboard";
 	}
-	
+
 	@GetMapping("/citas/{documento}")
-	public String citas(HttpServletRequest request, @PathVariable("documento") String documento, Model model){
-		
-			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
-			Paciente paci = pacienteService.get(documento);
-			request.getSession().setAttribute("docPaci", documento);
-			List<HistoriaClinica> listHC = historiaClinicaService.getAll();
-			request.getSession().setAttribute("docPaci", documento);
-			List<Cita> listCitas = citaService.getAll();
-			List<Tratamiento> tratamientos = tratamientoService.getAll();
-			List<Odontologo> odontologos = odontologoService.getAll();
-			List<Evolucion> ev = evolucionService.getAll();
-			List<Hora> horas = horaService.getAll();
-			listCitasByPaciente.clear();
-			listCitas.forEach((cita)->{
-				if(cita.getPaciente_doc().equals(paci.getNombre()))
-					listCitasByPaciente.add(cita);
-			});
-			listHC.forEach((hc)->{
-				if(hc.getPaciente_doc().equals(paci.getDocumento())) 
-					historia = historiaClinicaService.get(hc.getId());
-				
-			});
-			listCitasByPaciente.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
-			tratamientos.sort(Comparator.comparing(Tratamiento::getNombre));
-			model.addAttribute("hc", historia.getId());
-			model.addAttribute("tratamientos", tratamientos);
-			model.addAttribute("horas", horas);
-			model.addAttribute("evos", ev);
-			model.addAttribute("odontologos", odontologos);
-			model.addAttribute("nombre", paci.getNombre());
-			model.addAttribute("documento", documento);
-			model.addAttribute("paci", paci);
-			model.addAttribute("citas", listCitasByPaciente);
-			model.addAttribute("admin", adm);
-			return "citaspaciente";
+	public String citas(HttpServletRequest request, @PathVariable("documento") String documento, Model model) {
+
+		Administrador adm = administradorService.get((String) request.getSession().getAttribute("admin_doc"));
+		Paciente paci = pacienteService.get(documento);
+		request.getSession().setAttribute("docPaci", documento);
+		List<HistoriaClinica> listHC = historiaClinicaService.getAll();
+		request.getSession().setAttribute("docPaci", documento);
+		List<Cita> listCitas = citaService.getAll();
+		List<Tratamiento> tratamientos = tratamientoService.getAll();
+		List<Odontologo> odontologos = odontologoService.getAll();
+		List<Evolucion> ev = evolucionService.getAll();
+		List<Hora> horas = horaService.getAll();
+		listCitasByPaciente.clear();
+		listCitas.forEach((cita) -> {
+			if (cita.getPaciente_doc().equals(paci.getNombre()))
+				listCitasByPaciente.add(cita);
+		});
+		listHC.forEach((hc) -> {
+			if (hc.getPaciente_doc().equals(paci.getDocumento()))
+				historia = historiaClinicaService.get(hc.getId());
+
+		});
+		listCitasByPaciente.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
+		tratamientos.sort(Comparator.comparing(Tratamiento::getNombre));
+		model.addAttribute("hc", historia.getId());
+		model.addAttribute("tratamientos", tratamientos);
+		model.addAttribute("horas", horas);
+		model.addAttribute("evos", ev);
+		model.addAttribute("odontologos", odontologos);
+		model.addAttribute("nombre", paci.getNombre());
+		model.addAttribute("documento", documento);
+		model.addAttribute("paci", paci);
+		model.addAttribute("citas", listCitasByPaciente);
+		model.addAttribute("admin", adm);
+		return "citaspaciente";
 	}
-	
+
 	@GetMapping("/edit")
-	public String edit(HttpServletRequest request, Model model){
-		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
+	public String edit(HttpServletRequest request, Model model) {
+		String adm_doc = (String) request.getSession().getAttribute("admin_doc");
 		Administrador admin = administradorService.get(adm_doc);
 		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
-		model.addAttribute("tipoDoc", tipoDoc);	
+		model.addAttribute("tipoDoc", tipoDoc);
 		model.addAttribute("adm", admin);
 		return "editadmin";
 	}
-	
+
 	@PostMapping("/save")
 	public String save(RedirectAttributes att, Administrador administrador, Model model) {
-		if(administrador != null) {
+		if (administrador != null) {
 			administradorService.save(administrador);
 			att.addFlashAttribute("accion", "¡Datos actualizados con éxito!");
 		}
 		return "redirect:/admin/dashboard";
 	}
-	
+
 	@GetMapping("/delete/{id}")
-	public String delete(RedirectAttributes att, @PathVariable("id") String id, Model model){
+	public String delete(RedirectAttributes att, @PathVariable("id") String id, Model model) {
 		citaService.delete(Integer.parseInt(id));
 		att.addFlashAttribute("accion", "¡Cita eliminada con éxito!");
 		return "redirect:/cita/list";
 	}
-	
+
 	@PostMapping("/editFotoAdmin")
-	public String editFotoAdmin(RedirectAttributes att, @RequestParam("imagen") String imagen,HttpServletRequest request,Model model) throws IOException
-	{
-		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
-		
-		/*String filename = foto.getOriginalFilename();
-		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
-		
-		String fotoAntigua = adm.getFoto();
-		File borrar = new File(uploadDirectory,fotoAntigua);
-		
-		if(borrar.exists())
-			borrar.delete();
-		
-		
-		try {
-			Files.write(fileNameAndPath, foto.getBytes());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
-			
-			adm.setFoto(imagen);
-		
-			administradorService.save(adm);
-			att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
-		
+	public String editFotoAdmin(RedirectAttributes att, @RequestParam MultipartFile file,
+			HttpServletRequest request, Model model) throws Exception {
+		Administrador adm = administradorService.get((String) request.getSession().getAttribute("admin_doc"));
+		cloudinaryService.getImage(adm.getFoto());
+		adm.setFoto(cloudinaryService.upload(file).get("url").toString());
+
+		administradorService.save(adm);
+		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
+
 		return "redirect:/admin/edit";
 	}
-	
+
 	@PostMapping("/editDatosAdmin")
-	public String editDatosAdmin(RedirectAttributes att, @RequestParam("documento") String documento, @RequestParam("nombre") String nombre,
-			@RequestParam("tipodoc") String tipodoc, @RequestParam("correo") String correo, @RequestParam("celular") String celular, 
-			@RequestParam("password") String password,Model model)
-	{
+	public String editDatosAdmin(RedirectAttributes att, @RequestParam("documento") String documento,
+			@RequestParam("nombre") String nombre, @RequestParam("tipodoc") String tipodoc,
+			@RequestParam("correo") String correo, @RequestParam("celular") String celular,
+			@RequestParam("password") String password, Model model) {
 		Administrador adm = administradorService.get(documento);
 		adm.setNombre(nombre);
 		adm.setTipodoc(tipodoc);
@@ -304,13 +296,13 @@ public class AdministradorController {
 		att.addFlashAttribute("accion", "¡Datos personales actualizados con éxito!");
 		return "redirect:/admin/edit";
 	}
-	
+
 	@PostMapping("/editDatosPaciente")
-	public String editPaciente(RedirectAttributes att, Paciente paciente, HttpServletRequest request, Model model){
+	public String editPaciente(RedirectAttributes att, Paciente paciente, HttpServletRequest request, Model model) {
 		List<Cita> citas = citaService.getAll();
 		Paciente paci = pacienteService.get(paciente.getDocumento());
 		citas.forEach((cita) -> {
-			if(cita.getPaciente_doc().equals(paci.getNombre())) {
+			if (cita.getPaciente_doc().equals(paci.getNombre())) {
 				cita.setPaciente_doc(paciente.getNombre());
 				citaService.save(cita);
 			}
@@ -318,75 +310,46 @@ public class AdministradorController {
 		paciente.setFoto(paci.getFoto());
 		pacienteService.save(paciente);
 		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
-		return "redirect:/admin/edit/"+paci.getDocumento();
+		return "redirect:/admin/edit/" + paci.getDocumento();
 	}
-	
+
 	@PostMapping("/editDatosOdontologo")
-	public String editOdontologo(RedirectAttributes att, Odontologo odontologo, HttpServletRequest request, Model model)
-	{
+	public String editOdontologo(RedirectAttributes att, Odontologo odontologo, HttpServletRequest request,
+			Model model) {
 		Odontologo odonto = odontologoService.get(odontologo.getDocumento());
 		odontologo.setFoto(odonto.getFoto());
 		odontologoService.save(odontologo);
 		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
-		return "redirect:/odontologo/edit/"+odonto.getDocumento();
+		return "redirect:/odontologo/edit/" + odonto.getDocumento();
 	}
-	
+
 	@PostMapping("/editFotoPaciente")
-	public String editFotoPaciente(RedirectAttributes att, @RequestParam("imagen") String imagen, 
-							@RequestParam("documento") String documento, HttpServletRequest request,Model model)
-	{
+	public String editFotoPaciente(RedirectAttributes att, @RequestParam MultipartFile file,
+			@RequestParam("documento") String documento, HttpServletRequest request, Model model) throws Exception {
 		Paciente paciente = pacienteService.get(documento);
-		/*String filename = foto.getOriginalFilename(); 
-		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
-		String fotoAntigua = paciente.getFoto();
-		File borrar = new File(uploadDirectory,fotoAntigua);
-		
-		if(borrar.exists())
-			borrar.delete();
-		
-		try {
-			Files.write(fileNameAndPath, foto.getBytes());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
-		
-		paciente.setFoto(imagen);
-		pacienteService.save(paciente);
+		cloudinaryService.getImage(paciente.getFoto());
+		paciente.setFoto(cloudinaryService.upload(file).get("url").toString());
 		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
-		return "redirect:/admin/edit/"+paciente.getDocumento();
+		return "redirect:/admin/edit/" + paciente.getDocumento();
 	}
-	
+
 	@PostMapping("/editFotoOdontologo")
-	public String editFotoOdontologo(RedirectAttributes att, @RequestParam("imagen") String imagen, 
-							@RequestParam("documento") String documento, HttpServletRequest request,Model model){
-		
+	public String editFotoOdontologo(RedirectAttributes att, @RequestParam MultipartFile file,
+			@RequestParam("documento") String documento, HttpServletRequest request, Model model) throws Exception {
+
 		Odontologo odonto = odontologoService.get(documento);
-		/*String filename = foto.getOriginalFilename(); 
-		Path fileNameAndPath = Paths.get(uploadDirectory, filename);
-		String fotoAntigua = odonto.getFoto();
-		File borrar = new File(uploadDirectory,fotoAntigua);
-		
-		if(borrar.exists())
-			borrar.delete();
-		
-		try {
-			Files.write(fileNameAndPath, foto.getBytes());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
-		odonto.setFoto(imagen);
+		cloudinaryService.getImage(odonto.getFoto());
+		odonto.setFoto(cloudinaryService.upload(file).get("url").toString());
 		odontologoService.save(odonto);
 		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
-		return "redirect:/odontologo/edit/"+odonto.getDocumento();
+		return "redirect:/odontologo/edit/" + odonto.getDocumento();
 	}
-	
+
 	@GetMapping("/buscar")
-	public String buscarCitas(@RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, 
-								@RequestParam("estado") String estado, HttpServletRequest request, 
-								RedirectAttributes att,Model model) {
-		
-		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
+	public String buscarCitas(@RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha,
+			@RequestParam("estado") String estado, HttpServletRequest request, RedirectAttributes att, Model model) {
+
+		Administrador adm = administradorService.get((String) request.getSession().getAttribute("admin_doc"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<Evolucion> ev = evolucionService.getAll();
 		List<Cita> listcitas = citaService.getAll();
@@ -394,27 +357,25 @@ public class AdministradorController {
 		listcitas.forEach((cita) -> {
 			String fechaCita = dateFormat.format(cita.getFecha());
 			String fechaBuscar = dateFormat.format(fecha);
-		if(fechaCita.equals(fechaBuscar) && cita.getEstado().equals(estado)) {
+			if (fechaCita.equals(fechaBuscar) && cita.getEstado().equals(estado)) {
 				listBuscarCita.add(cita);
-				listBuscarCita.sort(Comparator.comparing(Cita::getHora));	
+				listBuscarCita.sort(Comparator.comparing(Cita::getHora));
 				model.addAttribute("fecha", fechaBuscar);
 				model.addAttribute("estado", estado);
-		}else
-		{
-			model.addAttribute("fecha", fechaBuscar);
-			model.addAttribute("estado", estado);
-		}
+			} else {
+				model.addAttribute("fecha", fechaBuscar);
+				model.addAttribute("estado", estado);
+			}
 		});
 		model.addAttribute("evos", ev);
 		model.addAttribute("citas", listBuscarCita);
 		model.addAttribute("admin", adm);
 		return "citaspaciente";
 	}
-	
-	
+
 	@GetMapping("/logout")
 	public String logout(HttpServletRequest request, Model model) {
-			request.getSession().invalidate();
-			return "redirect:/admin/login";
+		request.getSession().invalidate();
+		return "redirect:/admin/login";
 	}
 }

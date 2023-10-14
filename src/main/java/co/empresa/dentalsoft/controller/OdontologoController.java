@@ -46,6 +46,7 @@ import co.empresa.dentalsoft.service.PacienteService;
 import co.empresa.dentalsoft.service.PaisService;
 import co.empresa.dentalsoft.service.SexoService;
 import co.empresa.dentalsoft.service.TipoDocumentoService;
+import co.empresa.dentalsoft.service.impl.CloudinaryService;
 
 @Controller
 @RequestMapping("/odontologo")
@@ -83,6 +84,9 @@ public class OdontologoController {
 	
 	@Autowired
 	private CitaService citaService;
+	
+	@Autowired
+	private CloudinaryService cloudinaryService;
 	
 	List<Cita> citas = new ArrayList<>();
 	
@@ -147,18 +151,9 @@ public class OdontologoController {
 	}
 	
 	@PostMapping("/save")
-	public String save(RedirectAttributes att,@RequestParam("imagen") String imagen,Odontologo odontologo, 
-				Model model){
+	public String save(RedirectAttributes att,@RequestParam MultipartFile file,Odontologo odontologo, 
+				Model model) throws IOException{
 		List<Odontologo> odontologos = odontologoService.getAll();
-		
-		/*String filename = foto.getOriginalFilename();
-		Path fileNameAndPath = Paths.get(uploadDirectory,filename);
-		
-		try {
-			Files.write(fileNameAndPath, foto.getBytes());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
 		
 		odontologos.forEach((o) ->{
 			if(o.getDocumento().equals(odontologo.getDocumento())) {
@@ -170,7 +165,7 @@ public class OdontologoController {
 			att.addFlashAttribute("accion", "¡Documento de identidad ya se encuentra registrado!");
 			return "redirect:/odontologo/list";
 		}else {
-			odontologo.setFoto(imagen);
+			odontologo.setFoto(cloudinaryService.upload(file).get("url").toString());
 			odontologoService.save(odontologo);
 			att.addFlashAttribute("accion", "¡Odontologo registrado con éxito!");
 			return "redirect:/odontologo/list";
