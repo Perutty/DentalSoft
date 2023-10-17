@@ -71,17 +71,30 @@
 
 							<div class="table-title">
 								<div th:if="${admin != null or odonto != null}">
-								<div class="row">
+								<div class="row" th:object="${paci}">
 									<div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
-										<h2 class="ml-lg-2" th:object="${paci}">
+										<h2 class="ml-lg-2">
 											Odontograma del paciente:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
 												th:text="${paci.nombre}"></span>
 										</h2>
-									</div>
-									  <div class="col-md-5 p-0 flex justify-content-lg-end justify-content-center">
-										<a type="button" id="download" class="btn btn-secondary">
-										<i class="material-icons">&#xf090;</i>
+										<h2 style="display:none" th:text="${paci.documento}" id="documento"></h2>
+									</div> 
+									  <div class="col-md-3 p-0 flex justify-content-lg-end justify-content-center" th:if="${paci.odontograma == null}">
+										<a href="#guardarEmployeeModal" data-toggle="modal" type="button" id="download" class="btn btn-secondary">
+										<i class="material-icons" data-toggle="tooltip">&#xe9fc;</i>
+										<span>Guardar</span>
+										</a> 
+									  </div>
+									  <div class="col-md-2 p-0 flex justify-content-lg-end justify-content-center" th:if="${paci.odontograma == null}">
+										<a href="#odontogramaEmployeeModal" data-toggle="modal" type="button" id="download" class="btn btn-secondary">
+										<i class="material-icons" data-toggle="tooltip">&#xf090;</i>
 										<span>Descargar</span>
+										</a> 
+									  </div>
+									  <div class="col-md-5 p-0 flex justify-content-lg-end justify-content-center" th:if="${paci.odontograma != null}">
+										<a href="#editarEmployeeModal" data-toggle="modal" type="button" class="btn btn-secondary">
+										<i class="material-icons" data-toggle="tooltip">&#xE254;</i>
+										<span>Editar</span>
 										</a> 
 									  </div>
 									  <div class="col-md-1 p-0 flex justify-content-lg-start justify-content-center">
@@ -94,8 +107,8 @@
 					</div>
 				</div>
 
-
-				<div id="main" role="main">
+			<div th:object="${paci}">
+				<div id="main" role="main" th:if="${paci.odontograma == null}">
 					<div id="tratamiento" class="col-md-6 order-1 order-md-1">
 						<h2>Tratamiento</h2>
 						<select
@@ -117,11 +130,80 @@
 						<div id="odontograma"></div>
 					</div>
 				</div>
+				<div th:if="${paci.odontograma != null}">
+					<img th:src="${paci.odontograma}" style="margin: 0 auto"/>
+				</div>
+			</div>
 
 
 			</div>
 		</div>
 	</div>
+	
+	<div class="modal fade" tabindex="-1" id="odontogramaEmployeeModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Guardar Odontograma</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <label>¿Quieres guardar este odontograma? <br><br>No se podrá editar. Deberás crear uno nuevo en caso de algún error.</label>
+      <div style="text-align:center;color:white"><br>
+      <a id="confirmarOdontograma" class="btn btn-success">Confirmar</a>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      </div>
+      </div>
+      </div>
+     </div> 
+     </div>
+     
+     <div class="modal fade" tabindex="-1" id="guardarEmployeeModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Guardar Odontograma</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <form th:action="@{/paciente/guardar-odontograma}" method="post" enctype="multipart/form-data" th:object="${paci}">
+      <label>Recomendación: <br><br>Por favor, primero descargue el odontograma y después si suba el archivo.</label>
+      <input type="file" name="file"/>
+      <input th:field="*{documento}" type="hidden" name="documento"></input>
+      <div style="text-align:center;color:white"><br>
+      <button type="submit" class="btn btn-success">Guardar</button>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      </div>
+      </form>
+      </div>
+      </div>
+     </div> 
+     </div>
+     
+     <div class="modal fade" tabindex="-1" id="editarEmployeeModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Odontograma</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <label>Nota: <br><br>El odontograma no tiene edición. Esta opción elimina el odontograma ya creado y le permite crear uno nuevo.</label>
+      <div style="text-align:center; color: white">
+      <a style="color:white" th:href="@{/paciente/eliminar-odontograma/{odontograma}(odontograma=${paci.odontograma})/{documento}(documento=${paci.documento})}" class="btn btn-success">Confirmar</a>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      </div>
+      </div>
+      </div>
+     </div> 
+     </div>
+     
 	<footer id="footer">
 		<div class="col-md-12 text-center">
 			<span class="copyright" style="color: white"> DentalSoft ©
@@ -146,6 +228,7 @@
 	<script th:src="@{/j3/modernizr-2.0.6.min.js}"></script>
 	<script th:src="@{/j3/tratamientos.js}"></script>
 	<script th:src="@{/j3/screenshot.js}"></script>
+	
 	
 
 	<script type="text/javascript" th:inline="javascript">

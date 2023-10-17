@@ -270,10 +270,10 @@ public class AdministradorController {
 	public String editFotoAdmin(RedirectAttributes att, @RequestParam MultipartFile file,
 			HttpServletRequest request, Model model) throws Exception {
 		Administrador adm = administradorService.get((String) request.getSession().getAttribute("admin_doc"));
+		
 		cloudinaryService.getImage(adm.getFoto());
 		adm.setFoto(cloudinaryService.upload(file).get("url").toString());
-
-		administradorService.save(adm);
+		
 		att.addFlashAttribute("accion", "¡Foto del perfil actualizada con éxito!");
 
 		return "redirect:/admin/edit";
@@ -319,7 +319,7 @@ public class AdministradorController {
 		Odontologo odonto = odontologoService.get(odontologo.getDocumento());
 		odontologo.setFoto(odonto.getFoto());
 		odontologoService.save(odontologo);
-		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
+		att.addFlashAttribute("accion", "¡Datos del odontólogo actualizados con éxito!");
 		return "redirect:/odontologo/edit/" + odonto.getDocumento();
 	}
 

@@ -82,6 +82,9 @@ public class Paciente {
 	@Column
 	private String password;
 	
+	@Column
+	private String odontograma;
+	
 	public Paciente(){};
 	
 	public Paciente (String documento, String password) {
