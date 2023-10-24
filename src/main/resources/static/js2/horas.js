@@ -5,7 +5,7 @@ var hora;
 var horasArray;
 
 odontologo.addEventListener('change', function(){
-		fetch('http://localhost:8080/cita/horasocupadas/' + localStorage.getItem('fechas') + '/' + odontologo.value)
+		/**fetch('http://localhost:8080/cita/horasocupadas/' + localStorage.getItem('fechas') + '/' + odontologo.value)
 		.then(response => response.text())
 		.then(data => {
 			var dataY = data.slice(1, -1);
@@ -26,7 +26,7 @@ odontologo.addEventListener('change', function(){
 						}
 					}
 				})
-		}).catch(error => console.error('Error', error));
+		}).catch(error => console.error('Error', error));**/
 		
 		fetch('https://dentalsoft-production.up.railway.app/cita/horasocupadas/' + localStorage.getItem('fechas') + '/' + odontologo.value)
 		.then(response => response.text())
@@ -50,13 +50,13 @@ odontologo.addEventListener('change', function(){
 					}
 				})
 		}).catch(error => console.error('Error', error));
-	})
+	});
 
 fechacita.addEventListener('change', function() {
 	var fechaSeleccionada = fechacita.value;
 	localStorage.setItem('fechas',fechaSeleccionada);
 	
-	fetch('http://localhost:8080/cita/horasocupadas/' + fechaSeleccionada + '/' + odontologo.value)
+	/**fetch('http://localhost:8080/cita/horasocupadas/' + fechaSeleccionada + '/' + odontologo.value)
 		.then(response => response.text())
 		.then(data => {
 			var dataX = data.slice(1, -1);
@@ -84,7 +84,7 @@ fechacita.addEventListener('change', function() {
 				})
 			}
 		})
-		.catch(error => console.error('Error', error));
+		.catch(error => console.error('Error', error));**/
 		
 		fetch('https://dentalsoft-production.up.railway.app/cita/horasocupadas/' + fechaSeleccionada + '/' + odontologo.value)
 		.then(response => response.text())
