@@ -310,27 +310,7 @@
    <script th:src="@{/js/popper.min.js}"></script>
    <script th:src="@{/js/bootstrap.min.js}"></script>
    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
-   <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
-  <script>
-    var inputFecha = document.getElementById('fechacita');
-
-    // Escuchar el evento de clic en el campo de entrada de fecha
-    inputFecha.addEventListener('click', function() {
-        // Obtener la fecha actual
-        var fechaActual = new Date();
-        var dia = fechaActual.getDate();
-        var mes = fechaActual.getMonth() + 1;
-        var anio = fechaActual.getFullYear();
-
-        // Formatear la fecha actual como YYYY-MM-DD
-        var fechaFormateada = anio + '-' + (mes < 10 ? '0' + mes : mes) + '-' + (dia < 10 ? '0' + dia : dia);
-
-        // Establecer el atributo min en el campo de entrada de fecha
-        inputFecha.min = fechaFormateada;
-    });
-</script>
-  <script type="text/javascript" th:inline="javascript">
+   <script type="text/javascript" th:inline="javascript">
        $(document).ready(function(){
 	      $(".xp-menubar").on('click',function(){
 		    $("#sidebar").toggleClass('active');

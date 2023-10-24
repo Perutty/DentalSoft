@@ -1,9 +1,6 @@
 package co.empresa.dentalsoft.controller;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -95,10 +92,8 @@ public class OdontologoController {
 	List<Cita> listBuscarCita = new ArrayList<>();
 	List<Paciente> listBuscarPaciente = new ArrayList<>();
 	public List<Evolucion> ev = new ArrayList<>();
-	HistoriaClinica historia = new HistoriaClinica();
 	public List<Cita> cita = new ArrayList<>();
 	List<Evolucion> listEvo = new ArrayList<>();
-	List<HistoriaClinica> hcs = new ArrayList<>();
 	
 	public static String uploadDirectory = "/home/centos/fotos";
 	
@@ -110,8 +105,7 @@ public class OdontologoController {
 	@PostMapping("/signin")
 	public String validate(RedirectAttributes att, @RequestParam String documento, @RequestParam String password, HttpServletRequest request, Model model) {
 		
-		Odontologo odonto = odontologoService.select(documento, password);
-		if(odonto != null)
+		if(odontologoService.select(documento, password) != null)
 		{
 			request.getSession().setAttribute("odonto_doc", documento);
 			return "redirect:/odontologo/dashboard";
@@ -124,38 +118,32 @@ public class OdontologoController {
 	@GetMapping("/dashboard")
 	public String dashboard(HttpServletRequest request, Model model){
 			
-		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
 		List<Cita> listCitas = citaService.getAll();
-		List<Evolucion> ev = evolucionService.getAll();
 		citas.clear();
 		listCitas.forEach((cita)->{
-			if(cita.getOdontologo_doc().equals(odonto.getNombre()))
+			if(cita.getOdontologo_doc().equals(odontologoService.get((String)request.getSession().getAttribute("odonto_doc")).getNombre()))
 				citas.add(cita);
 		});
 		citas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
-		model.addAttribute("evos", ev);
-		model.addAttribute("odontologo", odonto);
+		model.addAttribute("evos", evolucionService.getAll());
+		model.addAttribute("odontologo", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
 		model.addAttribute("citas", citas);
 			return "odontologodashboard";
 	}
 	
 	@GetMapping("/list")
 	public String list(HttpServletRequest request, Model model){
-		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
-		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
-		List<Odontologo> odontologos = odontologoService.getAll();
-		model.addAttribute("tipoDoc", tipoDoc);
-		model.addAttribute("odontologos", odontologos);
-		model.addAttribute("admin", adm);
+		model.addAttribute("tipoDoc", tipoDocumentoService.getAll());
+		model.addAttribute("odontologos", odontologoService.getAll());
+		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
 		return "misodontologos";
 	}
 	
 	@PostMapping("/save")
 	public String save(RedirectAttributes att,@RequestParam MultipartFile file,Odontologo odontologo, 
 				Model model) throws IOException{
-		List<Odontologo> odontologos = odontologoService.getAll();
 		
-		odontologos.forEach((o) ->{
+		odontologoService.getAll().forEach((o) ->{
 			if(o.getDocumento().equals(odontologo.getDocumento())) {
 				exist = true;
 			}
@@ -175,15 +163,10 @@ public class OdontologoController {
 	
 	@GetMapping("/edit/{documento}")
 	public String edit(RedirectAttributes att, HttpServletRequest request, @PathVariable("documento") String documento, Model model){
-		String adm_doc = (String)request.getSession().getAttribute("admin_doc");
-		Administrador adm = administradorService.get(adm_doc);
-		Odontologo odonto = odontologoService.get(documento);
 		
-		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
-		
-		model.addAttribute("tipoDoc", tipoDoc);
-		model.addAttribute("odontologo", odonto);
-		model.addAttribute("admin", adm);
+		model.addAttribute("tipoDoc", tipoDocumentoService.getAll());
+		model.addAttribute("odontologo", odontologoService.get(documento));
+		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
 		return "editodontologo";
 	}
 	
@@ -191,15 +174,13 @@ public class OdontologoController {
 	public String buscarCitas(@RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, 
 								@RequestParam("estado") String estado, HttpServletRequest request, 
 								RedirectAttributes att,Model model) {
-		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<Cita> listcitas = citaService.getAll();
-		List<Evolucion> ev = evolucionService.getAll();
 		listBuscarCita.clear();
 		listcitas.forEach((cita) -> {
 			String fechaCita = dateFormat.format(cita.getFecha());
 			String fechaBuscar = dateFormat.format(fecha);
-		if(fechaCita.equals(fechaBuscar) && cita.getEstado().equals(estado) && cita.getOdontologo_doc().equals(odonto.getNombre())) {
+		if(fechaCita.equals(fechaBuscar) && cita.getEstado().equals(estado) && cita.getOdontologo_doc().equals(odontologoService.get((String)request.getSession().getAttribute("odonto_doc")).getNombre())) {
 				listBuscarCita.add(cita);
 				listBuscarCita.sort(Comparator.comparing(Cita::getHora));	
 				model.addAttribute("fecha", fechaBuscar);
@@ -210,8 +191,8 @@ public class OdontologoController {
 			model.addAttribute("estado", estado);
 		}
 		});
-		model.addAttribute("evos", ev);
-		model.addAttribute("odontologo", odonto);
+		model.addAttribute("evos", evolucionService.getAll());
+		model.addAttribute("odontologo", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
 		model.addAttribute("citas", listBuscarCita);
 		return "odontologodashboard";
 	}
@@ -228,7 +209,6 @@ public class OdontologoController {
 		
 		Cita cita = citaService.get(Integer.parseInt(id));
 		cita.setEstado("Finalizada");
-		citaService.save(cita);
 		att.addFlashAttribute("accion", "¡Cita finalizada con éxito!");
 		return "redirect:/odontologo/dashboard";
 	}
@@ -241,48 +221,37 @@ public class OdontologoController {
 	
 	@GetMapping("/pacientes")
 	public String pacientes(Model model, HttpServletRequest request) {
-		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
 		List<Cita> listcitas = citaService.getAll();
 		List<Paciente> pacientes = pacienteService.getAll();
 		listBuscarPaciente.clear();
 		listcitas.forEach((c)->{
 			pacientes.forEach((p)->{
-				if(c.getOdontologo_doc().equals(odonto.getNombre()) && c.getPaciente_doc().equals(p.getNombre()))
+				if(c.getOdontologo_doc().equals(odontologoService.get((String)request.getSession().getAttribute("odonto_doc")).getNombre()) && c.getPaciente_doc().equals(p.getNombre()))
 							if(!listBuscarPaciente.contains(p))
 							listBuscarPaciente.add(p);
 					});
 		});
 		listBuscarPaciente.sort(Comparator.comparing(Paciente::getNombre));
-		model.addAttribute("odontologo", odonto);
+		model.addAttribute("odontologo", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
 		model.addAttribute("pacientes", listBuscarPaciente);
 		return "odontologopacientes";
 	}
 	
 	@GetMapping("/verpaciente/{documento}")
 	public String verPaciente(Model model, HttpServletRequest request,@PathVariable("documento") String documento) {
-		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
-		Paciente paci = pacienteService.get(documento);
-		List<TipoDocumento> tipoDoc = tipoDocumentoService.getAll();
-		List<EstadoCivil> estadoCivil = estadoCivilService.getAll();
-		List<Pais> pais = paisService.getAll();
-		List<Sexo> sexo = sexoService.getAll();
-		List<Eps> eps = epsService.getAll();
-		model.addAttribute("tipoDoc", tipoDoc);
-		model.addAttribute("estadocivil", estadoCivil);
-		model.addAttribute("paciente", paci);
-		model.addAttribute("eps", eps);
-		model.addAttribute("sexo", sexo);
-		model.addAttribute("pais", pais);
-		model.addAttribute("paciente", paci);
-		model.addAttribute("odontologo", odonto);
+		model.addAttribute("tipoDoc", tipoDocumentoService.getAll());
+		model.addAttribute("estadocivil", estadoCivilService.getAll());
+		model.addAttribute("eps", epsService.getAll());
+		model.addAttribute("sexo", sexoService.getAll());
+		model.addAttribute("pais",  paisService.getAll());
+		model.addAttribute("paciente", pacienteService.get(documento));
+		model.addAttribute("odontologo", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
 		return "verpaciente";
 	}
 	
 	@GetMapping("/evolucion/new/{idCita}/{documento}")
 	public String generarEvo(RedirectAttributes att, HttpServletRequest request, Model model, @PathVariable("idCita") Integer idCita,
 			@PathVariable("documento") String documento) {
-		
-			Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
 			
 			List<Evolucion> evos = evolucionService.getAll();
 			List<HistoriaClinica> hc = historiaClinicaService.getAll();
@@ -301,11 +270,10 @@ public class OdontologoController {
 					});
 				});
 			});
-			Cita cita = citaService.get(idCita);
 			if(listEvo.isEmpty()) {
 			model.addAttribute("paci", pacienteService.get(documento).getNombre());
-			model.addAttribute("cita", cita);
-			model.addAttribute("odonto", odonto);
+			model.addAttribute("cita", citaService.get(idCita));
+			model.addAttribute("odonto", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
 				return "evolucionodonto";
 			}else {
 				att.addFlashAttribute("accion", "¡Esta cita ya cuenta con una evolución!");
@@ -327,9 +295,6 @@ public class OdontologoController {
 	
 	@GetMapping("/verhistoria/{documento}")
 	public String list(HttpServletRequest request,  @PathVariable("documento") String documento, Model model){
-		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
-		
-		Paciente paci = pacienteService.get(documento);
 		
 		List<HistoriaClinica> historias = historiaClinicaService.getAll();
 		List<Cita> citas = citaService.getAll();
@@ -337,7 +302,7 @@ public class OdontologoController {
 		ev.clear();
 		cita.clear();
 		historias.forEach((historia)->{
-			if(historia.getPaciente_doc().equals(paci.getDocumento())){
+			if(historia.getPaciente_doc().equals(pacienteService.get(documento).getDocumento())){
 				evos.forEach((e)->{
 					if(e.getHistoria_id().equals(historia.getId()))
 					{
@@ -353,16 +318,15 @@ public class OdontologoController {
 		});
 		model.addAttribute("cita", cita);
 		model.addAttribute("evos", ev);
-		model.addAttribute("nombre", paci.getNombre());
-		model.addAttribute("paci", paci);
-		model.addAttribute("odontologo", odonto);
+		model.addAttribute("nombre", pacienteService.get(documento).getNombre());
+		model.addAttribute("paci", pacienteService.get(documento));
+		model.addAttribute("odontologo", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
 		return "historiapaciente";
 	}
 	
 	@GetMapping("/odontograma")
 	public String historia(Model model, HttpServletRequest request) {
-		Odontologo odonto = odontologoService.get((String)request.getSession().getAttribute("odonto_doc"));
-		model.addAttribute("odonto", odonto);
+		model.addAttribute("odonto", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
 		return "odontograma";
 	}
 }

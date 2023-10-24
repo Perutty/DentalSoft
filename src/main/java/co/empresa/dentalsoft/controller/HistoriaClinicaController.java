@@ -54,9 +54,6 @@ public class HistoriaClinicaController {
 	
 	@GetMapping("/ver/{documento}")
 	public String list(HttpServletRequest request,  @PathVariable("documento") String documento, Model model){
-		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
-		
-		Paciente paci = pacienteService.get(documento);
 		
 		List<HistoriaClinica> historias = historiaClinicaService.getAll();
 		List<Cita> citas = citaService.getAll();
@@ -64,7 +61,7 @@ public class HistoriaClinicaController {
 		ev.clear();
 		cita.clear();
 		historias.forEach((historia)->{
-			if(historia.getPaciente_doc().equals(paci.getDocumento())){
+			if(historia.getPaciente_doc().equals(documento)){
 				evos.forEach((e)->{
 					if(e.getHistoria_id().equals(historia.getId()))
 					{
@@ -80,9 +77,9 @@ public class HistoriaClinicaController {
 		});
 		model.addAttribute("cita", cita);
 		model.addAttribute("evos", ev);
-		model.addAttribute("nombre", paci.getNombre());
-		model.addAttribute("paci", paci);
-		model.addAttribute("admin", adm);
+		model.addAttribute("nombre", pacienteService.get(documento).getNombre());
+		model.addAttribute("paci", pacienteService.get(documento));
+		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
 		return "historiaclinica";
 	}
 	
@@ -90,14 +87,13 @@ public class HistoriaClinicaController {
 	public void exportarPDF(HttpServletResponse response,RedirectAttributes att, 
 								@PathVariable("documento") String documento) throws DocumentException, IOException {
 		
-		Paciente paci = pacienteService.get(documento);
 		List<HistoriaClinica> historias = historiaClinicaService.getAll();
 		List<Cita> citas = citaService.getAll();
 		List<Evolucion> evos = evolucionService.getAll();
 		ev.clear();
 		cita.clear();
 		historias.forEach((historia)->{
-			if(historia.getPaciente_doc().equals(paci.getDocumento())){
+			if(historia.getPaciente_doc().equals(documento)){
 				evos.forEach((e)->{
 					if(e.getHistoria_id().equals(historia.getId()))
 					{
@@ -113,10 +109,10 @@ public class HistoriaClinicaController {
 		});
 			response.setContentType("application/pdf");
 			String cabecera = "Content-Disposition";
-			String valor = "attachment; filename=HC_" + paci.getNombre() + ".pdf";
+			String valor = "attachment; filename=HC_" + pacienteService.get(documento).getNombre() + ".pdf";
 			response.setHeader(cabecera, valor);
 			
-			HistoriaClinicaExport hc = new HistoriaClinicaExport(ev, cita, paci.getNombre());
+			HistoriaClinicaExport hc = new HistoriaClinicaExport(ev, cita, pacienteService.get(documento).getNombre());
 			hc.exportar(response);
 		
 	}

@@ -1,7 +1,6 @@
 package co.empresa.dentalsoft.controller;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -28,14 +27,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.empresa.dentalsoft.model.Administrador;
 import co.empresa.dentalsoft.model.Cita;
-import co.empresa.dentalsoft.model.Evolucion;
 import co.empresa.dentalsoft.model.Hora;
 import co.empresa.dentalsoft.model.Odontologo;
 import co.empresa.dentalsoft.model.Paciente;
 import co.empresa.dentalsoft.model.Tratamiento;
 import co.empresa.dentalsoft.service.AdministradorService;
 import co.empresa.dentalsoft.service.CitaService;
-import co.empresa.dentalsoft.service.EvolucionService;
 import co.empresa.dentalsoft.service.HoraService;
 import co.empresa.dentalsoft.service.OdontologoService;
 import co.empresa.dentalsoft.service.PacienteService;
@@ -69,8 +66,6 @@ public class CitaController {
 	
 	List<Cita> listBuscarCita = new ArrayList<>();
 	
-	Set<Hora> horasDisponiblesSet = new HashSet<>();
-	
 	List<String> horasOcupadas = new ArrayList<>();
 	
 	ArrayList<String> meses = new ArrayList<String>(Arrays.asList("Enero","Febrero","Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"));
@@ -78,27 +73,20 @@ public class CitaController {
 	
 	@GetMapping("/list")
 	public String list(HttpServletRequest request, Model model){
-		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
-		List<Odontologo> odontologos = odontologoService.getAll();
-		List<Paciente> pacientes = pacienteService.getAll();
-		List<Tratamiento> tratamientos = tratamientoService.getAll();
-		List<Hora> horas = horaService.getAll();
 		List<Cita> citas = citaService.getAll();
-		citas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
-		model.addAttribute("odontologos", odontologos);
-		model.addAttribute("pacientes", pacientes);
-		model.addAttribute("tratamientos", tratamientos);
+		citas.sort(Comparator.comparing(Cita::getFecha).reversed().thenComparing(Cita::getHora).reversed());
+		model.addAttribute("odontologos", odontologoService.getAll());
+		model.addAttribute("pacientes", pacienteService.getAll());
+		model.addAttribute("tratamientos", tratamientoService.getAll());
 		model.addAttribute("citas", citas);
-		model.addAttribute("horas", horas);
-		model.addAttribute("admin", adm);
+		model.addAttribute("horas", horaService.getAll());
+		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
 		return "agenda";
 	}
 	
 
 	@PostMapping("/save")
 	public String save(RedirectAttributes att, Cita cita,HttpServletRequest request, Model model){
-				String documento = (String)request.getSession().getAttribute("docPaci");
-				Paciente p = pacienteService.get(documento);
 				Date f = new Date();
 				SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy");
 				String fechaString = formatoFecha.format(f);
@@ -110,40 +98,31 @@ public class CitaController {
 					}
 				}
 				String fechaCompleta = ""+fecha[0]+" de "+mes+" del año "+fecha[2];
-				cita.setPaciente_doc(p.getNombre());
+				cita.setPaciente_doc(pacienteService.get((String)request.getSession().getAttribute("docPaci")).getNombre());
 				citaService.save(cita);
-				emailService.sendEmail(""+p.getCorreo(), "Recordatorio cita odontológica", "Señor: "+p.getNombre()+"\n\nCordial saludo\n\n\nSu cita "+cita.getTratamiento_cod().toUpperCase()+" ha sido programada para el día "+fechaCompleta+" en el horario de "+cita.getHora()+", con el Dr. "+cita.getOdontologo_doc()+" en el edificio Colegio Médico oficina 402.\n\n\nPor favor, si no puede asistir notifíquenos por nuestros medios de atención.\n\n\n\nGracias.");
+				emailService.sendEmail(""+pacienteService.get((String)request.getSession().getAttribute("docPaci")).getCorreo(), "Recordatorio cita odontológica", "Señor: "+pacienteService.get((String)request.getSession().getAttribute("docPaci")).getNombre()+"\n\nCordial saludo\n\n\nSu cita "+cita.getTratamiento_cod().toUpperCase()+" ha sido programada para el día "+fechaCompleta+" en el horario de "+cita.getHora()+", con el Dr. "+cita.getOdontologo_doc()+" en el edificio Colegio Médico oficina 402.\n\n\nPor favor, si no puede asistir notifíquenos por nuestros medios de atención.\n\n\n\nGracias.");
 				att.addFlashAttribute("accion", "¡Cita agendada con éxito! se envió notificación vía email");
-				System.out.println(fechaCompleta);
-				return "redirect:/admin/citas/"+documento;
+				return "redirect:/admin/citas/"+pacienteService.get((String)request.getSession().getAttribute("docPaci"));
 	}
 	
 	
 	@GetMapping("/delete/{id}")
 	public String delete(RedirectAttributes att, HttpServletRequest request, @PathVariable("id") String id, Model model){
-		String documento = (String)request.getSession().getAttribute("docPaci");
 		citaService.delete(Integer.parseInt(id));
 		att.addFlashAttribute("accion", "¡Cita eliminada con éxito!");
-		return "redirect:/admin/citas/"+documento;
+		return "redirect:/admin/citas/"+(String)request.getSession().getAttribute("docPaci");
 	}
 	
 	@GetMapping("/editCita/{id}")
 	public String editar(RedirectAttributes att, @PathVariable("id") String id, HttpServletRequest request, Model model) {
 		if(id!=null) {
-			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
-			String docPaci = (String)request.getSession().getAttribute("docPaci");
-			Paciente paci = pacienteService.get(docPaci);
-			List<Odontologo> odontologos = odontologoService.getAll();
-			List<Tratamiento> tratamientos = tratamientoService.getAll();
-			List<Hora> horas = horaService.getAll();
-			Cita c = citaService.get(Integer.parseInt(id));
-			model.addAttribute("nombre", paci.getNombre());
-			model.addAttribute("paci", paci);
-			model.addAttribute("cita", c);
-			model.addAttribute("odontologos", odontologos);
-			model.addAttribute("tratamientos", tratamientos);
-			model.addAttribute("horas", horas);
-			model.addAttribute("adm", adm);
+			model.addAttribute("nombre", pacienteService.get((String)request.getSession().getAttribute("docPaci")).getNombre());
+			model.addAttribute("paci", pacienteService.get((String)request.getSession().getAttribute("docPaci")));
+			model.addAttribute("cita", citaService.get(Integer.parseInt(id)));
+			model.addAttribute("odontologos", odontologoService.getAll());
+			model.addAttribute("tratamientos", tratamientoService.getAll());
+			model.addAttribute("horas", horaService.getAll());
+			model.addAttribute("adm", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
 		}else {
 			model.addAttribute("cita", new Cita());
 		}
@@ -177,13 +156,9 @@ public class CitaController {
 	
 	@GetMapping("/atender/{id}")
 	public String atenderCita(RedirectAttributes att, @PathVariable("id") String id, HttpServletRequest request, Model model) {
-		String documento = (String)request.getSession().getAttribute("docPaci");
-		Paciente p = pacienteService.get(documento);
-		Cita cita = citaService.get(Integer.parseInt(id));
-		cita.setEstado("Finalizada");
-		citaService.save(cita);
+		citaService.get(Integer.parseInt(id)).setEstado("Finalizada");
 		att.addFlashAttribute("accion", "¡Cita finalizada con éxito!");
-		return "redirect:/admin/citas/"+p.getDocumento();
+		return "redirect:/admin/citas/"+pacienteService.get((String)request.getSession().getAttribute("docPaci")).getDocumento();
 	}
 	
 	@GetMapping("/buscar")
@@ -191,7 +166,6 @@ public class CitaController {
 								@RequestParam("estado") String estado, HttpServletRequest request, 
 								RedirectAttributes att,Model model) {
 		
-		Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<Cita> citas = citaService.getAll();
 		listBuscarCita.clear();
@@ -210,7 +184,7 @@ public class CitaController {
 		}
 		});
 		model.addAttribute("citas", listBuscarCita);
-		model.addAttribute("admin", adm);
+		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
 		return "agenda";
 	}
 	

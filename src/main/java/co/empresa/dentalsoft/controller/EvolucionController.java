@@ -44,7 +44,6 @@ public class EvolucionController {
 	
 	@GetMapping("/new/{idCita}/{idHistoria}")
 	public String generarEvo(RedirectAttributes att, HttpServletRequest request, Model model, @PathVariable("idCita") Integer idCita,  @PathVariable("idHistoria") Integer idHistoria) {
-			Administrador adm = administradorService.get((String)request.getSession().getAttribute("admin_doc"));
 			List<Evolucion> evos = evolucionService.getAll();
 			listEvo.clear();
 			evos.forEach((e)->{
@@ -52,17 +51,15 @@ public class EvolucionController {
 					listEvo.add(e);
 				}
 			});
-			Cita cita = citaService.get(idCita);
-			HistoriaClinica hc = historiaClinicaService.get(idHistoria);
 			if(listEvo.isEmpty()) {
-			model.addAttribute("paci", hc.getPaciente_doc());
-			model.addAttribute("cita", cita);
-			model.addAttribute("historia", hc);
-			model.addAttribute("admin", adm);
+			model.addAttribute("paci", historiaClinicaService.get(idHistoria).getPaciente_doc());
+			model.addAttribute("cita", citaService.get(idCita));
+			model.addAttribute("historia", historiaClinicaService.get(idHistoria));
+			model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
 				return "evolucion";
 			}else {
 				att.addFlashAttribute("accion", "¡Esta cita ya cuenta con una evolución!");
-				return "redirect:/admin/citas/"+hc.getPaciente_doc();
+				return "redirect:/admin/citas/"+historiaClinicaService.get(idHistoria).getPaciente_doc();
 			}
 	}
 	
@@ -71,12 +68,11 @@ public class EvolucionController {
 	public String save(RedirectAttributes att, Model model, @RequestParam  String historia_id, @RequestParam String cita_id, 
 						@RequestParam String descripcion) {
 		Evolucion evo = new Evolucion();
-		String documento = historiaClinicaService.get(Integer.valueOf(historia_id)).getPaciente_doc();
 		evo.setCita_id(Integer.valueOf(cita_id));
 		evo.setHistoria_id(Integer.valueOf(historia_id));
 		evo.setDescripcion(descripcion);
 		evolucionService.save(evo);
 		att.addFlashAttribute("accion", "¡Evolución agregada con éxito!");
-		return "redirect:/admin/citas/"+documento;
+		return "redirect:/admin/citas/"+historiaClinicaService.get(Integer.valueOf(historia_id)).getPaciente_doc();
 	}
 }
