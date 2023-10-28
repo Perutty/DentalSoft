@@ -140,7 +140,6 @@ public class AdministradorController {
 
 		model.addAttribute("tipoDoc", tipoDocumentoService.getAll());
 		model.addAttribute("estadocivil", estadoCivilService.getAll());
-		model.addAttribute("paciente", pacienteService.get(documento));
 		model.addAttribute("eps", epsService.getAll());
 		model.addAttribute("sexo", sexoService.getAll());
 		model.addAttribute("pais", paisService.getAll());

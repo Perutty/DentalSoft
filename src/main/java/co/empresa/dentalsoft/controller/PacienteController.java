@@ -161,7 +161,7 @@ public class PacienteController {
 		model.addAttribute("eps", epsService.getAll());
 		model.addAttribute("sexo", sexoService.getAll());
 		model.addAttribute("pais", paisService.getAll());
-		return "pacienteedit";
+		return "editpaciente";
 	}
 
 	@PostMapping("/editDatos")
