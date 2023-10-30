@@ -151,8 +151,8 @@
 						     <tr>
 						     <td class="idcita" style="display:none" th:text="${cita.id}"></td>
 						     <td class="idhc" style="display:none" th:text="${historia}"></td>
-						     <td class="paci" style="display:none" th:text="${paci.nombre}"></td>
-						     <td class="documento" th:object="${paci}" style="display:none" th:text="${paci.documento}"></td>
+						     <td class="paci" style="display:none" th:text="${cita.paciente_doc}"></td>
+						     <td class="documento" style="display:none" th:text="${documento}"></td>
 							 <td class="doctor" th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></td>
 							 <td th:text="${cita.tratamiento_cod}"></td>
 							 <td class="fecha" th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></td>

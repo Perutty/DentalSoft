@@ -116,7 +116,7 @@
 							   <a th:href="@{/odontologo/verhistoria/{documento}(documento=${paci.documento})}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Historia clínica">&#xE873;</i>
 							   </a>
-							   <a th:href="@{/odontologo/odontograma}">
+							   <a th:href="@{/odontologo/odontograma/{documento}(documento=${paci.documento})}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Odontograma">&#xe913;</i>
 							   </a>
 							    <a th:href="@{/odontologo/verpaciente/{documento}(documento=${paci.documento})}">

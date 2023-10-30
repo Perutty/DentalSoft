@@ -126,9 +126,9 @@ public class OdontologoController {
 		});
 		citas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
 		model.addAttribute("evos", evolucionService.getAll());
-		model.addAttribute("odontologo", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
+		model.addAttribute("odonto", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
 		model.addAttribute("citas", citas);
-			return "odontologodashboard";
+			return "admindashboard";
 	}
 	
 	@GetMapping("/list")
@@ -324,9 +324,10 @@ public class OdontologoController {
 		return "historiapaciente";
 	}
 	
-	@GetMapping("/odontograma")
-	public String historia(Model model, HttpServletRequest request) {
+	@GetMapping("/odontograma/{documento}")
+	public String historia(Model model,@PathVariable("documento") String documento, HttpServletRequest request) {
 		model.addAttribute("odonto", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
+		model.addAttribute("paci", pacienteService.get(documento));
 		return "odontograma";
 	}
 }

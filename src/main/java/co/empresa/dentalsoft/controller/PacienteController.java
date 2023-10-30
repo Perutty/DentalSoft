@@ -37,6 +37,7 @@ import co.empresa.dentalsoft.service.EpsService;
 import co.empresa.dentalsoft.service.EstadoCivilService;
 import co.empresa.dentalsoft.service.EvolucionService;
 import co.empresa.dentalsoft.service.HistoriaClinicaService;
+import co.empresa.dentalsoft.service.OdontologoService;
 import co.empresa.dentalsoft.service.PacienteService;
 import co.empresa.dentalsoft.service.PaisService;
 import co.empresa.dentalsoft.service.SexoService;
@@ -76,6 +77,9 @@ public class PacienteController {
 
 	@Autowired
 	private CitaService citaService;
+	
+	@Autowired
+	private OdontologoService odontologoService;
 
 	@Autowired
 	private CloudinaryService cloudinaryService;
@@ -124,7 +128,7 @@ public class PacienteController {
 		citas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
 		model.addAttribute("paciente", pacienteService.get((String) request.getSession().getAttribute("paciente_doc")));
 		model.addAttribute("citas", citas);
-		return "pacientedashboard";
+		return "admindashboard";
 	}
 
 	@PostMapping("/save")
@@ -232,11 +236,15 @@ public class PacienteController {
 	}
 
 	@PostMapping("/guardar-odontograma")
-	public String saveOdontograma(RedirectAttributes att, @RequestParam MultipartFile file,
+	public String saveOdontograma(RedirectAttributes att, HttpServletRequest request, @RequestParam MultipartFile file,
 									@RequestParam String documento, Model model) throws IOException {
+		
 		pacienteService.get(documento).setOdontograma(cloudinaryService.upload(file).get("url").toString());
 		att.addFlashAttribute("accion", "¡Odontograma guardado con éxito!");
-		return "redirect:/admin/dashboard";
+		model.addAttribute("paci", pacienteService.get(documento));
+		model.addAttribute("odonto", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")).getNombre());
+		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")).getNombre());
+		return "admindashboard";
 	}
 	
 	@GetMapping("/eliminar-odontograma/{odontograma}/{documento}")
