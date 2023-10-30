@@ -102,7 +102,7 @@ public class CitaController {
 				citaService.save(cita);
 				emailService.sendEmail(""+pacienteService.get((String)request.getSession().getAttribute("docPaci")).getCorreo(), "Recordatorio cita odontológica", "Señor: "+pacienteService.get((String)request.getSession().getAttribute("docPaci")).getNombre()+"\n\nCordial saludo\n\n\nSu cita "+cita.getTratamiento_cod().toUpperCase()+" ha sido programada para el día "+fechaCompleta+" en el horario de "+cita.getHora()+", con el Dr. "+cita.getOdontologo_doc()+" en el edificio Colegio Médico oficina 402.\n\n\nPor favor, si no puede asistir notifíquenos por nuestros medios de atención.\n\n\n\nGracias.");
 				att.addFlashAttribute("accion", "¡Cita agendada con éxito! se envió notificación vía email");
-				return "redirect:/admin/citas/"+pacienteService.get((String)request.getSession().getAttribute("docPaci"));
+				return "redirect:/admin/citas/"+pacienteService.get((String)request.getSession().getAttribute("docPaci")).getDocumento();
 	}
 	
 	
