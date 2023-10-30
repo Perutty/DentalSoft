@@ -7,7 +7,6 @@
    	   <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
       <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
-      <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
   </head>
   <body>
 <div class="wrapper">
@@ -151,7 +150,7 @@
 						  <tbody th:each="cita: ${citas}">
 						     <tr>
 						     <td class="idcita" style="display:none" th:text="${cita.id}"></td>
-						     <td class="idhc" style="display:none" th:text="${hc}"></td>
+						     <td class="idhc" style="display:none" th:text="${historia}"></td>
 						     <td class="paci" style="display:none" th:text="${paci.nombre}"></td>
 						     <td class="documento" th:object="${paci}" style="display:none" th:text="${paci.documento}"></td>
 							 <td class="doctor" th:text="'Dr. '+${#strings.arraySplit(cita.odontologo_doc, ' ')[0] + ' ' + #strings.arraySplit(cita.odontologo_doc, ' ')[2]}"></td>
@@ -160,7 +159,7 @@
 							 <td class="hora" th:text="${cita.hora}"></td>
 							 <td th:text="${cita.estado}"></td>
 							 <td>
-							   <a id="ref" th:if="${!#lists.contains(evos.![cita_id], cita.id)}" th:href="@{/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${hc})}">
+							   <a id="ref" th:if="${!#lists.contains(evos.![cita_id], cita.id)}" th:href="@{/evolucion/new/{idCita}/{idHistoria}(idCita=${cita.id},idHistoria=${historia})}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Generar evolución">&#xEf40;</i>
 							   </a>
 							   <a class="notify" th:if="${cita.estado == 'Pendiente'}" href="#notifyEmployeeModal" data-toggle="modal">  
@@ -306,9 +305,9 @@
    <script th:src="@{/js2/horas.js}"></script>
    <script th:src="@{/js2/deletes.js}"></script>
    <script th:src="@{/js2/notify.js}"></script>
-   <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
    <script th:src="@{/js/popper.min.js}"></script>
    <script th:src="@{/js/bootstrap.min.js}"></script>
+   <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
    <script type="text/javascript" th:inline="javascript">
        $(document).ready(function(){

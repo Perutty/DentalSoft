@@ -117,7 +117,7 @@
      	<input th:field="*{documento}" type="hidden" name="documento"></input>
 		<img th:src="${paci.foto}" style="margin: 0 auto;border-radius:8%; width:360px; height:240px"/><br><br>
 		<div aria-label="Subir foto"><span>¿Quieres actualizar la foto del paciente?</span></div><br>
-		<input type="file" name="file"/><br><br>
+		<input type="file" name="file" required/><br><br>
 		<button type="submit" class="btn btn-info">Actualizar</button>
 	</form>
     </div>

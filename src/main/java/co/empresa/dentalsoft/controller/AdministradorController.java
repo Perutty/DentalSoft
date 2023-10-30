@@ -180,6 +180,7 @@ public class AdministradorController {
 		listHC.forEach((hc) -> {
 			if (hc.getPaciente_doc().equals(pacienteService.get(documento).getDocumento()))
 				model.addAttribute("historia", hc.getId());
+				
 		});
 		listCitasByPaciente.sort(Comparator.comparing(Cita::getFecha).reversed().thenComparing(Cita::getHora).reversed());
 		tratamientos.sort(Comparator.comparing(Tratamiento::getNombre));
@@ -189,6 +190,7 @@ public class AdministradorController {
 		model.addAttribute("odontologos", odontologoService.getAll());
 		model.addAttribute("nombre", pacienteService.get(documento).getNombre());
 		model.addAttribute("documento", documento);
+		
 		model.addAttribute("paci", pacienteService.get(documento));
 		model.addAttribute("citas", listCitasByPaciente);
 		model.addAttribute("admin", administradorService.get((String) request.getSession().getAttribute("admin_doc")));

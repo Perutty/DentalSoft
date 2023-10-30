@@ -113,7 +113,7 @@
 	     <form th:action="@{/admin/editFotoAdmin}" method="post" enctype="multipart/form-data">
 			<img th:src="*{foto}" style="margin: 0 auto;border-radius:50%; width:240px; height:240px"/><br><br>
 			<div><span>¿Quieres actualizar tu foto de perfil?</span></div><br>
-			<input type="file" name="file" /><br><br>
+			<input type="file" name="file" required/><br><br>
 				<button type="submit" class="btn btn-info">Actualizar</button>
 		 </form>
 	    </div>					
