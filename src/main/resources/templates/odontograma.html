@@ -97,8 +97,11 @@
 										<span>Editar</span>
 										</a> 
 									  </div>
-									  <div class="col-md-1 p-0 flex justify-content-lg-start justify-content-center">
+									  <div th:if="${admin != null}" class="col-md-1 p-0 flex justify-content-lg-start justify-content-center">
 										<a type="button" th:href="@{/admin/dashboard}" class="btn btn-secondary">Salir</a>
+									  </div>
+									  <div th:if="${odonto != null}" class="col-md-1 p-0 flex justify-content-lg-start justify-content-center">
+										<a type="button" th:href="@{/odontologo/dashboard}" class="btn btn-secondary">Salir</a>
 									  </div>
 								</div>
 								</div>

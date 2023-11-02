@@ -21,16 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import co.empresa.dentalsoft.model.Administrador;
 import co.empresa.dentalsoft.model.Cita;
-import co.empresa.dentalsoft.model.Eps;
-import co.empresa.dentalsoft.model.EstadoCivil;
 import co.empresa.dentalsoft.model.Evolucion;
 import co.empresa.dentalsoft.model.HistoriaClinica;
 import co.empresa.dentalsoft.model.Paciente;
-import co.empresa.dentalsoft.model.Pais;
-import co.empresa.dentalsoft.model.Sexo;
-import co.empresa.dentalsoft.model.TipoDocumento;
 import co.empresa.dentalsoft.service.AdministradorService;
 import co.empresa.dentalsoft.service.CitaService;
 import co.empresa.dentalsoft.service.EpsService;
@@ -127,6 +121,7 @@ public class PacienteController {
 		});
 		citas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
 		model.addAttribute("paciente", pacienteService.get((String) request.getSession().getAttribute("paciente_doc")));
+		model.addAttribute("isPaciente", true);
 		model.addAttribute("citas", citas);
 		return "admindashboard";
 	}
@@ -165,6 +160,7 @@ public class PacienteController {
 		model.addAttribute("eps", epsService.getAll());
 		model.addAttribute("sexo", sexoService.getAll());
 		model.addAttribute("pais", paisService.getAll());
+		model.addAttribute("isPaciente",true);
 		return "editpaciente";
 	}
 

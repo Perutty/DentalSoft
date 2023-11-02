@@ -144,7 +144,8 @@ public class AdministradorController {
 		model.addAttribute("sexo", sexoService.getAll());
 		model.addAttribute("pais", paisService.getAll());
 		model.addAttribute("paci", pacienteService.get(documento));
-		model.addAttribute("admin", administradorService.get(adm_doc));
+		model.addAttribute("adm", administradorService.get(adm_doc));
+		model.addAttribute("isAdmin", true);
 		return "editpaciente";
 	}
 
@@ -161,6 +162,7 @@ public class AdministradorController {
 		model.addAttribute("sexo", sexoService.getAll());
 		model.addAttribute("pais", paisService.getAll());
 		model.addAttribute("admin", administradorService.get((String) request.getSession().getAttribute("admin_doc")));
+		model.addAttribute("isAdmin", true);
 
 		return "admindashboard";
 	}
@@ -200,8 +202,9 @@ public class AdministradorController {
 	@GetMapping("/edit")
 	public String edit(HttpServletRequest request, Model model) {
 		model.addAttribute("tipoDoc", tipoDocumentoService.getAll());
-		model.addAttribute("adm", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
-		return "editadmin";
+		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
+		model.addAttribute("isAdmin",true);
+		return "editpaciente";
 	}
 
 	@PostMapping("/save")

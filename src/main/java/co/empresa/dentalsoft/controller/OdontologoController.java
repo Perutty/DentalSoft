@@ -98,7 +98,10 @@ public class OdontologoController {
 	public static String uploadDirectory = "/home/centos/fotos";
 	
 	@GetMapping("/login")
-	public String login(Model model) {
+	public String login(HttpServletRequest request, Model model) {
+		if (request.getSession().getAttribute("odonto_doc") != null) {
+			return "redirect:/odontologo/dashboard";
+		} else
 		return "loginodontologo";
 	}
 	
@@ -167,7 +170,8 @@ public class OdontologoController {
 		model.addAttribute("tipoDoc", tipoDocumentoService.getAll());
 		model.addAttribute("odontologo", odontologoService.get(documento));
 		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
-		return "editodontologo";
+		model.addAttribute("isAdmin", true);
+		return "editpaciente";
 	}
 	
 	@GetMapping("/buscar")
