@@ -169,7 +169,7 @@ public class OdontologoController {
 		
 		model.addAttribute("tipoDoc", tipoDocumentoService.getAll());
 		model.addAttribute("odontologo", odontologoService.get(documento));
-		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
+		model.addAttribute("administrador", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
 		model.addAttribute("isAdmin", true);
 		return "editpaciente";
 	}
