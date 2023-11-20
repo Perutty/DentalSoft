@@ -240,7 +240,7 @@ public class PacienteController {
 		model.addAttribute("paci", pacienteService.get(documento));
 		model.addAttribute("odonto", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")).getNombre());
 		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")).getNombre());
-		return "admindashboard";
+		return "odontograma";
 	}
 	
 	@GetMapping("/eliminar-odontograma/{odontograma}/{documento}")

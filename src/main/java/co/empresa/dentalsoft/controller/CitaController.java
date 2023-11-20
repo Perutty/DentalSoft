@@ -162,27 +162,50 @@ public class CitaController {
 	}
 	
 	@GetMapping("/buscar")
-	public String buscarCitas(@RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, 
-								@RequestParam("estado") String estado, HttpServletRequest request, 
+	public String buscarCitas(@RequestParam(value="fecha", required=false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, 
+								@RequestParam(value="estado", required=false) String estado, HttpServletRequest request, 
 								RedirectAttributes att,Model model) {
-		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		List<Cita> citas = citaService.getAll();
-		listBuscarCita.clear();
-		citas.forEach((cita) -> {
-			String fechaCita = dateFormat.format(cita.getFecha());
-			String fechaBuscar = dateFormat.format(fecha);
-		if(fechaCita.equals(fechaBuscar) && cita.getEstado().equals(estado)) {
-				listBuscarCita.add(cita);
-				listBuscarCita.sort(Comparator.comparing(Cita::getHora));	
-				model.addAttribute("fecha", fechaBuscar);
-				model.addAttribute("estado", estado);
-		}else
-		{
-			model.addAttribute("fecha", fechaBuscar);
-			model.addAttribute("estado", estado);
+		if(estado != null && fecha == null) {
+			List<Cita> citas = citaService.getAll();
+			listBuscarCita.clear();
+			citas.forEach((cita) -> {
+				if(cita.getEstado().equals(estado)) {
+					listBuscarCita.add(cita);
+					listBuscarCita.sort(Comparator.comparing(Cita::getHora));
+					model.addAttribute("estado", estado);
+				}
+			});
+		}else if(fecha != null && estado == null) {
+			List<Cita> citas = citaService.getAll();
+			listBuscarCita.clear();
+			citas.forEach((cita) -> {
+				String fechaCita = dateFormat.format(cita.getFecha());
+				String fechaBuscar = dateFormat.format(fecha);
+				if(fechaCita.equals(fechaBuscar)) {
+					listBuscarCita.add(cita);
+					listBuscarCita.sort(Comparator.comparing(Cita::getHora));	
+					model.addAttribute("fecha", fechaBuscar);
+				}
+			});
+		}else {
+			List<Cita> citas = citaService.getAll();
+			listBuscarCita.clear();
+			citas.forEach((cita) -> {
+				String fechaCita = dateFormat.format(cita.getFecha());
+				String fechaBuscar = dateFormat.format(fecha);
+				if(fechaCita.equals(fechaBuscar) && cita.getEstado().equals(estado)) {
+					listBuscarCita.add(cita);
+					listBuscarCita.sort(Comparator.comparing(Cita::getHora));	
+					model.addAttribute("fecha", fechaBuscar);
+					model.addAttribute("estado", estado);
+				}else
+				{
+					model.addAttribute("fecha", fechaBuscar);
+					model.addAttribute("estado", estado);
+				}
+			});
 		}
-		});
 		model.addAttribute("citas", listBuscarCita);
 		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
 		return "agenda";

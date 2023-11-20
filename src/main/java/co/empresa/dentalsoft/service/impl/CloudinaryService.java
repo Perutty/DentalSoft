@@ -43,17 +43,17 @@ public class CloudinaryService {
 	public void getImage(String url) throws Exception {
 		ApiResponse resources = cloud.api().resources(ObjectUtils.asMap("type","upload"));
 		List<Map> resourceList = (List<Map>) resources.get("resources");
-		String publicId = null;
+		String publicId;
 
 		for (Map resource : resourceList) {
 		    String ruta = (String) resource.get("url");
 		    if (ruta.equals(url)) {
 		        publicId = (String) resource.get("public_id");
+		        this.delete(publicId);
 		        break;
 		    }
 		}
 		
-		this.delete(publicId);
 	}
 	
 	private File convert(MultipartFile multipartFile) throws IOException {
