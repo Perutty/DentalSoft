@@ -274,7 +274,7 @@
 	    </div>
     <div class="container col-md-5">
 		<form th:action="@{/admin/editDatosOdontologo}" method="post">
-	      	<div class="form-group">
+	      	<div class="form-group"> 
 			    <label>Tipo de documento </label>
 			    <select class="input-select" type="number" name="tipodoc">
 			    <div th:each="tipo: ${tipoDoc}">
@@ -284,7 +284,7 @@
 			</div>
 	        <div class="form-group">
 			    <label>Número de Documento</label>
-				<input name="documento" type="text" th:field="*{documento}" placeholder="No. documento" class="form-control" required>
+				<input name="documento" type="text" th:field="*{documento}" placeholder="No. documento" readonly class="form-control" required>
 			</div>
 			<div class="form-group">
 			    <label>Nombre</label>
@@ -435,7 +435,7 @@
 		</div>
         <div class="form-group">
 		    <label>Número de Documento</label>
-			<input name="documento" type="text" th:field="*{documento}" placeholder="No. documento" class="form-control" required>
+			<input name="documento" type="text" th:field="*{documento}" placeholder="No. documento" class="form-control" readonly required>
 		</div>
 		<div class="form-group">
 		    <label>Nombre</label>

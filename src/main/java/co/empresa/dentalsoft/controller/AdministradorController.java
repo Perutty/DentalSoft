@@ -261,7 +261,26 @@ public class AdministradorController {
 				citaService.save(cita);
 			}
 		});
-		pacienteService.get(paciente.getDocumento()).setFoto(pacienteService.get(paciente.getDocumento()).getFoto());
+		Paciente paci = pacienteService.get(paciente.getDocumento());
+		paci.setTipodoc(paciente.getTipodoc());
+		paci.setNombre(paciente.getNombre());
+		paci.setSexo(paciente.getSexo());
+		paci.setEstadocivil(paciente.getEstadocivil());
+		paci.setPaisnac(paciente.getPaisnac());
+		paci.setCiudadnac(paciente.getCiudadnac());
+		paci.setFechanac(paciente.getFechanac());
+		paci.setFechaingreso(paciente.getFechaingreso());
+		paci.setPaisdomi(paciente.getPaisdomi());
+		paci.setCiudaddomi(paciente.getPaisdomi());
+		paci.setDirecciondomi(paciente.getDirecciondomi());
+		paci.setBarriodomi(paciente.getBarriodomi());
+		paci.setCelular(paciente.getCelular());
+		paci.setCorreo(paciente.getCorreo());
+		paci.setOcupacion(paciente.getOcupacion());
+		paci.setEps(paciente.getEps());
+		paci.setTipoafiliacion(paciente.getTipoafiliacion());
+		paci.setPoliza(paciente.getPoliza());
+		paci.setFoto(pacienteService.get(paciente.getDocumento()).getFoto());
 		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
 		return "redirect:/admin/edit/" + pacienteService.get(paciente.getDocumento()).getDocumento();
 	}
@@ -269,9 +288,13 @@ public class AdministradorController {
 	@PostMapping("/editDatosOdontologo")
 	public String editOdontologo(RedirectAttributes att, Odontologo odontologo, HttpServletRequest request,
 			Model model) {
+		odontologoService.get(odontologo.getDocumento()).setTipodoc(odontologo.getTipodoc());
+		odontologoService.get(odontologo.getDocumento()).setNombre(odontologo.getNombre());
+		odontologoService.get(odontologo.getDocumento()).setCelular(odontologo.getCelular());
+		odontologoService.get(odontologo.getDocumento()).setCorreo(odontologo.getCorreo());
 		odontologoService.get(odontologo.getDocumento()).setFoto(odontologoService.get(odontologo.getDocumento()).getFoto());
 		att.addFlashAttribute("accion", "¡Datos del odontólogo actualizados con éxito!");
-		return "redirect:/odontologo/edit/" + odontologoService.get(odontologo.getDocumento()).getDocumento();
+		return "redirect:/odontologo/edit/" + odontologo.getDocumento();
 	}
 
 	@PostMapping("/editFotoPaciente")

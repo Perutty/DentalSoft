@@ -166,7 +166,6 @@ public class OdontologoController {
 	
 	@GetMapping("/edit/{documento}")
 	public String edit(RedirectAttributes att, HttpServletRequest request, @PathVariable("documento") String documento, Model model){
-		
 		model.addAttribute("tipoDoc", tipoDocumentoService.getAll());
 		model.addAttribute("odontologo", odontologoService.get(documento));
 		model.addAttribute("administrador", administradorService.get((String)request.getSession().getAttribute("admin_doc")));
