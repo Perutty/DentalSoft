@@ -22,34 +22,8 @@ function horas () {
 	fetch('http://localhost:8080/cita/horasocupadas/' + fechaSeleccionada + '/' + odontologo.value)
 		.then(response => response.text())
 		.then(data => {
-			var dataX = data.slice(1, -1);
-			horasArray = dataX.split(',');
-			var opcionHora = selectHora.querySelectorAll('.horacita');
-
-			if (data.length === 0 || data === '[]') {
-				opcionHora.forEach(function(opcion) {
-					opcion.disabled = false;
-					opcion.style.color = "green";
-				})
-			}else {
-				opcionHora.forEach(function(opcion) {
-					for (let i = 0; i < horasArray.length; i++) {
-
-						if (opcion.textContent.trim() === horasArray[i].trim()) {
-							opcion.disabled = true;
-							opcion.style.color = "red";
-							break; // Deshabilitar opción ocupada
-						} else {
-							opcion.disabled = false;
-							opcion.style.color = "green"; // Habilitar todas las opciones
-						}
-					}
-				})
-			}
-		})
-		.catch(error => console.error('Error', error));
-		
-		/**fetch('https://dentalsoft-production.up.railway.app/cita/horasocupadas/' + fechaSeleccionada + '/' + odontologo.value)
+		if(data === null){
+			fetch('https://dentalsoft-production.up.railway.app/cita/horasocupadas/' + fechaSeleccionada + '/' + odontologo.value)
 		.then(response => response.text())
 		.then(data => {
 			var dataX = data.slice(1, -1);
@@ -77,5 +51,35 @@ function horas () {
 				})
 			}
 		})
-		.catch(error => console.error('Error', error));**/
+		.catch(error => console.error('Error', error));
+		}
+		
+			var dataX = data.slice(1, -1);
+			horasArray = dataX.split(',');
+			var opcionHora = selectHora.querySelectorAll('.horacita');
+
+			if (data.length === 0 || data === '[]') {
+				opcionHora.forEach(function(opcion) {
+					opcion.disabled = false;
+					opcion.style.color = "green";
+				})
+			}else {
+				opcionHora.forEach(function(opcion) {
+					for (let i = 0; i < horasArray.length; i++) {
+
+						if (opcion.textContent.trim() === horasArray[i].trim()) {
+							opcion.disabled = true;
+							opcion.style.color = "red";
+							break; // Deshabilitar opción ocupada
+						} else {
+							opcion.disabled = false;
+							opcion.style.color = "green"; // Habilitar todas las opciones
+						}
+					}
+				})
+			}
+		})
+		.catch(error => console.error('Error', error));
+		
+		
 }
