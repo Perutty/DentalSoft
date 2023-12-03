@@ -111,7 +111,7 @@
 					
 	<div class="container-info" >					
     <div class="container col-md-6">
-		<form th:action="@{/cita/save}" method="post" th:object="${cita}">
+		<form th:action="@{/cita/editarcita}" method="post" th:object="${cita}">
 	<br>
 		<input name="nombre" th:field="*{id}" type="hidden" class="form-control" readonly required>
 		<div class="form-group">
@@ -120,7 +120,7 @@
 		</div>
 		<div class="form-group">
 		    <label>Nombre del odontólogo </label>
-		    <select class="input-select" type="number" name="odontologo_doc">
+		    <select id="odontologo" class="input-select" type="number" name="odontologo_doc">
 		    <option value="" style="text-align: center">--- Seleccione el nombre del odontólogo ---</option>
 		    <div th:each="odonto: ${odontologos}">
 				<option th:value="${odonto.nombre}" th:text="${odonto.nombre}" th:field="*{odontologo_doc}"></option>
@@ -137,15 +137,15 @@
 			</select>
 		</div>
 		<div class="form-group">
-		<label>Fecha de ingreso </label>
-				<input name="fecha" type="date" th:field="*{fecha}" required></input>
+		<label>Fecha de cita </label>
+				<input name="fecha" type="date" id="fechacita" th:field="*{fecha}" required></input>
 		</div>
 		<div class="form-group">
 		    <label>Hora</label>
-		    <select class="input-select" type="number" name="hora">
+		    <select id="hora" class="input-select" type="number" name="hora">
 		    <option value="" style="text-align: center">--- Seleccione la hora de la cita ---</option>
 		    <div th:each="hora: ${horas}">
-				<option th:value="${hora.hora}" th:text="${hora.hora}" th:field="*{hora}"></option>
+				<option th:value="${hora.hora}" th:text="${hora.hora}" th:field="*{hora}" class="horacita"></option>
 			</div>
 			</select>
 		</div>
@@ -174,6 +174,96 @@
 				</div>
 		</footer>
 
+   <script>
+	   const odontologo = document.getElementById('odontologo');
+	   const fechacita = document.getElementById('fechacita');
+	   const selectHora = document.querySelector('select[name="hora"]');
+	   const selectDoc = document.querySelector('select[name="odontologo_doc"]');
+	   var hora;
+	   var horasArray;
+	   
+	   selectHora.addEventListener('click', function(){
+			horas();
+		});
+
+		fechacita.addEventListener('click', function(){
+			horas();
+		});
+
+		selectDoc.addEventListener('click', function(){
+			horas();
+		});
+		
+		function horas () {
+			var fechaSeleccionada = fechacita.value;
+			localStorage.setItem('fechas',fechaSeleccionada);
+			
+			fetch('http://localhost:8080/cita/horasocupadas/' + fechaSeleccionada + '/' + odontologo.value)
+				.then(response => response.text())
+				.then(data => {
+				if(data === null){
+					console.log(data);
+					fetch('https://dentalsoft-production.up.railway.app/cita/horasocupadas/' + fechaSeleccionada + '/' + odontologo.value)
+				.then(response => response.text())
+				.then(data => {
+					var dataX = data.slice(1, -1);
+					horasArray = dataX.split(',');
+					var opcionHora = selectHora.querySelectorAll('.horacita');
+
+					if (data.length === 0 || data === '[]') {
+						opcionHora.forEach(function(opcion) {
+							opcion.disabled = false;
+							opcion.style.color = "green";
+						})
+					}else {
+						opcionHora.forEach(function(opcion) {
+							for (let i = 0; i < horasArray.length; i++) {
+
+								if (opcion.textContent.trim() === horasArray[i].trim()) {
+									opcion.disabled = true;
+									opcion.style.color = "red";
+									break; // Deshabilitar opción ocupada
+								} else {
+									opcion.disabled = false;
+									opcion.style.color = "green"; // Habilitar todas las opciones
+								}
+							}
+						})
+					}
+				})
+				.catch(error => console.error('Error', error));
+				}
+				console.log(data);
+					var dataX = data.slice(1, -1);
+					horasArray = dataX.split(',');
+					var opcionHora = selectHora.querySelectorAll('.horacita');
+
+					if (data.length === 0 || data === '[]') {
+						opcionHora.forEach(function(opcion) {
+							opcion.disabled = false;
+							opcion.style.color = "green";
+						})
+					}else {
+						opcionHora.forEach(function(opcion) {
+							for (let i = 0; i < horasArray.length; i++) {
+
+								if (opcion.textContent.trim() === horasArray[i].trim()) {
+									opcion.disabled = true;
+									opcion.style.color = "red";
+									break; // Deshabilitar opción ocupada
+								} else {
+									opcion.disabled = false;
+									opcion.style.color = "green"; // Habilitar todas las opciones
+								}
+							}
+						})
+					}
+				})
+				.catch(error => console.error('Error', error));
+				
+				
+		}
+   </script>
    <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
    <script th:src="@{/js/popper.min.js}"></script>
    <script th:src="@{/js/bootstrap.min.js}"></script>

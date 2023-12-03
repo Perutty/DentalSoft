@@ -87,9 +87,8 @@ public class CitaController {
 
 	@PostMapping("/save")
 	public String save(RedirectAttributes att, Cita cita,HttpServletRequest request, Model model){
-				Date f = new Date();
 				SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy");
-				String fechaString = formatoFecha.format(f);
+				String fechaString = formatoFecha.format(cita.getFecha());
 				String[] fecha = fechaString.split("-");
 				String mes = "";
 				for(int i = 0; i < meses.size();i++) {
@@ -127,6 +126,28 @@ public class CitaController {
 			model.addAttribute("cita", new Cita());
 		}
 		return "editarcita";
+	}
+	
+	@PostMapping("/editarcita")
+	public String editCita(RedirectAttributes att,HttpServletRequest request, Cita cita, Model model) {
+		SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy");
+		String fechaString = formatoFecha.format(cita.getFecha());
+		String[] fecha = fechaString.split("-");
+		String mes = "";
+		for(int i = 0; i < meses.size();i++) {
+			if(i == Integer.parseInt(fecha[1])-1) {
+				mes = meses.get(Integer.parseInt(fecha[1])-1);						
+			}
+		}
+		String fechaCompleta = ""+fecha[0]+" de "+mes+" del año "+fecha[2];
+		Cita c = citaService.get(cita.getId());
+		c.setOdontologo_doc(cita.getOdontologo_doc());
+		c.setTratamiento_cod(cita.getTratamiento_cod());
+		c.setHora(cita.getHora());
+		c.setFecha(cita.getFecha());
+		emailService.sendEmail(""+pacienteService.get((String)request.getSession().getAttribute("docPaci")).getCorreo(), "Actualización cita odontológica", "Señor: "+pacienteService.get((String)request.getSession().getAttribute("docPaci")).getNombre()+"\n\nCordial saludo\n\n\nSu cita "+cita.getTratamiento_cod().toUpperCase()+" ha sido re programada para el día "+fechaCompleta+" en el horario de "+cita.getHora()+", con el Dr. "+cita.getOdontologo_doc()+" en el edificio Colegio Médico oficina 402.\n\n\nPor favor, si no puede asistir notifíquenos por nuestros medios de atención.\n\n\n\nGracias.");
+		att.addFlashAttribute("accion", "¡Cita modificada con éxito! se envió notificación vía email");
+		return "redirect:/admin/citas/"+(String)request.getSession().getAttribute("docPaci");
 	}
 	
 	@GetMapping("/horasocupadas/{fecha}/{odontologo}")

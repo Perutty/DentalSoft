@@ -1,9 +1,9 @@
 const odontologo = document.getElementById('odontologo');
 const fechacita = document.getElementById('fechacita');
 const selectHora = document.querySelector('select[name="hora"]');
+const selectDoc = document.querySelector('select[name="odontologo_doc"]');
 var hora;
 var horasArray;
-
 
 odontologo.addEventListener('change', function(){
 	if(localStorage.getItem('fechas')!==null){
@@ -23,6 +23,7 @@ function horas () {
 		.then(response => response.text())
 		.then(data => {
 		if(data === null){
+			console.log(data);
 			fetch('https://dentalsoft-production.up.railway.app/cita/horasocupadas/' + fechaSeleccionada + '/' + odontologo.value)
 		.then(response => response.text())
 		.then(data => {
@@ -53,7 +54,7 @@ function horas () {
 		})
 		.catch(error => console.error('Error', error));
 		}
-		
+		console.log(data);
 			var dataX = data.slice(1, -1);
 			horasArray = dataX.split(',');
 			var opcionHora = selectHora.querySelectorAll('.horacita');
