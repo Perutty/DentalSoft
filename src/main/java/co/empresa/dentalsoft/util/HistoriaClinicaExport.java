@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,8 +44,11 @@ public class HistoriaClinicaExport {
 		
 		Date fechaActual = new Date();
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(fechaActual);
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Bogota"));
+		calendar.setTime(fechaActual);
+		
+		/**Calendar calendar = Calendar.getInstance();
+		calendar.setTime(fechaActual);**/
 
         int año = calendar.get(Calendar.YEAR);
         int mes = calendar.get(Calendar.MONTH) + 1;
