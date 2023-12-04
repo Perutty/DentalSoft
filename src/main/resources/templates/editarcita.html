@@ -116,7 +116,7 @@
 		<input name="nombre" th:field="*{id}" type="hidden" class="form-control" readonly required>
 		<div class="form-group">
 		    <label>Nombre</label>
-			<input name="paciente_doc" th:field="*{paciente_doc}" type="text" class="form-control" readonly required>
+			<input name="paciente_doc" id="paciente" th:field="*{paciente_doc}" type="text" class="form-control" readonly required>
 		</div>
 		<div class="form-group">
 		    <label>Nombre del odontólogo </label>
@@ -176,6 +176,7 @@
 
    <script>
 	   const odontologo = document.getElementById('odontologo');
+	   const paciente = document.getElementById('paciente');
 	   const fechacita = document.getElementById('fechacita');
 	   const selectHora = document.querySelector('select[name="hora"]');
 	   const selectDoc = document.querySelector('select[name="odontologo_doc"]');
@@ -198,7 +199,7 @@
 			var fechaSeleccionada = fechacita.value;
 			localStorage.setItem('fechas',fechaSeleccionada);
 			
-					fetch('https://dentalsoft-production.up.railway.app/cita/horasocupadas/' + fechaSeleccionada + '/' + odontologo.value)
+					fetch('https://dentalsoft-production.up.railway.app/cita/horasocupadas/' + fechaSeleccionada + '/' + odontologo.value + '/' + paciente.value)
 				.then(response => response.text())
 				.then(data => {
 					var dataX = data.slice(1, -1);
