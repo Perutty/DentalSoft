@@ -119,7 +119,7 @@ public class PacienteController {
 			if (cita.getPaciente_doc().equals(pacienteService.get((String) request.getSession().getAttribute("paciente_doc")).getNombre()))
 				citas.add(cita);
 		});
-		citas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
+		citas.sort(Comparator.comparing(Cita::getFecha).reversed().thenComparing(Cita::getHora));
 		model.addAttribute("paciente", pacienteService.get((String) request.getSession().getAttribute("paciente_doc")));
 		model.addAttribute("isPaciente", true);
 		model.addAttribute("citas", citas);
@@ -166,7 +166,28 @@ public class PacienteController {
 
 	@PostMapping("/editDatos")
 	public String editPaciente(RedirectAttributes att, Paciente paciente, HttpServletRequest request, Model model) {
-		paciente.setFoto(pacienteService.get(paciente.getDocumento()).getFoto());
+		
+		Paciente paci = pacienteService.get(paciente.getDocumento());
+		
+		paciente.setFoto(paci.getFoto());
+		paci.setTipodoc(paciente.getTipodoc());
+		paci.setNombre(paciente.getNombre());
+		paci.setSexo(paciente.getSexo());
+		paci.setEstadocivil(paciente.getEstadocivil());
+		paci.setPaisnac(paciente.getPaisnac());
+		paci.setCiudadnac(paciente.getCiudadnac());
+		paci.setFechanac(paciente.getFechanac());
+		paci.setFechaingreso(paciente.getFechaingreso());
+		paci.setPaisdomi(paciente.getPaisdomi());
+		paci.setCiudaddomi(paciente.getPaisdomi());
+		paci.setDirecciondomi(paciente.getDirecciondomi());
+		paci.setBarriodomi(paciente.getBarriodomi());
+		paci.setCelular(paciente.getCelular());
+		paci.setCorreo(paciente.getCorreo());
+		paci.setOcupacion(paciente.getOcupacion());
+		paci.setEps(paciente.getEps());
+		paci.setTipoafiliacion(paciente.getTipoafiliacion());
+		paci.setPoliza(paciente.getPoliza());
 		att.addFlashAttribute("accion", "¡Datos del paciente actualizados con éxito!");
 		return "redirect:/paciente/edit";
 	}
@@ -202,7 +223,8 @@ public class PacienteController {
 		});
 		model.addAttribute("paciente", pacienteService.get((String) request.getSession().getAttribute("paciente_doc")));
 		model.addAttribute("citas", listBuscarCita);
-		return "pacientedashboard";
+		model.addAttribute("isPaciente",true);
+		return "admindashboard";
 	}
 
 	@GetMapping("/delete/{documento}")
@@ -226,6 +248,9 @@ public class PacienteController {
 
 	@GetMapping("/odontograma/{documento}")
 	public String historia(Model model, HttpServletRequest request, @PathVariable("documento") String documento) {
+		if(request.getSession().getAttribute("odonto_doc") != null){
+			model.addAttribute("odonto", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")).getNombre());
+		}
 		model.addAttribute("admin", administradorService.get((String) request.getSession().getAttribute("admin_doc")));
 		model.addAttribute("paci", pacienteService.get(documento));
 		return "odontograma";
@@ -236,11 +261,9 @@ public class PacienteController {
 									@RequestParam String documento, Model model) throws IOException {
 		
 		pacienteService.get(documento).setOdontograma(cloudinaryService.upload(file).get("url").toString());
+		
 		att.addFlashAttribute("accion", "¡Odontograma guardado con éxito!");
-		model.addAttribute("paci", pacienteService.get(documento));
-		model.addAttribute("odonto", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")).getNombre());
-		model.addAttribute("admin", administradorService.get((String)request.getSession().getAttribute("admin_doc")).getNombre());
-		return "odontograma";
+		return "redirect:/paciente/odontograma/"+documento;
 	}
 	
 	@GetMapping("/eliminar-odontograma/{odontograma}/{documento}")

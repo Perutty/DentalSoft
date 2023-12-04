@@ -109,7 +109,6 @@
 					     </div>
 					   </div>
 						<div th:if="${citas.isEmpty()}">
-					   		<h5 style="margin-top:30px;text-align:center">No hay citas agendadas</h5><br>
 					   		<label>Buscar por: </label>
 					   		  <form th:action="@{/admin/buscar}" style="display:flex; align-items:center">
 							   	<input type="date" th:attr="value=${fecha}" style="width:150px; height:40px" name="fecha">
@@ -121,6 +120,7 @@
 							   	<button type="submit" class="btn btn-info" style="margin-left:20px">Buscar</button>
 							   </label>
 						   </form><br>
+					   		<h5 style="margin-top:30px;text-align:center">No hay citas agendadas</h5><br>
 					   </div>
 					   <br>
 					   <div th:if="${!citas.isEmpty()}">
@@ -165,13 +165,13 @@
 							   <a class="notify" th:if="${cita.estado == 'Pendiente'}" href="#notifyEmployeeModal" data-toggle="modal">  
 							   		<i class="material-icons" data-toggle="tooltip" title="Notificar">&#xE7f7;</i>
 							   </a>
-							    <a th:href="@{/cita/editCita/{id}(id=${cita.id})}">
+							    <a th:href="@{/cita/editCita/{id}(id=${cita.id})}" th:if="${cita.estado == 'Pendiente'}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
 							   </a>
 							   <a th:if="${cita.estado == 'Pendiente'}" th:href="@{/cita/atender/{id}(id=${cita.id})}">
 							   		<i class="material-icons" data-toggle="tooltip" title="Atender">&#xE876;</i>
 							   </a>
-							   <a href="#deleteEmployeeModal" class="deleteCita" data-toggle="modal">
+							   <a href="#deleteEmployeeModal" th:if="${cita.estado == 'Pendiente'}" class="deleteCita" data-toggle="modal">
 							   		<i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
 							   </a>
 							   </td>
@@ -245,7 +245,7 @@
       <div class="modal-body">
         <div class="form-group">
 		    <label>Nombre del paciente: </label>
-		    <input name="paciente_doc" type="text" th:value="${nombre}" readonly class="form-control" required>
+		    <input name="paciente_doc" id="paciente" type="text" th:value="${nombre}" readonly class="form-control" required>
 		</div>
 		<div class="form-group">
 		    <label>Nombre del odontólogo: </label>

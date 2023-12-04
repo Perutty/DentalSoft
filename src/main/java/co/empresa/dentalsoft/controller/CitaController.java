@@ -150,9 +150,10 @@ public class CitaController {
 		return "redirect:/admin/citas/"+(String)request.getSession().getAttribute("docPaci");
 	}
 	
-	@GetMapping("/horasocupadas/{fecha}/{odontologo}")
+	@GetMapping("/horasocupadas/{fecha}/{odontologo}/{paciente}")
 	@ResponseBody
-	public String horasDisponibles(@PathVariable("fecha") String fecha, @PathVariable("odontologo") String odontologo,Model model){
+	public String horasDisponibles(@PathVariable("fecha") String fecha, @PathVariable("odontologo") String odontologo,
+			@PathVariable("paciente") String paciente,Model model){
 		List<Cita> citas = citaService.getAll();
 		List<Hora> horas = horaService.getAll();
 		horasOcupadas.clear();
@@ -164,7 +165,7 @@ public class CitaController {
 			int day = cal.get(Calendar.DAY_OF_MONTH);
 
 			String fechaCitaString = String.format("%04d-%02d-%02d", year, month, day);
-			if((fechaCitaString.equals(fecha) && c.getOdontologo_doc().equals(odontologo))) {
+			if(((fechaCitaString.equals(fecha) && c.getOdontologo_doc().equals(odontologo))) || (c.getPaciente_doc().equals(paciente) && fechaCitaString.equals(fecha))) {
 				horas.forEach((h) -> {
 					if(h.getHora().equals(c.getHora()))
 						horasOcupadas.add(h.getHora());

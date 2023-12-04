@@ -95,7 +95,6 @@ public class OdontologoController {
 	public List<Cita> cita = new ArrayList<>();
 	List<Evolucion> listEvo = new ArrayList<>();
 	
-	public static String uploadDirectory = "/home/centos/fotos";
 	
 	@GetMapping("/login")
 	public String login(HttpServletRequest request, Model model) {
@@ -127,7 +126,7 @@ public class OdontologoController {
 			if(cita.getOdontologo_doc().equals(odontologoService.get((String)request.getSession().getAttribute("odonto_doc")).getNombre()))
 				citas.add(cita);
 		});
-		citas.sort(Comparator.comparing(Cita::getFecha).thenComparing(Cita::getHora));
+		citas.sort(Comparator.comparing(Cita::getFecha).reversed().thenComparing(Cita::getHora));
 		model.addAttribute("evos", evolucionService.getAll());
 		model.addAttribute("odonto", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
 		model.addAttribute("citas", citas);
@@ -263,10 +262,15 @@ public class OdontologoController {
 			evos.forEach((e)->{
 				hc.forEach((h)->{
 					pacientes.forEach((p)->{
-						if(p.getNombre().equals(documento)) {
-							if(h.getPaciente_doc().equals(p.getDocumento())) {
+						if(p.getNombre().equals(documento) && h.getPaciente_doc().equals(p.getDocumento())) {
+							model.addAttribute("historia", historiaClinicaService.get(h.getId()));
+						}
+						
+						if(e.getCita_id().equals(idCita)) {
+							if(h.getPaciente_doc().equals(p.getNombre())) {
 								if(e.getCita_id().equals(idCita) && e.getHistoria_id().equals(h.getId())) {
 									listEvo.add(e);
+									
 								}
 							}
 						}
@@ -274,9 +278,8 @@ public class OdontologoController {
 				});
 			});
 			if(listEvo.isEmpty()) {
-			model.addAttribute("paci", pacienteService.get(documento).getNombre());
 			model.addAttribute("cita", citaService.get(idCita));
-			model.addAttribute("odonto", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
+			model.addAttribute("odontologo", odontologoService.get((String)request.getSession().getAttribute("odonto_doc")));
 				return "evolucionodonto";
 			}else {
 				att.addFlashAttribute("accion", "¡Esta cita ya cuenta con una evolución!");

@@ -611,8 +611,6 @@
 									</div>
 								</div>
 								<div th:if="${citas.isEmpty()}">
-									<h5 style="margin-top: 30px; text-align: center">No hay
-										citas agendadas</h5>
 									<br> <label>Buscar por: </label>
 									<form th:action="@{/paciente/buscar}"
 										style="display: flex; align-items: center">
@@ -630,6 +628,8 @@
 										</label>
 									</form>
 									<br>
+									<h5 style="margin-top: 30px; text-align: center">No hay
+										citas agendadas</h5>
 								</div>
 								<br>
 								<div th:if="${!citas.isEmpty()}">
