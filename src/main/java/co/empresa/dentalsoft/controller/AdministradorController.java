@@ -188,9 +188,9 @@ public class AdministradorController {
 		tratamientos.sort(Comparator.comparing(Tratamiento::getNombre));
 		model.addAttribute("tratamientos", tratamientos);
 		model.addAttribute("horas", horaService.getAll());
-		model.addAttribute("evos", evolucionService.getAll());
 		model.addAttribute("odontologos", odontologoService.getAll());
 		model.addAttribute("nombre", pacienteService.get(documento).getNombre());
+		model.addAttribute("evos", evolucionService.getAll());
 		model.addAttribute("documento", documento);
 		model.addAttribute("paci", pacienteService.get(documento));
 		model.addAttribute("citas", listCitasByPaciente);
@@ -321,6 +321,7 @@ public class AdministradorController {
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<Cita> listcitas = citaService.getAll();
+		List<Tratamiento> tratamientos = tratamientoService.getAll();
 		listBuscarCita.clear();
 		listcitas.forEach((cita) -> {
 			String fechaCita = dateFormat.format(cita.getFecha());
@@ -335,9 +336,14 @@ public class AdministradorController {
 				model.addAttribute("estado", estado);
 			}
 		});
+		tratamientos.sort(Comparator.comparing(Tratamiento::getNombre));
 		model.addAttribute("evos", evolucionService.getAll());
 		model.addAttribute("citas", listBuscarCita);
 		model.addAttribute("admin", administradorService.get((String) request.getSession().getAttribute("admin_doc")));
+		model.addAttribute("tratamientos", tratamientos);
+		model.addAttribute("horas", horaService.getAll());
+		model.addAttribute("odontologos", odontologoService.getAll());
+		model.addAttribute("nombre", pacienteService.get((String)request.getSession().getAttribute("docPaci")).getNombre());
 		return "citaspaciente";
 	}
 
